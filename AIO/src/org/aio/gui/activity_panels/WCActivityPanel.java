@@ -1,0 +1,75 @@
+package org.aio.gui.activity_panels;
+
+import org.aio.activities.activity.Activity;
+import org.aio.activities.skills.woodcutting.Tree;
+import org.aio.activities.skills.woodcutting.WoodcuttingActivity;
+import org.aio.util.Location;
+import org.aio.util.ResourceMode;
+import org.json.simple.JSONObject;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class WCActivityPanel implements ActivityPanel {
+
+    private JPanel mainPanel;
+    private JComboBox<Tree> treeSelector;
+    private JComboBox<Location> locationSelector;
+    private JComboBox<ResourceMode> resourceModeSelector;
+
+    public WCActivityPanel() {
+        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+
+        final JLabel label1 = new JLabel("Tree:");
+        mainPanel.add(label1);
+
+        treeSelector = new JComboBox<>();
+        mainPanel.add(treeSelector);
+
+        final JLabel label2 = new JLabel("Location:");
+        mainPanel.add(label2);
+
+        locationSelector = new JComboBox<>();
+        mainPanel.add(locationSelector);
+
+        final JLabel label3 = new JLabel("Collection Mode:");
+        mainPanel.add(label3);
+
+        resourceModeSelector = new JComboBox<>();
+        mainPanel.add(resourceModeSelector);
+
+        treeSelector.setModel(new DefaultComboBoxModel<>(Tree.values()));
+        locationSelector.setModel(new DefaultComboBoxModel<>(Tree.values()[0].locations));
+        resourceModeSelector.setModel(new DefaultComboBoxModel<>(ResourceMode.values()));
+        treeSelector.addActionListener(e -> {
+            Tree selectedTree = (Tree) treeSelector.getSelectedItem();
+            locationSelector.setModel(new DefaultComboBoxModel<>(selectedTree.locations));
+        });
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return mainPanel;
+    }
+
+    @Override
+    public Activity toActivity() {
+        return new WoodcuttingActivity((Tree) treeSelector.getSelectedItem(), (Location) locationSelector.getSelectedItem(), (ResourceMode) resourceModeSelector.getSelectedItem());
+    }
+
+    @Override
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("tree", ((Tree) treeSelector.getSelectedItem()).name());
+        jsonObject.put("resource_mode", ((ResourceMode) resourceModeSelector.getSelectedItem()).name());
+        jsonObject.put("location_index", locationSelector.getSelectedIndex());
+        return jsonObject;
+    }
+
+    @Override
+    public void fromJSON(JSONObject jsonObject) {
+        treeSelector.setSelectedItem(Tree.valueOf((String) jsonObject.get("tree")));
+        resourceModeSelector.setSelectedItem(ResourceMode.valueOf((String) jsonObject.get("resource_mode")));
+        locationSelector.setSelectedIndex(new Long((long) jsonObject.get("location_index")).intValue());
+    }
+}
