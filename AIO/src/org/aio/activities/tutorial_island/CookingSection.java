@@ -3,7 +3,6 @@ package org.aio.activities.tutorial_island;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
-import org.osbot.rs07.api.ui.Tab;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +30,7 @@ public class CookingSection extends TutorialSection {
             case 130:
                 if (getWalking().walkPath(PATH_TO_COOK_BUILDING)) {
                     if (getDoorHandler().handleNextObstacle(COOK_BUILDING)) {
-                        Sleep.sleepUntil(() -> getProgress() == 140, 5000,500);
+                        Sleep.sleepUntil(() -> getProgress() == 140, 5000, 600);
                     }
                 }
                 break;
@@ -45,11 +44,8 @@ public class CookingSection extends TutorialSection {
                 bakeDough();
                 break;
             case 170:
-                getTabs().open(Tab.MUSIC);
-                break;
-            case 180:
                 if (getDoorHandler().handleNextObstacle(new Position(3071, 3090, 0))) {
-                    Sleep.sleepUntil(() -> getProgress() != 180, 5000,500);
+                    Sleep.sleepUntil(() -> getProgress() != 170, 5000, 600);
                 }
                 break;
         }
@@ -59,7 +55,7 @@ public class CookingSection extends TutorialSection {
         if (!"Pot of flour".equals(getInventory().getSelectedItemName())) {
             getInventory().interact("Use", "Pot of flour");
         } else if (getInventory().getItem("Bucket of water").interact()) {
-            Sleep.sleepUntil(() -> getInventory().contains("Bread dough"), 3000,500);
+            Sleep.sleepUntil(() -> getInventory().contains("Bread dough"), 3000, 600);
         }
     }
 
@@ -67,7 +63,7 @@ public class CookingSection extends TutorialSection {
         if (!"Bread dough".equals(getInventory().getSelectedItemName())) {
             getInventory().interact("Use", "Bread dough");
         } else if (getObjects().closest("Range").interact()) {
-            Sleep.sleepUntil(() -> getInventory().contains("Bread"), 5000,500);
+            Sleep.sleepUntil(() -> getInventory().contains("Bread"), 5000, 600);
         }
     }
 }

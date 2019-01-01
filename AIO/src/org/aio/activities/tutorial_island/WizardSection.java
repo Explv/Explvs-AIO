@@ -36,7 +36,16 @@ public final class WizardSection extends TutorialSection {
             new Position(3141, 3086, 0)
     );
 
-    private static final Area CHICKEN_AREA = new Area(3139, 3091, 3140, 3090);
+    private static final Area CHICKEN_AREA = new Area(
+            new int[][]{
+                    { 3140, 3088 },
+                    { 3140, 3089 },
+                    { 3137, 3092 },
+                    { 3141, 3092 },
+                    { 3144, 3089 },
+                    { 3144, 3088 }
+            }
+    );
 
     public WizardSection() {
         super("Magic Instructor");
@@ -50,7 +59,7 @@ public final class WizardSection extends TutorialSection {
         }
 
         if (getInstructor() == null) {
-            Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000,500);
+            Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000, 600);
             getWalking().walkPath(PATH_TO_WIZARD_BUILDING);
         }
 
@@ -94,7 +103,7 @@ public final class WizardSection extends TutorialSection {
     private boolean attackChicken() {
         NPC chicken = getNpcs().closest("Chicken");
         if (chicken != null && getMagic().castSpellOnEntity(Spells.NormalSpells.WIND_STRIKE, chicken)) {
-            Sleep.sleepUntil(() -> getProgress() != 650, 3000,500);
+            Sleep.sleepUntil(() -> getProgress() != 650, 3000, 600);
             return true;
         }
         return false;

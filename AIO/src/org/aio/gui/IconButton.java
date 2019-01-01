@@ -1,7 +1,5 @@
 package org.aio.gui;
 
-import org.osbot.Ic;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
