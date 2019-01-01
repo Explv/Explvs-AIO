@@ -6,7 +6,7 @@ public enum FishingMethod {
 
     NET ("Fishing spot", "Small Net", new ItemReq("Small fishing net")),
     BIG_NET ("Fishing spot", "Big Net", new ItemReq("Big fishing net")),
-    BAIT ("Rod Fishing spot", "Bait", new ItemReq("Fishing rod"), new ItemReq("Fishing bait", 1).setStackable()),
+    BAIT("Fishing spot", "Bait", new ItemReq("Fishing rod"), new ItemReq("Fishing bait", 1).setStackable()),
     OILY_BAIT ("Rod Fishing spot", "Bait", new ItemReq("Oily fishing rod"), new ItemReq("Fishing bait", 1).setStackable()),
     LURE ("Rod Fishing spot", "Lure", new ItemReq("Fly fishing rod"), new ItemReq("Feather", 1).setStackable()),
     STRIPY_LURE ("Rod Fishing spot", "Lure", new ItemReq("Fly fishing rod"), new ItemReq("Stripy Feather", 1).setStackable()),
