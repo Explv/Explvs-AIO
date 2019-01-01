@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v1.3", info = "AIO", version = 1.3, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v1.4", info = "AIO", version = 1.4, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
