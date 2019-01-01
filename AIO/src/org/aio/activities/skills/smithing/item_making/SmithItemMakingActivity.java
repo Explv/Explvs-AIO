@@ -69,7 +69,7 @@ public class SmithItemMakingActivity extends Activity {
     }
 
     private void smithAll(){
-        if (smithItemWidget.getParent(getWidgets()).get().interact("Smith All")) {
+        if (smithItemWidget.getParent(getWidgets()).get().interact("Smith All", "Smith All sets")) {
             Sleep.sleepUntil(() -> !canSmithItem() || getDialogues().isPendingContinuation(), 100_000);
         }
     }
