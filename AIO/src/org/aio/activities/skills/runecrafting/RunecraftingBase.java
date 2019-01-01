@@ -62,4 +62,9 @@ abstract class RunecraftingBase extends Activity {
             Sleep.sleepUntil(() -> getObjects().closest("Altar") == null, 10_000);
         }
     }
+
+    @Override
+    public boolean canExit() {
+        return getAltar() == null;
+    }
 }
