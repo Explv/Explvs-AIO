@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v1.8", info = "AIO", version = 1.8, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v1.9", info = "AIO", version = 1.9, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
@@ -154,13 +154,9 @@ public class AIO extends Script {
     }
 
     @Override
-    public void onExit() throws InterruptedException {
-        if (gui != null) {
-            try {
-                SwingUtilities.invokeAndWait(() -> gui.close());
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+    public void onExit() {
+        if (gui != null && gui.isOpen()) {
+            gui.close();
         }
         if (paint != null) {
             getBot().removePainter(paint);
