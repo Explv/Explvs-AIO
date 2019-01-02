@@ -107,11 +107,9 @@ public class FishingActivity extends Activity {
     private void fish(){
         currentFishingSpot = getFishingSpot();
         if (currentFishingSpot != null) {
-
             if(!currentFishingSpot.isOnScreen()) {
                 getWalking().walk(currentFishingSpot);
             }
-
             if (currentFishingSpot.interact(fish.fishingMethod.action)) {
                 Sleep.sleepUntil(() -> myPlayer().isInteracting(currentFishingSpot) || !currentFishingSpot.exists(), 5000);
             }

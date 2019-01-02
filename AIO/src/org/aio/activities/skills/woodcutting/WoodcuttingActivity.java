@@ -39,10 +39,10 @@ public class WoodcuttingActivity extends Activity {
     public void onStart() {
         // On activity start get the best axe the player can use, and has in their inventory or equipment
         currentAxe = Arrays.stream(Axe.values())
-                           .filter(axe -> axe.canUse(getSkills()))
-                           .filter(axe -> getInventory().contains(axe.name) || getEquipment().isWearingItem(EquipmentSlot.WEAPON, axe.name))
-                           .max(Comparator.comparingInt(Axe::getLevelRequired))
-                           .orElse(null);
+                    .filter(axe -> axe.canUse(getSkills()))
+                    .filter(axe -> getInventory().contains(axe.name) || getEquipment().isWearingItem(EquipmentSlot.WEAPON, axe.name))
+                    .max(Comparator.comparingInt(Axe::getLevelRequired))
+                    .orElse(null);
         bankNode = new WCBanking();
         bankNode.exchangeContext(getBot());
     }
@@ -66,7 +66,7 @@ public class WoodcuttingActivity extends Activity {
             getWalking().webWalk(treeLocation.getArea());
         } else if (getGroundItems().closest("Bird's nest") != null) {
             pickUpBirdsNest();
-        } else if(!myPlayer().isAnimating() || (targetTree != null && !targetTree.exists())) {
+        } else if (!myPlayer().isAnimating() || (targetTree != null && !targetTree.exists())) {
             chopTree();
         }
     }
@@ -75,24 +75,24 @@ public class WoodcuttingActivity extends Activity {
         return axesInBank.stream().anyMatch(axe -> axe.canUse(getSkills()) && axe.getLevelRequired() > currentAxe.getLevelRequired());
     }
 
-    private boolean inventoryContainsNonWcItem(){
+    private boolean inventoryContainsNonWcItem() {
         return getInventory().contains(item ->
-                    !item.getName().equals(currentAxe.name) &&
-                    !item.getName().equals(tree.logsName) &&
-                    !item.getName().equals("Bird's nest")
-        );
+                !item.getName().equals(currentAxe.name) &&
+                        !item.getName().equals(tree.logsName) &&
+                        !item.getName().equals("Bird's nest"));
     }
 
-    private void chopTree(){
-        targetTree = getObjects().closest(new AreaFilter<>(treeLocation.getArea()), new NameFilter<>(tree.toString()));
+    private void chopTree() {
+        targetTree = getObjects().closest(new AreaFilter<>(treeLocation.getArea()), new NameFilter<>(tree.toString()),
+                i -> i.getDefinition().getModifiedModelColors() != null);
         if (targetTree != null && targetTree.interact("Chop down")) {
             Sleep.sleepUntil(() -> myPlayer().isAnimating() || !targetTree.exists(), 5000);
         }
     }
 
-    private void pickUpBirdsNest(){
+    private void pickUpBirdsNest() {
         int emptySlots = getInventory().getEmptySlots();
-        if(getGroundItems().closest("Bird's nest").interact("Take")) {
+        if (getGroundItems().closest("Bird's nest").interact("Take")) {
             Sleep.sleepUntil(() -> getInventory().getEmptySlots() < emptySlots || getGroundItems().closest("Bird's nest") == null, 5000);
         }
     }
@@ -119,7 +119,8 @@ public class WoodcuttingActivity extends Activity {
                 if (!getInventory().isEmpty()) {
                     getBank().depositAll();
                 } else {
-                    Optional<Axe> bestAxe = axesInBank.stream().filter(axe -> axe.canUse(getSkills())).max(Comparator.comparingInt(Axe::getLevelRequired));
+                    Optional<Axe> bestAxe = axesInBank.stream().filter(axe -> axe.canUse(getSkills()))
+                            .max(Comparator.comparingInt(Axe::getLevelRequired));
                     if (bestAxe.isPresent()) {
                         if (getBank().withdraw(bestAxe.get().name, 1)) {
                             currentAxe = bestAxe.get();
