@@ -348,8 +348,8 @@ public class Gui {
         }
     }
 
-    public static void main(String[] args){
-        Gui gui = new Gui();
-        gui.open();
-    }
+//    public static void main(String[] args){
+//        Gui gui = new Gui();
+//        gui.open();
+//    }
 }
