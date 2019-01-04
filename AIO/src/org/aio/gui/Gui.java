@@ -25,7 +25,7 @@ public class Gui {
 
     private boolean started;
     private JPanel taskList = new JPanel();
-    private TreeMap<String, TaskPanelContent> taskPanels = new TreeMap<>();
+    private LinkedHashMap<Integer, TaskPanelContent> taskPanels = new LinkedHashMap<>();
 
     public Gui() {
         gui = new JDialog();
@@ -227,13 +227,11 @@ public class Gui {
             throw new IllegalArgumentException(String.format("Task type %s not supported.", taskType.toString()));
         }
 
-        String taskPanelKey = String.valueOf(taskPanel.hashCode());
-
         JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Delete");
         menuItem.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                TaskPanelContent content = taskPanels.remove(taskPanelKey);
+                TaskPanelContent content = taskPanels.remove(taskPanel.hashCode());
 
                 for(Component component : content.components){
                     taskList.remove(component);
@@ -260,7 +258,7 @@ public class Gui {
         components.add(taskPanel.getPanel());
         components.add(Box.createRigidArea(new Dimension(5, 10)));
 
-        taskPanels.put(taskPanelKey, new TaskPanelContent(taskPanel, components));
+        taskPanels.put(taskPanel.hashCode(), new TaskPanelContent(taskPanel, components));
 
         for(Component component : components){
             taskList.add(component);
