@@ -8,3 +8,13 @@ To get started, you will need to load up the project "From Existing" when starti
 
 ## Issues
 If you find any bugs with the project, feel free to make a pull reuqest fixing them. Alternatively, you can make an issue on this project and they will be addressed when possible.
+
+## Colour Scheme
+
+Grey: #1b1919
+White: #ffffff
+Blue: #33b5e5
+
+## Icon templates
+
+https://github.com/Explv/Explvs-AIO/tree/master/AIO/resources/templates
