@@ -25,7 +25,7 @@ public class Gui {
 
     private boolean started;
     private JPanel taskList = new JPanel();
-    private List<TaskPanel> taskPanels = new ArrayList<>();
+    private LinkedHashMap<Integer, TaskPanelContent> taskPanels = new LinkedHashMap<>();
 
     public Gui() {
         gui = new JDialog();
@@ -197,8 +197,8 @@ public class Gui {
     public final Queue<Task> getTasks() {
         Queue<Task> tasks = new LinkedList<>();
         tasks.add(new TutorialIslandTask());
-        for (TaskPanel taskPanel : taskPanels) {
-            tasks.add(taskPanel.toTask());
+        for (TaskPanelContent taskPanel : taskPanels.values()) {
+            tasks.add(taskPanel.panel.toTask());
         }
         return tasks;
     }
@@ -223,14 +223,20 @@ public class Gui {
     private TaskPanel addTask(final TaskType taskType) {
         TaskPanel taskPanel = TaskPanelFactory.createTaskPanel(taskType);
 
+        if (taskPanel == null){
+            throw new IllegalArgumentException(String.format("Task type %s not supported.", taskType.toString()));
+        }
+
         JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Delete");
         menuItem.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
-                int index = taskPanels.indexOf(taskPanel);
-                taskPanels.remove(index);
-                taskList.remove(index);
-                taskList.remove(index);
+                TaskPanelContent content = taskPanels.remove(taskPanel.hashCode());
+
+                for(Component component : content.components){
+                    taskList.remove(component);
+                }
+
                 taskList.revalidate();
                 taskList.repaint();
                 gui.pack();
@@ -248,10 +254,15 @@ public class Gui {
             }
         });
 
-        taskPanels.add(taskPanel);
+        ArrayList<Component> components = new ArrayList<>();
+        components.add(taskPanel.getPanel());
+        components.add(Box.createRigidArea(new Dimension(5, 10)));
 
-        taskList.add(taskPanel.getPanel());
-        taskList.add(Box.createRigidArea(new Dimension(5, 10)));
+        taskPanels.put(taskPanel.hashCode(), new TaskPanelContent(taskPanel, components));
+
+        for(Component component : components){
+            taskList.add(component);
+        }
 
         taskPanel.getPanel().setMaximumSize(new Dimension(taskPanel.getPanel().getMaximumSize().width, taskPanel.getPanel().getPreferredSize().height));
         gui.pack();
@@ -269,8 +280,8 @@ public class Gui {
 
                 JSONArray taskJSONArray = new JSONArray();
 
-                for (TaskPanel taskPanel : taskPanels) {
-                    taskJSONArray.add(taskPanel.toJSON());
+                for (TaskPanelContent taskPanel : taskPanels.values()) {
+                    taskJSONArray.add(taskPanel.panel.toJSON());
                 }
 
                 jsonObject.put("tasks", taskJSONArray);
@@ -321,4 +332,22 @@ public class Gui {
             }
         }.execute();
     }
+
+    /**
+     * Task panel content for use with tracking rendered/interactive content for each task panel instance
+     */
+    class TaskPanelContent{
+        TaskPanel panel;
+        List<Component> components;
+
+        TaskPanelContent(TaskPanel panel, List<Component> components) {
+            this.panel = panel;
+            this.components = components;
+        }
+    }
+
+//    public static void main(String[] args){
+//        Gui gui = new Gui();
+//        gui.open();
+//    }
 }
