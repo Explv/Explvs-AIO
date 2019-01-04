@@ -11,9 +11,9 @@ If you find any bugs with the project, feel free to make a pull reuqest fixing t
 
 ## Colour Scheme
 
-Grey: #1b1919
-White: #ffffff
-Blue: #33b5e5
+Grey: `#1b1919`
+White: `#ffffff`
+Blue: `#33b5e5`
 
 ## Icon templates
 
