@@ -204,14 +204,6 @@ public class Gui {
     }
 
     /**
-     * Return cached task list, if found. Otherwise it returns a new Queue from the existing task list
-     * @return the current tasks in a Queue
-     */
-    public final Queue<Task> getTasksAsQueue() {
-        return new LinkedList<>(getTasksAsList());
-    }
-
-    /**
      * Public getter for the entire ordered task list
      *
      * Note: Intentionally rebuilds the tasks, so each call returns a fresh list of task instances

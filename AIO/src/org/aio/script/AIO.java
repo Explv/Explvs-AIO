@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v2.4", info = "AIO", version = 2.4, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v2.5", info = "AIO", version = 2.5, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
@@ -54,25 +54,22 @@ public class AIO extends Script {
             }
         }
 
-        boolean loadedTasks;
+        Supplier<List<Task>> taskSupplier;
 
         if (getParameters() != null && !getParameters().trim().isEmpty()) {
-            loadedTasks = loadTasksFromCLI();
+            taskSupplier = loadTasksFromCLI();
         } else {
-            loadedTasks = loadTasksFromGUI();
+            taskSupplier = loadTasksFromGUI();
         }
 
-        if (!loadedTasks) {
+        if (taskSupplier == null || taskSupplier.get().isEmpty()) {
+            log("No tasks loaded");
             stop(false);
             return;
         }
 
-        skillTracker = new SkillTracker(getSkills());
-        paint = new Paint(getBot(), skillTracker);
-        getBot().addPainter(paint);
-        mouseTrail = new MouseTrail(getMouse(), 20, Color.CYAN);
-        getBot().addPainter(mouseTrail);
-
+        taskExecutor = new TaskExecutor(taskSupplier.get(), taskSupplier);
+        taskExecutor.exchangeContext(getBot());
         taskExecutor.addTaskChangeListener((oldTask, newTask) -> {
             paint.setCurrentTask(newTask);
             skillTracker.stopAll();
@@ -82,8 +79,13 @@ public class AIO extends Script {
                 skillTracker.start(newTask.getActivity().getActivityType().gainedXPSkills);
             }
         });
-
         taskExecutor.onStart();
+
+        skillTracker = new SkillTracker(getSkills());
+        paint = new Paint(getBot(), skillTracker);
+        getBot().addPainter(paint);
+        mouseTrail = new MouseTrail(getMouse(), 20, Color.CYAN);
+        getBot().addPainter(mouseTrail);
     }
 
     /**
@@ -91,14 +93,14 @@ public class AIO extends Script {
      *
      * Note: Does not currently support looping
      */
-    private boolean loadTasksFromCLI() {
+    private Supplier<List<Task>> loadTasksFromCLI() {
         String parameter = getParameters().trim();
 
         File configFile = Paths.get(getDirectoryData(), parameter).toFile();
 
         if (!configFile.exists()) {
             log("Invalid config file: " + parameter);
-            return false;
+            return null;
         }
 
         ConfigManager configManager = new ConfigManager();
@@ -106,20 +108,10 @@ public class AIO extends Script {
 
         if (!tasksJSON.isPresent()) {
             log("Failed to load config file: " + parameter);
-            return false;
+            return null;
         }
 
-        Supplier<List<Task>> taskSupplier = () -> configManager.getTasksFromJSON(tasksJSON.get());
-
-        if (taskSupplier.get().isEmpty()) {
-            log("No tasks loaded from config file: " + parameter);
-            return false;
-        }
-
-        taskExecutor = new TaskExecutor(taskSupplier);
-        taskExecutor.exchangeContext(getBot());
-
-        return true;
+        return () -> configManager.getTasksFromJSON(tasksJSON.get());
     }
 
     /**
@@ -127,7 +119,7 @@ public class AIO extends Script {
      *
      * @throws InterruptedException
      */
-    private boolean loadTasksFromGUI() throws InterruptedException {
+    private Supplier<List<Task>> loadTasksFromGUI() throws InterruptedException {
         try {
             EventDispatchThreadRunner.runOnDispatchThread(() -> {
                 gui = new Gui();
@@ -136,24 +128,14 @@ public class AIO extends Script {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
             log("Failed to create GUI");
-            return false;
+            return null;
         }
 
         if (!gui.isStarted()) {
-            return false;
+            return null;
         }
 
-        Supplier<List<Task>> taskSupplier = () -> gui.getTasksAsList();
-
-        if (taskSupplier.get().isEmpty()) {
-            log("No tasks loaded from gui");
-            return false;
-        }
-
-        taskExecutor = new TaskExecutor(taskSupplier);
-        taskExecutor.exchangeContext(getBot());
-
-        return true;
+        return () -> gui.getTasksAsList();
     }
 
     @Override

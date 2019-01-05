@@ -135,7 +135,7 @@ public class Paint implements Painter {
     }
 
     private void drawActivityInfo(Graphics2D g) {
-        if (currentTask != null) {
+        if (currentTask != null && currentTask.getActivity() != null) {
             g.drawString("Activity: " + currentTask.getActivity().toString(), 10, 437);
         }
     }

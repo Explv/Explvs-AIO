@@ -36,7 +36,7 @@ public class AgilityActivity extends Activity {
 
     @Override
     public boolean canExit() {
-        return course.peek() == agilityCourse.COURSE_PARTS[0];
+        return course == null || course.peek() == agilityCourse.COURSE_PARTS[0];
     }
 
     @Override
