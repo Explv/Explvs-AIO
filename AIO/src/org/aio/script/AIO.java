@@ -228,7 +228,20 @@ public class AIO extends Script {
                 skillTracker.start(currentTask.getActivity().getActivityType().gainedXPSkills);
             }
         } else {
-            currentTask.run();
+            try {
+                currentTask.run();
+            } catch (NullPointerException nullPointer){
+                log("Found null pointer exception. Task failed, exiting.");
+
+                StackTraceElement[] stack = nullPointer.getStackTrace();
+                for (StackTraceElement element : stack){
+                    log(element.toString());
+                }
+
+                isLooping = false;
+                currentTask = null;
+                tasks.clear();
+            }
         }
     }
 
