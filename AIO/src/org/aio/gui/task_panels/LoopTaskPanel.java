@@ -17,6 +17,7 @@ public class LoopTaskPanel implements TaskPanel {
     private JPanel mainPanel;
     private JTextField iterationCountField;
     private JTextField taskCountField;
+    private JCheckBox loopforeverBox;
 
     LoopTaskPanel(){
         mainPanel = new JPanel(new BorderLayout());
@@ -24,19 +25,28 @@ public class LoopTaskPanel implements TaskPanel {
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
         // Add counter of previous tasks
-        controls.add(new JLabel("# Previous Tasks:"));
+        controls.add(new JLabel("Num Previous Tasks:"));
         taskCountField = new JTextField();
-        taskCountField.setColumns(2);
+        taskCountField.setColumns(4);
         ((AbstractDocument) taskCountField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(taskCountField);
 
-        // Add counter of previous tasks
-        controls.add(new JLabel("# Iterations:"));
-        controls.add(new JLabel("(-1 to loop forever)"));
+        controls.add(new JLabel("Num Iterations:"));
         iterationCountField = new JTextField();
-        iterationCountField.setColumns(2);
+        iterationCountField.setColumns(4);
         ((AbstractDocument) iterationCountField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(iterationCountField);
+
+        loopforeverBox = new JCheckBox("Loop forever");
+        controls.add(loopforeverBox);
+
+        loopforeverBox.addActionListener(e -> {
+            if (loopforeverBox.isSelected()) {
+                iterationCountField.setEnabled(false);
+            } else {
+                iterationCountField.setEnabled(true);
+            }
+        });
 
         mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Loop Task"));
 
@@ -49,7 +59,9 @@ public class LoopTaskPanel implements TaskPanel {
 
     @Override
     public Task toTask() {
-        return new LoopTask(Integer.parseInt(taskCountField.getText()), Integer.parseInt(iterationCountField.getText()));
+        int numIterations = loopforeverBox.isSelected() ? LoopTask.INFINITE_ITERATIONS : Integer.parseInt(iterationCountField.getText());
+
+        return new LoopTask(Integer.parseInt(taskCountField.getText()), numIterations);
     }
 
     @Override
@@ -58,6 +70,7 @@ public class LoopTaskPanel implements TaskPanel {
         jsonObject.put("type", TaskType.LOOP.name());
         jsonObject.put("taskCount", taskCountField.getText());
         jsonObject.put("iterationCount", iterationCountField.getText());
+        jsonObject.put("loopForever", loopforeverBox.isSelected());
         return jsonObject;
     }
 
@@ -65,6 +78,7 @@ public class LoopTaskPanel implements TaskPanel {
     public void fromJSON(JSONObject jsonObject) {
         taskCountField.setText((String) jsonObject.get("taskCount"));
         iterationCountField.setText((String) jsonObject.get("iterationCount"));
+        loopforeverBox.setSelected((boolean) jsonObject.get("loopForever"));
     }
 }
 

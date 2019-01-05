@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 
 public class LoopTask extends Task {
 
+    public static final int INFINITE_ITERATIONS = -1;
+
     private int taskCount;
     private int numIterations;
 
@@ -70,14 +72,7 @@ public class LoopTask extends Task {
      * @return a queue of tasks
      */
     private List<Task> getLoopTasks() {
-        List<Task> allOrderedTasks = taskSupplier.get();
-
-        List<Task> loopTasks = new ArrayList<>();
-        for (int i = startTaskIndex; i < endTaskIndex; i++) {
-            loopTasks.add(allOrderedTasks.get(i));
-        }
-
-        return loopTasks;
+        return new ArrayList<>(taskSupplier.get().subList(startTaskIndex, endTaskIndex));
     }
 
     @Override
