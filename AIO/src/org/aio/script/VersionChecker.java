@@ -17,25 +17,24 @@ public class VersionChecker {
     public static final String GITHUB_RELEASES_URL = "https://github.com/Explv/Explvs-AIO/releases/";
     private static final String GITHUB_API_LATEST_RELEASE_URL = "https://api.github.com/repos/Explv/Explvs-AIO/releases/latest";
 
-    public static boolean updateIsIgnored(final String currentVersion) {
+    private final String currentVersion;
+    private final String latestVersion;
+
+    public VersionChecker(final String currentVersion) {
+        this.currentVersion = currentVersion;
+        latestVersion = getLatestVersion().orElse(currentVersion);
+    }
+
+    public boolean updateIsIgnored() {
         String ignoreUpdateScriptVerProp = ScriptProperties.getProperty(ScriptProperties.IGNORE_UPDATE_SCRIPT_VER);
-
-        return currentVersion.equals(ignoreUpdateScriptVerProp);
+        return latestVersion.equals(ignoreUpdateScriptVerProp);
     }
 
-    public static void ignoreUpdate(final String currentVersion) {
-        ScriptProperties.setProperty(ScriptProperties.IGNORE_UPDATE_SCRIPT_VER, currentVersion);
+    public void ignoreUpdate() {
+        ScriptProperties.setProperty(ScriptProperties.IGNORE_UPDATE_SCRIPT_VER, latestVersion);
     }
 
-    public static boolean isUpToDate(final String currentVersion) {
-        Optional<String> latestVersionOpt = getLatestVersion();
-
-        if (!latestVersionOpt.isPresent()) {
-            return true;
-        }
-
-        String latestVersion = latestVersionOpt.get();
-
+    public boolean isUpToDate() {
         return currentVersion.equals(latestVersion);
     }
 
