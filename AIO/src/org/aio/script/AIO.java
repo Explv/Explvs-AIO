@@ -2,7 +2,8 @@ package org.aio.script;
 
 import org.aio.gui.Gui;
 import org.aio.gui.conf_man.ConfigManager;
-import org.aio.gui.task_panels.TaskPanel;
+import org.aio.gui.dialogs.NewVersionDialog;
+import org.aio.gui.utils.EventDispatchThreadRunner;
 import org.aio.paint.MouseTrail;
 import org.aio.paint.Paint;
 import org.aio.tasks.break_task.CustomBreakManager;
@@ -16,7 +17,6 @@ import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v1.9", info = "AIO", version = 1.9, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v2.2", info = "AIO", version = 2.2, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
@@ -49,6 +49,25 @@ public class AIO extends Script {
 
     @Override
     public void onStart() throws InterruptedException {
+        VersionChecker versionChecker = new VersionChecker(Double.toString(getVersion()));
+
+        if (!versionChecker.updateIsIgnored() && !versionChecker.isUpToDate()) {
+            try {
+                EventDispatchThreadRunner.runOnDispatchThread(
+                        () -> {
+                            int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
+
+                            if (selectedOption == 0) {
+                                versionChecker.ignoreUpdate();
+                            }
+                        },
+                        true
+                );
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (getParameters() != null && !getParameters().trim().isEmpty()) {
             loadTasksFromCLI();
         } else {
@@ -104,15 +123,10 @@ public class AIO extends Script {
      */
     private void loadTasksFromGUI() throws InterruptedException {
         try {
-            if (SwingUtilities.isEventDispatchThread()) {
+            EventDispatchThreadRunner.runOnDispatchThread(() -> {
                 gui = new Gui();
                 gui.open();
-            } else {
-                SwingUtilities.invokeAndWait(() -> {
-                    gui = new Gui();
-                    gui.open();
-                });
-            }
+            }, true);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
             log("Failed to create GUI");
