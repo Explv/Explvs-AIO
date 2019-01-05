@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v2.0", info = "AIO", version = 2.0, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v2.1", info = "AIO", version = 2.1, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
@@ -36,10 +36,18 @@ public class AIO extends Script {
 
     @Override
     public void onStart() throws InterruptedException {
-        if (!VersionChecker.isUpToDate(getVersion())) {
+        String currentVersion = Double.toString(getVersion());
+
+        if (!VersionChecker.updateIsIgnored(currentVersion) && !VersionChecker.isUpToDate(currentVersion)) {
             try {
                 EventDispatchThreadRunner.runOnDispatchThread(
-                        () -> NewVersionDialog.showNewVersionDialog(getBot().getBotPanel()),
+                        () -> {
+                            int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
+
+                            if (selectedOption == 0) {
+                                VersionChecker.ignoreUpdate(currentVersion);
+                            }
+                        },
                         true
                 );
             } catch (InvocationTargetException e) {

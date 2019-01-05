@@ -1,5 +1,6 @@
 package org.aio.script;
 
+import org.aio.util.ScriptProperties;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -16,19 +17,29 @@ public class VersionChecker {
     public static final String GITHUB_RELEASES_URL = "https://github.com/Explv/Explvs-AIO/releases/";
     private static final String GITHUB_API_LATEST_RELEASE_URL = "https://api.github.com/repos/Explv/Explvs-AIO/releases/latest";
 
-    public static boolean isUpToDate(final double currentVersion) {
-        Optional<Double> latestVersionOpt = getLatestVersion();
+    public static boolean updateIsIgnored(final String currentVersion) {
+        String ignoreUpdateScriptVerProp = ScriptProperties.getProperty(ScriptProperties.IGNORE_UPDATE_SCRIPT_VER);
+
+        return currentVersion.equals(ignoreUpdateScriptVerProp);
+    }
+
+    public static void ignoreUpdate(final String currentVersion) {
+        ScriptProperties.setProperty(ScriptProperties.IGNORE_UPDATE_SCRIPT_VER, currentVersion);
+    }
+
+    public static boolean isUpToDate(final String currentVersion) {
+        Optional<String> latestVersionOpt = getLatestVersion();
 
         if (!latestVersionOpt.isPresent()) {
             return true;
         }
 
-        Double latestVersion = latestVersionOpt.get();
+        String latestVersion = latestVersionOpt.get();
 
-        return Math.abs(latestVersion - currentVersion) <= 0.000001;
+        return currentVersion.equals(latestVersion);
     }
 
-    private static Optional<Double> getLatestVersion() {
+    private static Optional<String> getLatestVersion() {
         Optional<String> latestGitHubReleaseTagOpt = getLatestGitHubReleaseTag();
 
         if (!latestGitHubReleaseTagOpt.isPresent()) {
@@ -37,7 +48,7 @@ public class VersionChecker {
 
         String latestGitHubReleaseTag = latestGitHubReleaseTagOpt.get();
         String latestGitHubVersion = latestGitHubReleaseTag.replaceAll("[^\\d.]", "");
-        return Optional.of(Double.parseDouble(latestGitHubVersion));
+        return Optional.of(latestGitHubVersion);
     }
 
     private static Optional<String> getLatestGitHubReleaseTag() {
