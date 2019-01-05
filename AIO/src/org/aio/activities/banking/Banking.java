@@ -6,7 +6,7 @@ import org.osbot.rs07.api.map.Area;
 
 public abstract class Banking extends Executable {
 
-    private boolean succeeded;
+    public boolean succeeded;
 
     protected static final Area[] bankAreas = Bank.getAreas();
 
