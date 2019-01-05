@@ -1,8 +1,9 @@
-package org.aio.tasks.task;
+package org.aio.tasks;
 
 public enum TaskType {
 
     LEVEL ("Level Task"),
+    LOOP ("Loop Task"),
     RESOURCE ("Resource Task"),
     TIMED ("Timed task"),
     QUEST ("Quest task"),

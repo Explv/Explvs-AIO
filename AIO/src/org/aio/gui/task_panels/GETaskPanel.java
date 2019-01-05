@@ -3,9 +3,9 @@ package org.aio.gui.task_panels;
 import org.aio.activities.grand_exchange.*;
 import org.aio.gui.utils.AutoCompleteTextField;
 import org.aio.gui.utils.NumberDocumentFilter;
-import org.aio.tasks.grand_exchange_task.GrandExchangeTask;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.GrandExchangeTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -26,7 +26,8 @@ public class GETaskPanel implements TaskPanel {
     private JTextField itemPriceField;
     private JCheckBox waitForCompletion;
 
-    public GETaskPanel() {
+    GETaskPanel(){
+
         mainPanel = new JPanel(new BorderLayout());
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));

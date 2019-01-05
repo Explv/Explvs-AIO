@@ -1,7 +1,7 @@
 package org.aio.tasks.break_task;
 
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.osbot.rs07.script.RandomEvent;
 
 import java.util.concurrent.TimeUnit;

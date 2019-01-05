@@ -81,7 +81,7 @@ public class ItemReqBanking extends Banking {
     }
 
     @Override
-    protected void bank() {
+    protected boolean bank() {
         reqTargetAmountMap.forEach((itemRequirement, integer) -> {
             if (itemRequirement != null && integer != null) {
                 log(itemRequirement.getName() + ": " + integer);
@@ -93,6 +93,8 @@ public class ItemReqBanking extends Banking {
         } else if (!ItemReq.hasItemRequirements(itemReqs, getInventory(), getEquipment())) {
             getItemRequirements(itemReqs);
         }
+
+        return true;
     }
 
     private boolean depositNonItemReqs() {

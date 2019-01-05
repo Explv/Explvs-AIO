@@ -81,12 +81,14 @@ public class RunecraftingActivity extends RunecraftingBase {
 
     private class TalismanBanking extends Banking {
         @Override
-        protected void bank() {
+        protected boolean bank() {
             if (getBank().contains(altar.tiara)) {
                 talismanReq = new ItemReq(altar.tiara).setEquipable();
             } else {
                 talismanReq = new ItemReq(altar.talisman);
             }
+
+            return true;
         }
     }
 }

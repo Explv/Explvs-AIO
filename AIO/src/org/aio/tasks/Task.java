@@ -1,11 +1,14 @@
-package org.aio.tasks.task;
+package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
 import org.aio.util.Executable;
 
-public abstract class Task extends Executable {
+import java.util.UUID;
 
-    protected final TaskType taskType;
+public abstract class Task extends Executable {
+    private int executionOrder;
+
+    private final TaskType taskType;
     protected Activity activity;
 
     public Task(final TaskType taskType) {
@@ -26,6 +29,10 @@ public abstract class Task extends Executable {
     public Activity getActivity() {
         return activity;
     }
+
+    public int getExecutionOrder() { return executionOrder; }
+
+    public void setExecutionOrder(int executionOrder) { this.executionOrder = executionOrder; }
 
     @Override
     public void onStart() throws InterruptedException {

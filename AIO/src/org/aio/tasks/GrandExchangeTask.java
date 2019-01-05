@@ -1,10 +1,8 @@
-package org.aio.tasks.grand_exchange_task;
+package org.aio.tasks;
 
 import org.aio.activities.grand_exchange.GEActivity;
 import org.aio.activities.grand_exchange.GEItem;
 import org.aio.activities.grand_exchange.GEMode;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
 import org.osbot.rs07.api.GrandExchange;
 
 public class GrandExchangeTask extends Task {

@@ -2,9 +2,9 @@ package org.aio.gui.conf_man;
 
 import org.aio.gui.task_panels.TaskPanel;
 import org.aio.gui.task_panels.TaskPanelFactory;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
-import org.aio.tasks.tutorial_island_task.TutorialIslandTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
+import org.aio.tasks.TutorialIslandTask;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

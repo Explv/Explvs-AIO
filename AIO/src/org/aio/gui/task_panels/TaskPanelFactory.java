@@ -1,6 +1,6 @@
 package org.aio.gui.task_panels;
 
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.TaskType;
 
 public class TaskPanelFactory {
     public static TaskPanel createTaskPanel(final TaskType taskType) {
@@ -9,6 +9,8 @@ public class TaskPanelFactory {
                 return new ResourceTaskPanel();
             case LEVEL:
                 return new LevelTaskPanel();
+            case LOOP:
+                return new LoopTaskPanel();
             case TIMED:
                 return new TimedTaskPanel();
             case QUEST:

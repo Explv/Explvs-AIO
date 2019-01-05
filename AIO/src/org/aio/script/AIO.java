@@ -2,11 +2,13 @@ package org.aio.script;
 
 import org.aio.gui.Gui;
 import org.aio.gui.conf_man.ConfigManager;
+import org.aio.gui.task_panels.TaskPanel;
 import org.aio.paint.MouseTrail;
 import org.aio.paint.Paint;
 import org.aio.tasks.break_task.CustomBreakManager;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.loop_task.LoopTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.aio.util.SkillTracker;
 import org.aio.util.event.ToggleShiftDropEvent;
 import org.json.simple.JSONObject;
@@ -19,6 +21,7 @@ import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
@@ -32,6 +35,17 @@ public class AIO extends Script {
     private Queue<Task> tasks = new LinkedList<>();
     private Task currentTask;
     private SkillTracker skillTracker;
+
+    // Loop tracking
+    private int loopIndex; // Our index within the current loop
+    private int loopIndexStart;
+    private int loopIndexEnd;
+    private int numLoopIterations; // Max iterations of the loop (-1 == forever)
+    private boolean isLooping; // Whether or not we are currently looping
+
+    // The tasks that are part of the current loop queue
+    private Queue<Task> loopTasksCurrentQueue;
+
 
     @Override
     public void onStart() throws InterruptedException {
@@ -57,6 +71,11 @@ public class AIO extends Script {
         }
     }
 
+    /**
+     * Load the task list from the command line
+     *
+     * Note: Does not currently support looping
+     */
     private void loadTasksFromCLI() {
         String parameter = getParameters().trim();
 
@@ -78,6 +97,11 @@ public class AIO extends Script {
         tasks = configManager.getTasksFromJSON(tasksJSON.get());
     }
 
+    /**
+     * Load the task list from the GUI
+     *
+     * @throws InterruptedException
+     */
     private void loadTasksFromGUI() throws InterruptedException {
         try {
             if (SwingUtilities.isEventDispatchThread()) {
@@ -97,7 +121,8 @@ public class AIO extends Script {
         if (!gui.isStarted()) {
             return;
         }
-        tasks = gui.getTasks();
+
+        tasks = gui.getTasksAsQueue();
     }
 
     @Override
@@ -113,12 +138,72 @@ public class AIO extends Script {
     }
 
     private boolean isComplete() {
-        return tasks.isEmpty() && (currentTask == null || currentTask.hasFailed() || currentTask.isComplete());
+        return !isLooping && tasks.isEmpty() && (currentTask == null || currentTask.hasFailed() || currentTask.isComplete());
     }
 
     private void executeTasks() throws InterruptedException {
         if (currentTask == null || (currentTask.isComplete() && currentTask.canExit()) || currentTask.hasFailed()) {
-            currentTask = tasks.poll();
+            // Determine task based on looping logic
+            if (isLooping) {
+                log(String.format("In loop on iteration %d", loopIndex + 2)); // +2, (1 for first step before loop, +1 for 0 based index)
+
+                currentTask = loopTasksCurrentQueue.poll();
+
+                // Ended this loop iteration!
+                if (currentTask == null){
+                    loopIndex++;
+
+                    // Loop is done, move on
+                    if (numLoopIterations != -1 && loopIndex >= numLoopIterations) {
+                        isLooping = false;
+
+                        currentTask = tasks.poll();
+                    // Restart the loop
+                    } else {
+                        loopTasksCurrentQueue = getLoopTaskQueue();
+                        currentTask = loopTasksCurrentQueue.poll();
+                    }
+                }
+
+            // Pull non-loop task
+            } else {
+                currentTask = tasks.poll();
+            }
+
+            // Looping can cause this task to be null, short circuit
+            if (currentTask == null){
+                return;
+            }
+
+            // Handle loops
+            if (currentTask instanceof LoopTask){
+                log("Detected loop, setting up");
+
+                if (gui != null) {
+                    // Setup our loop
+                    loopIndex = 0;
+                    numLoopIterations = ((LoopTask) currentTask).numIterations - 1; // -1 because we already performed the op once
+
+                    // Determine which tasks to execut
+                    int taskCount = ((LoopTask) currentTask).taskCount;
+                    loopIndexEnd = currentTask.getExecutionOrder();
+                    loopIndexStart = loopIndexEnd - taskCount;
+
+                    log(String.format("Will loop for %d iterations starting from task %d and ending at task %d",
+                            numLoopIterations, loopIndexStart, loopIndexEnd));
+
+                    loopTasksCurrentQueue = getLoopTaskQueue();
+
+                    // Pull the first task off the queue, start the loop
+                    currentTask = loopTasksCurrentQueue.poll();
+                    isLooping = true;
+                } else {
+                    // Skip loops in the CLI mode for now
+                    currentTask = tasks.poll();
+                }
+
+            }
+
             paint.setCurrentTask(currentTask);
             currentTask.exchangeContext(getBot());
             currentTask.onStart();
@@ -131,6 +216,22 @@ public class AIO extends Script {
         } else {
             currentTask.run();
         }
+    }
+
+    /**
+     * Given the start and end indices, pull a new task queue for the current loop
+     *
+     * @return a queue of tasks
+     */
+    private Queue<Task> getLoopTaskQueue(){
+        ArrayList<Task> allOrderedTasks = gui.getTasksAsList();
+
+        Queue<Task> taskQueue = new LinkedList<>();
+        for(int i = loopIndexStart; i < loopIndexEnd; i++){
+            taskQueue.add(allOrderedTasks.get(i));
+        }
+
+        return taskQueue;
     }
 
     @Override
