@@ -2,7 +2,6 @@ package org.aio.gui.dialogs;
 
 import org.aio.gui.utils.CopyToClipboardButton;
 import org.aio.script.VersionChecker;
-import org.aio.util.ScriptProperties;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,7 +62,7 @@ public class NewVersionDialog {
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE,
                 null,
-                new Object[]{ "Ignore this update", "Ok" },
+                new Object[]{ "Don't show this message again", "Ok" },
                 null
         );
     }
