@@ -6,6 +6,8 @@ import org.osbot.rs07.api.map.Area;
 
 public abstract class Banking extends Executable {
 
+    private boolean succeeded;
+
     protected static final Area[] bankAreas = Bank.getAreas();
 
     @Override
@@ -15,7 +17,7 @@ public abstract class Banking extends Executable {
         } else if (!getBank().isOpen()) {
             openBank();
         } else {
-            bank();
+            succeeded = bank();
         }
     }
 
