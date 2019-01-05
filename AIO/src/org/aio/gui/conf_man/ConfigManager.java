@@ -18,9 +18,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 
 public class ConfigManager {
 
@@ -81,8 +79,8 @@ public class ConfigManager {
         return Optional.empty();
     }
 
-    public Queue<Task> getTasksFromJSON(final JSONObject json) {
-        Queue<Task> tasks = new LinkedList<>();
+    public List<Task> getTasksFromJSON(final JSONObject json) {
+        List<Task> tasks = new ArrayList<>();
         tasks.add(new TutorialIslandTask());
 
         JSONArray taskJSONArray;
