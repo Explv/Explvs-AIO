@@ -1,8 +1,8 @@
-package org.aio.tasks.timed_task;
+package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 
 public class TimedTask extends Task {
 

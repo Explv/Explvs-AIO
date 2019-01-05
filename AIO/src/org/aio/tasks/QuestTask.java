@@ -1,9 +1,7 @@
-package org.aio.tasks.quest_task;
+package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.quests.Quest;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
 
 public class QuestTask extends Task{
 

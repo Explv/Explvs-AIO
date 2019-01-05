@@ -100,7 +100,7 @@ public class WoodcuttingActivity extends Activity {
     private class WCBanking extends Banking {
 
         @Override
-        public void bank() {
+        public boolean bank() {
             if (axesInBank.isEmpty()) {
                 for (Axe axe : Axe.values()) {
                     if (getBank().contains(axe.name)) {
@@ -113,7 +113,7 @@ public class WoodcuttingActivity extends Activity {
             if (currentAxe == null || bankContainsBetterAxe()) {
                 if (axesInBank.isEmpty()) {
                     setFailed();
-                    return;
+                    return false;
                 }
 
                 if (!getInventory().isEmpty()) {
@@ -127,11 +127,14 @@ public class WoodcuttingActivity extends Activity {
                         }
                     } else {
                         setFailed();
+                        return false;
                     }
                 }
             } else if (!getInventory().isEmptyExcept(currentAxe.name)) {
                 getBank().depositAllExcept(currentAxe.name);
             }
+
+            return true;
         }
     }
 }

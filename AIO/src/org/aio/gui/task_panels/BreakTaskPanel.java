@@ -2,8 +2,8 @@ package org.aio.gui.task_panels;
 
 import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.break_task.BreakTask;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class BreakTaskPanel implements TaskPanel {
     private JTextField durationField;
     private JCheckBox logoutCheckBox;
 
-    public BreakTaskPanel() {
+    BreakTaskPanel() {
         mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Break Task"));
 

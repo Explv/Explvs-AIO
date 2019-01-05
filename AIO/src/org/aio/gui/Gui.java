@@ -3,9 +3,9 @@ package org.aio.gui;
 import org.aio.gui.conf_man.ConfigManager;
 import org.aio.gui.task_panels.TaskPanel;
 import org.aio.gui.task_panels.TaskPanelFactory;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
-import org.aio.tasks.tutorial_island_task.TutorialIslandTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
+import org.aio.tasks.TutorialIslandTask;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -25,6 +25,7 @@ public class Gui {
 
     private boolean started;
     private JPanel taskList = new JPanel();
+
     private LinkedHashMap<Integer, TaskPanelContent> taskPanels = new LinkedHashMap<>();
 
     public Gui() {
@@ -105,6 +106,14 @@ public class Gui {
         ));
 
         addTaskPanel.add(createButtonPanel(
+                "Loop",
+                "Loop Previous Tasks",
+                "loopIcon.png",
+                "loopIconHover.png",
+                e -> addTask(TaskType.LOOP)
+        ));
+
+        addTaskPanel.add(createButtonPanel(
                 "Quest",
                 "Quest Task",
                 "questIcon.png",
@@ -161,7 +170,7 @@ public class Gui {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         gui.setMinimumSize(new Dimension(700, 300));
-        gui.setMaximumSize(new Dimension(700, 700));
+        gui.setMaximumSize(new Dimension(2000, 2000));
 
         gui.setLocationRelativeTo(null);
         gui.setContentPane(mainPanel);
@@ -194,12 +203,32 @@ public class Gui {
         return buttonPanel;
     }
 
-    public final Queue<Task> getTasks() {
-        Queue<Task> tasks = new LinkedList<>();
+    /**
+     * Return cached task list, if found. Otherwise it returns a new Queue from the existing task list
+     * @return the current tasks in a Queue
+     */
+    public final Queue<Task> getTasksAsQueue() {
+        return new LinkedList<>(getTasksAsList());
+    }
+
+    /**
+     * Public getter for the entire ordered task list
+     *
+     * Note: Intentionally rebuilds the tasks, so each call returns a fresh list of task instances
+     */
+    public final ArrayList<Task> getTasksAsList(){
+        ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(new TutorialIslandTask());
+
+        int taskIndex = 1;
         for (TaskPanelContent taskPanel : taskPanels.values()) {
-            tasks.add(taskPanel.panel.toTask());
+            Task task = taskPanel.panel.toTask();
+            task.setExecutionOrder(taskIndex);
+            taskIndex++;
+
+            tasks.add(task);
         }
+
         return tasks;
     }
 
@@ -346,8 +375,8 @@ public class Gui {
         }
     }
 
-//    public static void main(String[] args){
-//        Gui gui = new Gui();
-//        gui.open();
-//    }
+    public static void main(String[] args){
+        Gui gui = new Gui();
+        gui.open();
+    }
 }

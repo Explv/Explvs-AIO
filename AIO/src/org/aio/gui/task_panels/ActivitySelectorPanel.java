@@ -7,6 +7,8 @@ import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ActivitySelectorPanel implements JSONSerializable {
 
@@ -18,10 +20,10 @@ public class ActivitySelectorPanel implements JSONSerializable {
         return activitySelector;
     }
 
-    public ActivitySelectorPanel() {
+    public ActivitySelectorPanel(TaskPanel panel) {
         mainPanel = new JPanel(new BorderLayout());
 
-        activitySelector = new JComboBox<>(new DefaultComboBoxModel<>(ActivityType.values()));
+        activitySelector = new JComboBox<>(new DefaultComboBoxModel<>(getValidActivitiesForPanel(panel)));
 
         JPanel selectorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -79,5 +81,20 @@ public class ActivitySelectorPanel implements JSONSerializable {
         activitySelector.setSelectedItem(ActivityType.valueOf((String) jsonObject.get("activity_type")));
         activityPanel.fromJSON((JSONObject) jsonObject.get("activity"));
         setActivityPanel(activityPanel);
+    }
+
+    /**
+     * Filter out any invalid activities for the given panel class
+     * @param panel To populate activities for
+     * @return Valid activities for this panel
+     */
+    private ActivityType[] getValidActivitiesForPanel(TaskPanel panel) {
+        ArrayList<ActivityType> allOptions = new ArrayList<>(Arrays.asList(ActivityType.values()));
+
+        if (panel instanceof LevelTaskPanel || panel instanceof ResourceTaskPanel) {
+            allOptions.removeIf(type -> type == ActivityType.MONEY_MAKING);
+        }
+
+        return allOptions.toArray(new ActivityType[allOptions.size()]);
     }
 }

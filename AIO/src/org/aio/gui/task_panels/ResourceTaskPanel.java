@@ -3,9 +3,9 @@ package org.aio.gui.task_panels;
 import org.aio.activities.grand_exchange.GrandExchangeHelper;
 import org.aio.gui.utils.AutoCompleteTextField;
 import org.aio.gui.utils.NumberDocumentFilter;
-import org.aio.tasks.resource_task.ResourceTask;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.ResourceTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class ResourceTaskPanel implements TaskPanel {
     private JTextField quantityField;
     private ActivitySelectorPanel activitySelectorPanel;
 
-    public ResourceTaskPanel() {
+    ResourceTaskPanel(){
         mainPanel = new JPanel(new BorderLayout());
 
         JPanel bottomControls = new JPanel();
@@ -49,7 +49,7 @@ public class ResourceTaskPanel implements TaskPanel {
 
         mainPanel.add(bottomControls, BorderLayout.SOUTH);
 
-        activitySelectorPanel = new ActivitySelectorPanel();
+        activitySelectorPanel = new ActivitySelectorPanel(this);
         mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
     }
 
