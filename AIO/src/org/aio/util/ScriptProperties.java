@@ -1,5 +1,6 @@
 package org.aio.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,8 +30,15 @@ public class ScriptProperties {
 
     private static Properties loadProperties() {
         Properties properties = new Properties();
+
+        File propertiesFile = new File(PROPERTIES_FILENAME);
+
+        if (!propertiesFile.exists()) {
+            return properties;
+        }
+
         try {
-            FileInputStream fileInputStream = new FileInputStream(PROPERTIES_FILENAME);
+            FileInputStream fileInputStream = new FileInputStream(propertiesFile);
             properties.load(fileInputStream);
         } catch (IOException e) {
             e.printStackTrace();
