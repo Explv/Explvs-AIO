@@ -1,8 +1,6 @@
-package org.aio.tasks.resource_task;
+package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
 
 public class ResourceTask extends Task {
 

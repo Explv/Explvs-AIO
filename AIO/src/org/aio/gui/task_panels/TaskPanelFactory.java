@@ -1,6 +1,6 @@
 package org.aio.gui.task_panels;
 
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.TaskType;
 
 public class TaskPanelFactory {
     public static TaskPanel createTaskPanel(final TaskType taskType) {

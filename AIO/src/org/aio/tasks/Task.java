@@ -1,4 +1,4 @@
-package org.aio.tasks.task;
+package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
 import org.aio.util.Executable;

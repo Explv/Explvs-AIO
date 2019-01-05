@@ -174,8 +174,10 @@ public class AgilityActivity extends Activity {
 
     private class AgilityBank extends Banking {
         @Override
-        public void bank() {
+        public boolean bank() {
             getBank().depositAll();
+
+            return true;
         }
     }
 }

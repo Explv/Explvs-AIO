@@ -25,7 +25,11 @@ public abstract class Banking extends Executable {
         }
     }
 
-    protected abstract void bank();
+    /**
+     * Execute banking operation
+     * @return whether the operation was a success or not
+     */
+    protected abstract boolean bank();
 
     @Override
     public void onEnd() {

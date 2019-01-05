@@ -1,9 +1,9 @@
 package org.aio.gui.task_panels;
 
 import org.aio.gui.utils.NumberDocumentFilter;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
-import org.aio.tasks.timed_task.TimedTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
+import org.aio.tasks.TimedTask;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -35,7 +35,7 @@ public class TimedTaskPanel implements TaskPanel {
 
         mainPanel.add(bottomControls, BorderLayout.SOUTH);
 
-        activitySelectorPanel = new ActivitySelectorPanel();
+        activitySelectorPanel = new ActivitySelectorPanel(this);
         mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
     }
 

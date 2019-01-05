@@ -1,4 +1,4 @@
-package org.aio.tasks.task;
+package org.aio.tasks;
 
 public enum TaskType {
 

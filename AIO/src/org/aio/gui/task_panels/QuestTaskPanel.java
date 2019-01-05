@@ -2,9 +2,9 @@ package org.aio.gui.task_panels;
 
 import org.aio.activities.quests.Quest;
 import org.aio.activities.quests.RuneMysteries;
-import org.aio.tasks.quest_task.QuestTask;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.QuestTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;

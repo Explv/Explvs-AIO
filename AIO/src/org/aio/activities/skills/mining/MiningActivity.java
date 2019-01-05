@@ -128,7 +128,7 @@ public class MiningActivity extends Activity {
     protected class ItemReqBankingImpl extends Banking {
 
         @Override
-        public void bank() {
+        public boolean bank() {
             if (pickaxesInBank.isEmpty()) {
                 for (Pickaxe pickaxe : Pickaxe.values()) {
                     if (getBank().contains(pickaxe.name)) {
@@ -141,7 +141,7 @@ public class MiningActivity extends Activity {
             if (currentPickaxe == null || bankContainsBetterPickaxe()) {
                 if (pickaxesInBank.isEmpty()) {
                     setFailed();
-                    return;
+                    return false;
                 }
 
                 if (!getInventory().isEmpty()) {
@@ -159,6 +159,8 @@ public class MiningActivity extends Activity {
             } else if (!getInventory().isEmptyExcept(currentPickaxe.name)) {
                 getBank().depositAllExcept(currentPickaxe.name);
             }
+
+            return true;
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.aio.paint;
 
-import org.aio.tasks.task.Task;
+import org.aio.tasks.Task;
 import org.aio.util.SkillTracker;
 import org.osbot.rs07.Bot;
 import org.osbot.rs07.api.ui.Skill;

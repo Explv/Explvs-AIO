@@ -2,9 +2,9 @@ package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
 import org.aio.gui.utils.NumberDocumentFilter;
-import org.aio.tasks.level_task.LevelTask;
-import org.aio.tasks.task.Task;
-import org.aio.tasks.task.TaskType;
+import org.aio.tasks.LevelTask;
+import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Skill;
 
@@ -24,7 +24,7 @@ public class LevelTaskPanel implements TaskPanel {
     public LevelTaskPanel() {
         mainPanel = new JPanel(new BorderLayout());
 
-        activitySelectorPanel = new ActivitySelectorPanel();
+        activitySelectorPanel = new ActivitySelectorPanel(this);
 
         mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
 

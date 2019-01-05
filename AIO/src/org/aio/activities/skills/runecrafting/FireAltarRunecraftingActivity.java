@@ -71,12 +71,14 @@ public class FireAltarRunecraftingActivity extends RunecraftingActivity {
 
     private class RingOfDuelingBanking extends Banking {
         @Override
-        public void bank() {
+        public boolean bank() {
             if (!getBank().contains(ringOfDuelingFilter)) {
                 setFailed();
             } else {
                 getBank().withdraw(ringOfDuelingFilter, 1);
             }
+
+            return true;
         }
     }
 }
