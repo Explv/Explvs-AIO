@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v2.5", info = "AIO", version = 2.5, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v2.6", info = "AIO", version = 2.6, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
