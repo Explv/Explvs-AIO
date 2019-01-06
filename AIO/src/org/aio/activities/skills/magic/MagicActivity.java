@@ -14,4 +14,9 @@ public class MagicActivity extends Activity{
     @Override
     public void runActivity() throws InterruptedException {
     }
+
+    @Override
+    public MagicActivity copy() {
+        return new MagicActivity(spell);
+    }
 }

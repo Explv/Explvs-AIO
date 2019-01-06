@@ -61,4 +61,9 @@ public class FletchingActivity extends Activity {
             }
         }
     }
+
+    @Override
+    public FletchingActivity copy() {
+        return new FletchingActivity(fletchItem);
+    }
 }

@@ -101,4 +101,9 @@ public class RangeGuildActivity extends Activity {
             Sleep.sleepUntil(() -> getDialogues().inDialogue(), 5000);
         }
     }
+
+    @Override
+    public RangeGuildActivity copy() {
+        return new RangeGuildActivity(bow);
+    }
 }

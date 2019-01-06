@@ -1,5 +1,6 @@
 package org.aio.activities.quests;
 
+import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.Bank;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
@@ -142,5 +143,10 @@ public class RuneMysteries extends QuestActivity {
             npc.interact("Talk-to");
             Sleep.sleepUntil(() -> getDialogues().inDialogue(), 5000);
         }
+    }
+
+    @Override
+    public Activity copy() {
+        return new RuneMysteries();
     }
 }

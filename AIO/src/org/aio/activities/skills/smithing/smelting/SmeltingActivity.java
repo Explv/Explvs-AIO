@@ -67,4 +67,9 @@ public class SmeltingActivity extends Activity {
             Sleep.sleepUntil(() -> makeAllInterface.isMakeAllScreenOpen(), 5000);
         }
     }
+
+    @Override
+    public SmeltingActivity copy() {
+        return new SmeltingActivity(bar, smeltLocation);
+    }
 }

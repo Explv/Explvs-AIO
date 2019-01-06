@@ -153,4 +153,9 @@ public class FiremakingActivity extends Activity {
 
         return longestConsecutiveRow;
     }
+
+    @Override
+    public FiremakingActivity copy() {
+        return new FiremakingActivity(log, location);
+    }
 }

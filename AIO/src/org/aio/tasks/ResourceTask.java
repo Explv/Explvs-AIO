@@ -38,4 +38,9 @@ public class ResourceTask extends Task {
     public String toString() {
         return String.format("Resource task: %s (%d/%d)", resource, quantityObtained, targetQuantity);
     }
+
+    @Override
+    public Task copy() {
+        return new ResourceTask(getActivity().copy(), resource, targetQuantity);
+    }
 }

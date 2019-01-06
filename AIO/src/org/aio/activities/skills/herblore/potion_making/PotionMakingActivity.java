@@ -57,4 +57,9 @@ public class PotionMakingActivity extends Activity {
             getInventory().getItem(potion.itemReqs[1].toString()).interact("Use");
         }
     }
+
+    @Override
+    public PotionMakingActivity copy() {
+        return new PotionMakingActivity(potion);
+    }
 }

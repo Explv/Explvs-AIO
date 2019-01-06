@@ -97,6 +97,11 @@ public class WoodcuttingActivity extends Activity {
         }
     }
 
+    @Override
+    public WoodcuttingActivity copy() {
+        return new WoodcuttingActivity(tree, treeLocation, resourceMode);
+    }
+
     private class WCBanking extends Banking {
 
         @Override

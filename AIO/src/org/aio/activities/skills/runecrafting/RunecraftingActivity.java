@@ -1,7 +1,9 @@
 package org.aio.activities.skills.runecrafting;
 
+import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.Banking;
 import org.aio.activities.banking.ItemReqBanking;
+import org.aio.activities.skills.mining.RuneEssMiningActivity;
 import org.aio.util.Executable;
 import org.aio.util.Sleep;
 import org.aio.util.item_requirement.ItemReq;
@@ -9,6 +11,7 @@ import org.osbot.rs07.api.ui.EquipmentSlot;
 
 public class RunecraftingActivity extends RunecraftingBase {
 
+    protected final EssenceType essenceType;
     private final ItemReq essenceReq;
     private ItemReq talismanReq;
     protected Executable banking;
@@ -16,6 +19,7 @@ public class RunecraftingActivity extends RunecraftingBase {
 
     public RunecraftingActivity(final Altar altar, final EssenceType essenceType) {
         super(altar);
+        this.essenceType = essenceType;
         this.essenceReq = new ItemReq(essenceType.toString(), 1);
     }
 
@@ -77,6 +81,11 @@ public class RunecraftingActivity extends RunecraftingBase {
         if (getAltar().interact("Craft-rune")) {
             Sleep.sleepUntil(() -> getDialogues().isPendingContinuation() || (!myPlayer().isAnimating() && !getInventory().contains("Rune essence", "Pure essence")), 10_000);
         }
+    }
+
+    @Override
+    public RunecraftingActivity copy() {
+        return new RunecraftingActivity(altar, essenceType);
     }
 
     private class TalismanBanking extends Banking {

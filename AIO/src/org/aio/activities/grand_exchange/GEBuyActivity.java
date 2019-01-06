@@ -1,5 +1,6 @@
 package org.aio.activities.grand_exchange;
 
+import org.aio.activities.activity.Activity;
 import org.aio.util.Sleep;
 
 public class GEBuyActivity extends GEActivity {
@@ -52,5 +53,10 @@ public class GEBuyActivity extends GEActivity {
     @Override
     public String toString() {
         return "Buying";
+    }
+
+    @Override
+    public GEBuyActivity copy() {
+        return new GEBuyActivity(geItem);
     }
 }

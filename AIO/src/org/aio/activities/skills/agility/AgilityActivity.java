@@ -172,6 +172,11 @@ public class AgilityActivity extends Activity {
         return course;
     }
 
+    @Override
+    public AgilityActivity copy() {
+        return new AgilityActivity(agilityCourse);
+    }
+
     private class AgilityBank extends Banking {
         @Override
         public boolean bank() {

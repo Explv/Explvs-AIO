@@ -23,4 +23,9 @@ public class LevelTask extends Task {
     public String toString() {
         return String.format("Level task: %s (%d/%d)", skill.toString(), getSkills().getStatic(skill), targetLevel);
     }
+
+    @Override
+    public Task copy() {
+        return new LevelTask(getActivity().copy(), skill, targetLevel);
+    }
 }

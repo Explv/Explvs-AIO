@@ -45,4 +45,9 @@ public class HerbCleaningActivity extends Activity {
             Sleep.sleepUntil(() -> getInventory().getAmount(herb.grimyName) < herbCount, 2000);
         }
     }
+
+    @Override
+    public HerbCleaningActivity copy() {
+        return new HerbCleaningActivity(herb);
+    }
 }

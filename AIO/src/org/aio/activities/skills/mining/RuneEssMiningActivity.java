@@ -1,5 +1,6 @@
 package org.aio.activities.skills.mining;
 
+import org.aio.activities.activity.Activity;
 import org.aio.util.Executable;
 import org.aio.util.ResourceMode;
 import org.aio.util.Sleep;
@@ -105,5 +106,10 @@ public class RuneEssMiningActivity extends MiningActivity {
                 super.run();
             }
         }
+    }
+
+    @Override
+    public RuneEssMiningActivity copy() {
+        return new RuneEssMiningActivity(resourceMode);
     }
 }

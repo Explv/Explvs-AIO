@@ -150,4 +150,9 @@ public class CraftingActivity extends Activity {
             MAKE_ALL_INTERFACE_OPEN_SLEEP.sleep();
         }
     }
+
+    @Override
+    public CraftingActivity copy() {
+        return new CraftingActivity(craftingItem, location);
+    }
 }

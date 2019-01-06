@@ -43,4 +43,9 @@ public class BreakTask extends Task {
                 h > 0 ? String.format("%02d:%02d:%02d", h, m, s) :
                         String.format("%02d:%02d", m, s);
     }
+
+    @Override
+    public Task copy() {
+        return new BreakTask(duration, shouldLogout);
+    }
 }

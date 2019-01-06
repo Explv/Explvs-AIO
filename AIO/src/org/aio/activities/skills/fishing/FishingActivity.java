@@ -125,6 +125,11 @@ public class FishingActivity extends Activity {
         );
     }
 
+    @Override
+    public FishingActivity copy() {
+        return new FishingActivity(fish, location, resourceMode);
+    }
+
     private class MusaPointBanking extends ItemReqBanking {
 
         private final Area musaPoint = new Area(

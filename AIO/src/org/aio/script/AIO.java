@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.function.Supplier;
 
 @ScriptManifest(author = "Explv", name = "Explv's AIO v2.5", info = "AIO", version = 2.5, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
@@ -54,21 +53,21 @@ public class AIO extends Script {
             }
         }
 
-        Supplier<List<Task>> taskSupplier;
+        List<Task> tasks;
 
         if (getParameters() != null && !getParameters().trim().isEmpty()) {
-            taskSupplier = loadTasksFromCLI();
+            tasks = loadTasksFromCLI();
         } else {
-            taskSupplier = loadTasksFromGUI();
+            tasks = loadTasksFromGUI();
         }
 
-        if (taskSupplier == null || taskSupplier.get().isEmpty()) {
+        if (tasks.isEmpty()) {
             log("No tasks loaded");
             stop(false);
             return;
         }
 
-        taskExecutor = new TaskExecutor(taskSupplier.get(), taskSupplier);
+        taskExecutor = new TaskExecutor(tasks);
         taskExecutor.exchangeContext(getBot());
         taskExecutor.addTaskChangeListener((oldTask, newTask) -> {
             paint.setCurrentTask(newTask);
@@ -93,14 +92,14 @@ public class AIO extends Script {
      *
      * Note: Does not currently support looping
      */
-    private Supplier<List<Task>> loadTasksFromCLI() {
+    private List<Task> loadTasksFromCLI() {
         String parameter = getParameters().trim();
 
         File configFile = Paths.get(getDirectoryData(), parameter).toFile();
 
         if (!configFile.exists()) {
             log("Invalid config file: " + parameter);
-            return null;
+            return Collections.emptyList();
         }
 
         ConfigManager configManager = new ConfigManager();
@@ -108,10 +107,10 @@ public class AIO extends Script {
 
         if (!tasksJSON.isPresent()) {
             log("Failed to load config file: " + parameter);
-            return null;
+            return Collections.emptyList();
         }
 
-        return () -> configManager.getTasksFromJSON(tasksJSON.get());
+        return configManager.getTasksFromJSON(tasksJSON.get());
     }
 
     /**
@@ -119,7 +118,7 @@ public class AIO extends Script {
      *
      * @throws InterruptedException
      */
-    private Supplier<List<Task>> loadTasksFromGUI() throws InterruptedException {
+    private List<Task> loadTasksFromGUI() throws InterruptedException {
         try {
             EventDispatchThreadRunner.runOnDispatchThread(() -> {
                 gui = new Gui();
@@ -128,14 +127,14 @@ public class AIO extends Script {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
             log("Failed to create GUI");
-            return null;
+            return Collections.emptyList();
         }
 
         if (!gui.isStarted()) {
-            return null;
+            return Collections.emptyList();
         }
 
-        return () -> gui.getTasksAsList();
+        return gui.getTasksAsList();
     }
 
     @Override

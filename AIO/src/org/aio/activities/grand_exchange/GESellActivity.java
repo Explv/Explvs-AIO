@@ -1,5 +1,6 @@
 package org.aio.activities.grand_exchange;
 
+import org.aio.activities.activity.Activity;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.Bank;
 
@@ -51,5 +52,10 @@ public class GESellActivity extends GEActivity {
     @Override
     public String toString() {
         return "Selling";
+    }
+
+    @Override
+    public GESellActivity copy() {
+        return new GESellActivity(geItem);
     }
 }

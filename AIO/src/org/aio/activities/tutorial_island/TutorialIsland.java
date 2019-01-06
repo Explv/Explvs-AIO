@@ -81,4 +81,9 @@ public final class TutorialIsland extends Activity {
     private int getTutorialSection() {
         return getConfigs().get(406);
     }
+
+    @Override
+    public TutorialIsland copy() {
+        return new TutorialIsland();
+    }
 }

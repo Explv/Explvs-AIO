@@ -21,4 +21,9 @@ public class QuestTask extends Task{
     public String toString() {
         return "Quest task";
     }
+
+    @Override
+    public Task copy() {
+        return new QuestTask(getActivity().copy(), quest);
+    }
 }

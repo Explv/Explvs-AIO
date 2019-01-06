@@ -137,6 +137,11 @@ public class ThievingActivity extends Activity {
         }
     }
 
+    @Override
+    public ThievingActivity copy() {
+        return new ThievingActivity(thievingObject, food, hpPercentToEatAt, location, resourceMode);
+    }
+
     private class ThievingBank extends Banking {
         @Override
         public boolean bank() {

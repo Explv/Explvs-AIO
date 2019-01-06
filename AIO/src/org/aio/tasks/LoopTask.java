@@ -2,45 +2,46 @@ package org.aio.tasks;
 
 import org.aio.tasks.task_executor.TaskChangeListener;
 import org.aio.tasks.task_executor.TaskExecutor;
+import org.aio.util.Copyable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class LoopTask extends Task {
 
     public static final int INFINITE_ITERATIONS = -1;
 
-    private int taskCount;
-    private int numIterations;
+    private final int taskCount;
+    private final int numIterations;
 
     private int startTaskIndex;
     private int endTaskIndex;
-    private Supplier<List<Task>> taskSupplier;
 
     private TaskExecutor taskExecutor;
     private int currentIteration;
 
-    public LoopTask(int taskCount, int numIterations) {
-        super(TaskType.LOOP);
+    private List<Task> loopTasks;
 
+    public LoopTask(final int taskCount, final int numIterations) {
+        super(TaskType.LOOP);
         this.taskCount = taskCount;
         this.numIterations = numIterations;
     }
 
-    public void setup(final Supplier<List<Task>> taskSupplier,
+    public void setup(final List<Task> allTasks,
                       final List<TaskChangeListener> taskChangeListeners) {
-        this.taskSupplier = taskSupplier;
+        this.endTaskIndex = getExecutionOrder();
+        this.startTaskIndex = this.endTaskIndex - taskCount;
 
-        taskExecutor = new TaskExecutor(getLoopTasks(), taskSupplier);
+        loopTasks = getLoopTasks(allTasks);
+        taskExecutor = new TaskExecutor(loopTasks);
         taskExecutor.addTaskChangeListeners(taskChangeListeners);
     }
 
     @Override
     public void onStart() {
         taskExecutor.exchangeContext(getBot());
-        this.endTaskIndex = getExecutionOrder();
-        this.startTaskIndex = this.endTaskIndex - taskCount;
+
         log(String.format("Will loop for %d iterations starting from task %d and ending at task %d",
                 numIterations, startTaskIndex, endTaskIndex));
     }
@@ -55,15 +56,10 @@ public class LoopTask extends Task {
         if (taskExecutor.isComplete()) {
             currentIteration++;
             log(String.format("Loop iteration: (%d/%d)", currentIteration, numIterations));
-            taskExecutor.setTasks(getLoopTasks());
+            taskExecutor.setTaskQueue(copyTasks(loopTasks));
         } else {
             taskExecutor.run();
         }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Loop Task: %d iterations", numIterations);
     }
 
     /**
@@ -71,12 +67,28 @@ public class LoopTask extends Task {
      *
      * @return a queue of tasks
      */
-    private List<Task> getLoopTasks() {
-        return new ArrayList<>(taskSupplier.get().subList(startTaskIndex, endTaskIndex));
+    private List<Task> getLoopTasks(final List<Task> allTasks) {
+        return copyTasks(allTasks.subList(startTaskIndex, endTaskIndex));
+    }
+
+    private List<Task> copyTasks(final List<Task> tasks) {
+        return tasks.stream()
+                    .map(Copyable::copy)
+                    .collect(Collectors.toList());
     }
 
     @Override
     public boolean canExit() {
         return true;
+    }
+
+    @Override
+    public Task copy() {
+        return new LoopTask(taskCount, numIterations);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Loop Task: %d iterations", numIterations);
     }
 }

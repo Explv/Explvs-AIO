@@ -7,23 +7,22 @@ import org.aio.tasks.LoopTask;
 import org.aio.util.Executable;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public final class TaskExecutor extends Executable {
 
-    private final Supplier<List<Task>> taskSupplier;
-    private final Queue<Task> tasks = new LinkedList<>();
+    private final List<Task> allTasks;
+    private final Queue<Task> taskQueue = new LinkedList<>();
     private final List<TaskChangeListener> taskChangeListeners = new ArrayList<>();
     private Task currentTask;
 
-    public TaskExecutor(final List<Task> tasks, final Supplier<List<Task>> taskSupplier) {
-        this.taskSupplier = taskSupplier;
-        this.tasks.addAll(tasks);
+    public TaskExecutor(final List<Task> tasks) {
+        allTasks = tasks;
+        this.taskQueue.addAll(tasks);
     }
 
-    public void setTasks(final List<Task> tasks) {
-        this.tasks.clear();
-        this.tasks.addAll(tasks);
+    public void setTaskQueue(final List<Task> taskQueue) {
+        this.taskQueue.clear();
+        this.taskQueue.addAll(taskQueue);
         currentTask = null;
     }
 
@@ -36,12 +35,12 @@ public final class TaskExecutor extends Executable {
     }
 
     public boolean isComplete() {
-        return tasks.isEmpty() && (currentTask == null || currentTask.hasFailed() || currentTask.isComplete());
+        return taskQueue.isEmpty() && (currentTask == null || currentTask.hasFailed() || currentTask.isComplete());
     }
 
     @Override
     public void onStart() throws InterruptedException {
-        if (tasks.stream().anyMatch(task -> task.getTaskType() == TaskType.BREAK)) {
+        if (taskQueue.stream().anyMatch(task -> task.getTaskType() == TaskType.BREAK)) {
             CustomBreakManager customBreakManager = new CustomBreakManager();
             customBreakManager.exchangeContext(getBot());
             getBot().getRandomExecutor().overrideOSBotRandom(customBreakManager);
@@ -51,7 +50,7 @@ public final class TaskExecutor extends Executable {
     @Override
     public final void run() throws InterruptedException {
         if (currentTask == null || (currentTask.isComplete() && currentTask.canExit()) || currentTask.hasFailed()) {
-            loadNextTask(tasks);
+            loadNextTask(taskQueue);
         } else {
             runTask(currentTask);
         }
@@ -68,7 +67,7 @@ public final class TaskExecutor extends Executable {
         currentTask.exchangeContext(getBot());
 
         if (currentTask instanceof LoopTask) {
-            ((LoopTask) currentTask).setup(taskSupplier, taskChangeListeners);
+            ((LoopTask) currentTask).setup(allTasks, taskChangeListeners);
         }
 
         currentTask.onStart();
@@ -90,7 +89,7 @@ public final class TaskExecutor extends Executable {
             }
 
             currentTask = null;
-            tasks.clear();
+            taskQueue.clear();
         }
     }
 }

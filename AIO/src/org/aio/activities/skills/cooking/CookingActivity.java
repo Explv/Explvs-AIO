@@ -59,4 +59,9 @@ public class CookingActivity extends Activity {
             Sleep.sleepUntil(() -> makeAllInterface.isMakeAllScreenOpen(), 2000);
         }
     }
+
+    @Override
+    public CookingActivity copy() {
+        return new CookingActivity(cookingItem, cookingLocation);
+    }
 }

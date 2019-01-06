@@ -1,8 +1,9 @@
 package org.aio.activities.activity;
 
+import org.aio.util.Copyable;
 import org.aio.util.Executable;
 
-public abstract class Activity extends Executable {
+public abstract class Activity extends Executable implements Copyable<Activity> {
 
     /**
      * Current activity status to be displayed in the GUI

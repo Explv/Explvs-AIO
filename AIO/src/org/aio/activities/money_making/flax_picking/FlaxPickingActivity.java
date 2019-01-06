@@ -71,6 +71,11 @@ public class FlaxPickingActivity extends Activity {
         }
     }
 
+    @Override
+    public Activity copy() {
+        return new FlaxPickingActivity();
+    }
+
     private class FlaxBank extends Banking {
 
         @Override

@@ -1,11 +1,12 @@
 package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
+import org.aio.util.Copyable;
 import org.aio.util.Executable;
 
 import java.util.UUID;
 
-public abstract class Task extends Executable {
+public abstract class Task extends Executable implements Copyable<Task> {
     private int executionOrder;
 
     private final TaskType taskType;

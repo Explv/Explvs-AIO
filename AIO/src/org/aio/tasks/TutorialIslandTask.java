@@ -27,4 +27,9 @@ public class TutorialIslandTask extends Task {
     public String toString() {
         return "Tutorial Island task";
     }
+
+    @Override
+    public Task copy() {
+        return new TutorialIslandTask();
+    }
 }

@@ -67,4 +67,9 @@ public class CannonballActivity extends Activity {
             Sleep.sleepUntil(() -> makeAllInterface.isMakeAllScreenOpen(), 5000);
         }
     }
+
+    @Override
+    public CannonballActivity copy() {
+        return new CannonballActivity(smeltLocation);
+    }
 }

@@ -79,4 +79,9 @@ public class SmithItemMakingActivity extends Activity {
             Sleep.sleepUntil(() -> smithItemWidget.getParent(getWidgets()).map(RS2Widget::isVisible).isPresent(), 5000);
         }
     }
+
+    @Override
+    public SmithItemMakingActivity copy() {
+        return new SmithItemMakingActivity(bar, smithItem, smithLocation);
+    }
 }

@@ -2,6 +2,7 @@ package org.aio.activities.skills.runecrafting;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.activity.ActivityType;
+import org.aio.activities.skills.mining.MiningActivity;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.event.WebWalkEvent;

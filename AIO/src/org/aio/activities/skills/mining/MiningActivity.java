@@ -17,7 +17,7 @@ public class MiningActivity extends Activity {
 
     private final Mine mine;
     private final Rock rock;
-    private final ResourceMode resourceMode;
+    protected final ResourceMode resourceMode;
     private final EnumSet<Pickaxe> pickaxesInBank = EnumSet.noneOf(Pickaxe.class);
     private final List<String> cutGems = Arrays.asList("Opal", "Jade", "Red topaz", "Sapphire", "Emerald", "Ruby", "Diamond", "Dragonstone", "Onyx");
     private final List<String> uncutGems = Arrays.asList("Uncut opal", "Uncut jade", "Uncut red topaz", "Uncut sapphire", "Uncut emerald", "Uncut ruby", "Uncut diamond", "Uncut dragonstone", "Uncut onyx");
@@ -89,6 +89,11 @@ public class MiningActivity extends Activity {
         if (bankNode.hasFailed()) {
             setFailed();
         }
+    }
+
+    @Override
+    public MiningActivity copy() {
+        return new MiningActivity(mine, rock, resourceMode);
     }
 
     private class MiningNode extends Executable {
