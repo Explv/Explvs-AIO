@@ -48,7 +48,7 @@ public class LoopTask extends Task {
 
     @Override
     public boolean isComplete() {
-        return numIterations != -1 && currentIteration >= numIterations;
+        return numIterations != INFINITE_ITERATIONS && currentIteration >= numIterations;
     }
 
     @Override
