@@ -5,7 +5,8 @@ import org.osbot.rs07.api.Configs;
 public enum Quest {
 
     RUNE_MYSTERIES ("Rune Mysteries", 63, 6),
-    COOKS_ASSISTANT ("Cooks Assistant", 29, 2);
+    COOKS_ASSISTANT ("Cooks Assistant", 29, 2),
+	ROMEO_AND_JULIET ("Romeo & Juliet", 144, 100);
     //ABYSS ("Abyss Mini Quest", 492, 4);
 
     final String name;
