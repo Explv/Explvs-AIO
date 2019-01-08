@@ -1,5 +1,6 @@
 package org.aio.gui.task_panels;
 
+import org.aio.activities.quests.CooksAssistant;
 import org.aio.activities.quests.Quest;
 import org.aio.activities.quests.RuneMysteries;
 import org.aio.tasks.QuestTask;
@@ -42,8 +43,10 @@ public class QuestTaskPanel implements TaskPanel {
     @Override
     public Task toTask() {
         switch ((Quest) questSelector.getSelectedItem()) {
-            case RUNE_MYSTERIES:
-                return new QuestTask(new RuneMysteries(), (Quest) questSelector.getSelectedItem());
+	        case RUNE_MYSTERIES:
+	            return new QuestTask(new RuneMysteries(), (Quest) questSelector.getSelectedItem());
+	        case COOKS_ASSISTANT:
+	            return new QuestTask(new CooksAssistant(), (Quest) questSelector.getSelectedItem());
         }
         return null;
     }
