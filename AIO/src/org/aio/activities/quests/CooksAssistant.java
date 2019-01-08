@@ -35,29 +35,50 @@ public class CooksAssistant extends QuestActivity {
 
     @Override
     public void runActivity() throws InterruptedException {
-
-        if (getTabs().getOpen() != Tab.INVENTORY) {
-            getTabs().open(Tab.INVENTORY);
-        }
+    	
+		if(!getInventory().contains(itemsNeeded) && getInventory().isFull()){
+			
+		    if(Bank.inAnyBank(myPosition())){
+		    	
+		        if(!getBank().isOpen()) {
+		        	
+		            if (getBank().open()) {
+		                Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+		            }
+		            
+		        }
+		        else getBank().depositAllExcept(itemsNeeded);
+		        
+		    } else{
+		        getWalking().webWalk(Bank.getAreas());
+		    }
+		    
+		} else {
         
-        switch (getProgress()) {
-            case 0:
-                talkToCook();
-                break;
-            case 1:
-            	if(hasRequiredItems()) {
-            		
-            		while(getInventory().contains(itemsNeeded) | getProgress() != 1) {
-            			
-                		talkToCook();
-            			
-            		}
-            		
-            	} else  {
-            		getItemsNeeded();
-            	}
-                break;
-        }
+	        if (getTabs().getOpen() != Tab.INVENTORY) {
+	            getTabs().open(Tab.INVENTORY);
+	        }
+	        
+	        switch (getProgress()) {
+	            case 0:
+	                talkToCook();
+	                break;
+	            case 1:
+	            	if(hasRequiredItems()) {
+	            		
+	            		while(getInventory().contains(itemsNeeded) | getProgress() != 1) {
+	            			
+	                		talkToCook();
+	            			
+	            		}
+	            		
+	            	} else  {
+	            		getItemsNeeded();
+	            	}
+	                break;
+	        }
+        
+		}
         
     }
     
