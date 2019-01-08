@@ -3,15 +3,15 @@ package org.aio.activities.quests;
 import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.DepositAllBanking;
 import org.aio.util.Sleep;
-import org.osbot.rs07.api.Chatbox.MessageType;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
+import org.osbot.rs07.api.ui.Message;
 import org.osbot.rs07.api.ui.Tab;
+import org.osbot.rs07.listener.MessageListener;
 
-import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
 public class CooksAssistant extends QuestActivity {
@@ -38,6 +38,25 @@ public class CooksAssistant extends QuestActivity {
             "Egg"
     };
 
+    private final MessageListener MILL_MESSAGE_LISTENER = message -> {
+        if (message.getType() != Message.MessageType.GAME) {
+            return;
+        }
+
+        String messageStr = message.getMessage();
+
+        if (messageStr.contains("There is already grain in the hopper.") ||
+            messageStr.contains("You put the grain in the hopper.")) {
+            put = true;
+            return;
+        }
+
+        if (messageStr.contains("You operate the hopper. The grain slides down the chute.")) {
+            operated = true;
+            return;
+        }
+    };
+
     private boolean operated = false;
     private boolean put = false;
 
@@ -50,6 +69,12 @@ public class CooksAssistant extends QuestActivity {
     @Override
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
+        getBot().addMessageListener(MILL_MESSAGE_LISTENER);
+    }
+
+    @Override
+    public void onEnd() {
+        getBot().removeMessageListener(MILL_MESSAGE_LISTENER);
     }
 
     @Override
@@ -134,17 +159,7 @@ public class CooksAssistant extends QuestActivity {
             }
 
             if (hopper.interact("Use")) {
-                BooleanSupplier chatboxContainsSuccessMessage = () -> getChatbox().contains(
-                        MessageType.GAME,
-                        "There is already grain in the hopper.",
-                        "You put grain into the hopper"
-                );
-
-                Sleep.sleepUntil(chatboxContainsSuccessMessage, 15000);
-
-                if (chatboxContainsSuccessMessage.getAsBoolean()) {
-                    put = true;
-                }
+                Sleep.sleepUntil(() -> put, 15000);
             }
         }
     }
@@ -162,16 +177,7 @@ public class CooksAssistant extends QuestActivity {
             }
 
             if (controls.interact("Operate")) {
-                BooleanSupplier chatboxContainsSuccessMessage = () -> getChatbox().contains(
-                        MessageType.GAME,
-                        "You operate the hopper. The grain slides down the chute."
-                );
-
-                Sleep.sleepUntil(chatboxContainsSuccessMessage, 10000);
-
-                if (chatboxContainsSuccessMessage.getAsBoolean()) {
-                    operated = true;
-                }
+                Sleep.sleepUntil(() -> operated, 10000);
             }
         }
     }
