@@ -66,10 +66,10 @@ public class RomeoAndJuliet extends QuestActivity {
                     break;
                 case 50:
                 	// Make sure we are not in the cut scene
-            		getTabs().open(Tab.QUEST);
-                	if(getDialogues().isPendingContinuation()) {
+                	if(Tab.INVENTORY.isDisabled(bot)) {
                 		
-                		getDialogues().clickContinue();
+                		if(getDialogues().isPendingContinuation())
+                			getDialogues().clickContinue();
                 		
                 	} else if(getTabs().getOpen() == Tab.QUEST){ 
                 		
@@ -81,7 +81,8 @@ public class RomeoAndJuliet extends QuestActivity {
                 	// Make sure we are not in the cut scene
                 	if(Tab.INVENTORY.isDisabled(bot)) {
                 		
-                		getDialogues().clickContinue();
+                		if(getDialogues().isPendingContinuation())
+                			getDialogues().clickContinue();
                 		
                 	} else { 
                 		
