@@ -66,7 +66,7 @@ public class CooksAssistant extends QuestActivity {
 	            case 1:
 	            	if(hasRequiredItems()) {
 	            		
-	            		while(getInventory().contains(itemsNeeded) | getProgress() != 1) {
+	            		while(getProgress() != 1) {
 	            			
 	                		talkToCook();
 	            			
@@ -167,8 +167,8 @@ public class CooksAssistant extends QuestActivity {
 					RS2Object controls = objects.closest(n -> n.getName().equals("Hopper controls"));
 
 					if(controls != null && controls.interact("Operate"))
-						Sleep.sleepUntil(() -> !myPlayer().isMoving() && myPlayer().isAnimating(), 10000);
-					if(!myPlayer().isMoving() && myPlayer().isAnimating())
+						Sleep.sleepUntil(() -> !myPlayer().isMoving() && getChatbox().contains(MessageType.GAME, "You operate the hopper. The grain slides down the chute."), 10000);
+					if(getChatbox().contains(MessageType.GAME, "You operate the hopper. The grain slides down the chute."))
 						operated = true;
 					
 				} else {
