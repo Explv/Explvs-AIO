@@ -178,7 +178,7 @@ public class CooksAssistant extends QuestActivity {
 
     private void getItemFromObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
         if (place.contains(myPlayer())) {
-            RS2Object object = getObjects().closest(n -> n.getName().equals(objectName));
+            RS2Object object = getObjects().closest(objectName);
             if (object != null && object.interact(interaction)) {
                 Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
             }
@@ -189,7 +189,7 @@ public class CooksAssistant extends QuestActivity {
 
     private void getGroundItem(Area place, String itemName) throws InterruptedException {
         if (place.contains(myPosition())) {
-            GroundItem itemToGet = groundItems.closest(itemName);
+            GroundItem itemToGet = getGroundItems().closest(itemName);
             if (itemToGet != null && itemToGet.interact("Take")) {
                 Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
             }
