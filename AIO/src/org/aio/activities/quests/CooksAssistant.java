@@ -11,34 +11,37 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
 
+import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
 public class CooksAssistant extends QuestActivity {
 
-    private final Area cookRoom = new Area(3205, 3215, 3212, 3212);
-    private final Area basement = new Area(3214, 9625, 3216, 9623);
-    private final Area cow = new Area(3253, 3270, 3255, 3275);
-    private final Area chicken = new Area(3235, 3295, 3226, 3300);
-    private final Area wheat = new Area(3162, 3295, 3157, 3298);
-    private final Area upper = new Area(new Position(3168, 3305, 2), new Position(3165, 3308, 2));
-    private final Area bin = new Area(3165, 3305, 3168, 3308);
+    private static final Area COOK_ROOM = new Area(3205, 3215, 3212, 3212);
+    private static final Area BASEMENT = new Area(3214, 9625, 3216, 9623);
+    private static final Area COW = new Area(3253, 3270, 3255, 3275);
+    private static final Area CHICKEN = new Area(3235, 3295, 3226, 3300);
+    private static final Area WHEAT = new Area(3162, 3295, 3157, 3298);
+    private static final Area UPPER = new Area(new Position(3168, 3305, 2), new Position(3165, 3308, 2));
+    private static final Area BIN = new Area(3165, 3305, 3168, 3308);
 
-    private boolean operated = false;
-    private boolean put = false;
-
-    private final String[] cookOptions = {
+    private static final String[] COOK_OPTIONS = {
             "What's wrong?",
             "I'm always happy to help a cook in distress.",
             "Actually, I know where to find this stuff."
     };
 
-    private final String[] itemsNeeded = {
+    private static final int INVENTORY_SLOTS_REQUIRED = 7;
+
+    private static final String[] ITEMS_NEEDED = {
             "Pot of flour",
             "Bucket of milk",
             "Egg"
     };
 
-    private final DepositAllBanking depositAllBanking = new DepositAllBanking(itemsNeeded);
+    private boolean operated = false;
+    private boolean put = false;
+
+    private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
 
     public CooksAssistant() {
         super(Quest.COOKS_ASSISTANT);
@@ -51,7 +54,7 @@ public class CooksAssistant extends QuestActivity {
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (!getInventory().contains(itemsNeeded) && getInventory().isFull()) {
+        if (!getInventory().contains(ITEMS_NEEDED) && getInventory().getEmptySlotCount() < INVENTORY_SLOTS_REQUIRED) {
             depositAllBanking.run();
         } else if (getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
@@ -80,23 +83,23 @@ public class CooksAssistant extends QuestActivity {
     }
 
     private boolean hasRequiredItems() {
-        return Stream.of(itemsNeeded).allMatch(item -> getInventory().contains(item));
+        return Stream.of(ITEMS_NEEDED).allMatch(item -> getInventory().contains(item));
     }
 
     private void getItemsNeeded() throws InterruptedException {
         if (!getInventory().contains("Pot", "Pot of flour", "Bucket of milk")) {
-            getGroundItem(cookRoom, "Pot");
+            getGroundItem(COOK_ROOM, "Pot");
         } else if (!getInventory().contains("Bucket", "Bucket of milk")) {
-            getGroundItem(basement, "Bucket");
+            getGroundItem(BASEMENT, "Bucket");
         } else if (getInventory().contains("Bucket") && !getInventory().contains("Bucket of milk")) {
-            getItemFromObject(cow, "Bucket of milk", "Dairy cow", "Milk");
+            getItemFromObject(COW, "Bucket of milk", "Dairy COW", "Milk");
         } else if (!getInventory().contains("Egg")) {
-            getGroundItem(chicken, "Egg");
+            getGroundItem(CHICKEN, "Egg");
         } else if (!getInventory().contains("Pot of flour")) {
 
             // Get grain
             if (!put && !getInventory().contains("Grain")) {
-                getItemFromObject(wheat, "Grain", "Wheat", "Pick");
+                getItemFromObject(WHEAT, "Grain", "Wheat", "Pick");
             }
 
             // Put grain
@@ -111,35 +114,44 @@ public class CooksAssistant extends QuestActivity {
 
             // Get flour
             if (operated && put) {
-                getItemFromObject(bin, "Pot of flour", "Flour bin", "Empty");
+                getItemFromObject(BIN, "Pot of flour", "Flour BIN", "Empty");
             }
         }
     }
 
     private void fillHopper() {
-        if (!upper.contains(myPosition())) {
-            getWalking().webWalk(upper);
-        } else if (getInventory().getSelectedItemName() != null && getInventory().getSelectedItemName().equals("Grain")) {
+        if (!UPPER.contains(myPosition())) {
+            getWalking().webWalk(UPPER);
+        } else if (!"Grain".equals(getInventory().getSelectedItemName())) {
+            getInventory().interact("Use", "Grain");
+        } else {
+            RS2Object hopper = getObjects().closest("Hopper");
 
-            RS2Object hopper = getObjects().closest(n -> n.getName().equals("Hopper"));
+            if (hopper == null) {
+                log("Could not find object 'Hopper'");
+                setFailed();
+                return;
+            }
 
-            if (hopper != null && hopper.interact("Use")) {
-                Sleep.sleepUntil(() -> {
-                    return getChatbox().contains(MessageType.GAME, "There is already grain in the hopper.") ||
-                            (!myPlayer().isAnimating() && !getInventory().contains("Grain"));
-                }, 15000);
+            if (hopper.interact("Use")) {
+                BooleanSupplier chatboxContainsSuccessMessage = () -> getChatbox().contains(
+                        MessageType.GAME,
+                        "There is already grain in the hopper.",
+                        "You put grain into the hopper"
+                );
+
+                Sleep.sleepUntil(chatboxContainsSuccessMessage, 15000);
+
+                if (chatboxContainsSuccessMessage.getAsBoolean()) {
+                    put = true;
+                }
             }
-            if (getChatbox().contains(MessageType.GAME, "There is already grain in the hopper.") || !getInventory().contains("Grain")) {
-                put = true;
-            }
-        } else if (getInventory().interact("Use", "Grain")) {
-            Sleep.sleepUntil(() -> getInventory().getSelectedItemName() != null && getInventory().getSelectedItemName().equals("Grain"), 5000);
         }
     }
 
     private void operateHopper() {
-        if (!upper.contains(myPosition())) {
-            getWalking().webWalk(upper);
+        if (!UPPER.contains(myPosition())) {
+            getWalking().webWalk(UPPER);
         } else {
             RS2Object controls = getObjects().closest("Hopper controls");
 
@@ -150,16 +162,16 @@ public class CooksAssistant extends QuestActivity {
             }
 
             if (controls.interact("Operate")) {
-                Sleep.sleepUntil(
-                        () -> getChatbox().contains(
-                                MessageType.GAME,
-                                "You operate the hopper. The grain slides down the chute."
-                        ),
-                        10000);
-            }
+                BooleanSupplier chatboxContainsSuccessMessage = () -> getChatbox().contains(
+                        MessageType.GAME,
+                        "You operate the hopper. The grain slides down the chute."
+                );
 
-            if (getChatbox().contains(MessageType.GAME, "You operate the hopper. The grain slides down the chute.")) {
-                operated = true;
+                Sleep.sleepUntil(chatboxContainsSuccessMessage, 10000);
+
+                if (chatboxContainsSuccessMessage.getAsBoolean()) {
+                    operated = true;
+                }
             }
         }
     }
@@ -189,14 +201,14 @@ public class CooksAssistant extends QuestActivity {
     private void talkToCook() throws InterruptedException {
         NPC cook = getNpcs().closest("Cook");
 
-        if (!cookRoom.contains(myPosition())) {
-            getWalking().webWalk(cookRoom);
+        if (!COOK_ROOM.contains(myPosition())) {
+            getWalking().webWalk(COOK_ROOM);
         } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(cook)) {
             if (cook.interact("Talk-to")) {
                 Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(cook), 5000);
             }
         } else {
-            getDialogues().completeDialogue(cookOptions);
+            getDialogues().completeDialogue(COOK_OPTIONS);
         }
     }
 

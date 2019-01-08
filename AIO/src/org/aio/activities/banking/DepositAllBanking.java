@@ -10,6 +10,9 @@ public class DepositAllBanking extends Banking {
 
     @Override
     protected boolean bank() {
+        if (exceptItems == null ){
+            return getBank().depositAll();
+        }
         return getBank().depositAllExcept(exceptItems);
     }
 }
