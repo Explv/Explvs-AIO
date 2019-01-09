@@ -4,6 +4,7 @@ import org.osbot.rs07.api.Configs;
 
 public enum Quest {
 
+    THE_RESTLESS_GHOST ("The Restless Ghost", 107, 5),
     RUNE_MYSTERIES ("Rune Mysteries", 63, 6),
     COOKS_ASSISTANT ("Cooks Assistant", 29, 2),
 	ROMEO_AND_JULIET ("Romeo & Juliet", 144, 100);
