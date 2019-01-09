@@ -2,18 +2,12 @@ package org.aio.activities.quests;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.DepositAllBanking;
-import org.aio.util.CachedWidget;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
-import org.osbot.rs07.api.map.Position;
-import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import org.osbot.rs07.api.ui.Message;
-import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;
-import org.osbot.rs07.listener.MessageListener;
 
 import java.util.stream.Stream;
 
@@ -92,10 +86,6 @@ public class TheRestlessGhost extends QuestActivity {
                     break;
             }
         }
-    }
-
-    private boolean hasRequiredItems() {
-        return Stream.of(ITEMS_NEEDED).allMatch(item -> getInventory().contains(item));
     }
 
     private void placeSkull() throws InterruptedException {
