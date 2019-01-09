@@ -2,6 +2,7 @@ package org.aio.activities.quests;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.DepositAllBanking;
+import org.aio.util.CachedWidget;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
@@ -10,6 +11,7 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 import org.osbot.rs07.api.ui.Message;
+import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.listener.MessageListener;
 
@@ -30,6 +32,10 @@ public class TheRestlessGhost extends QuestActivity {
     private static final String[] URHNEY_OPTIONS = {
             "Father Aereck sent me to talk to you.",
             "He's got a ghost haunting his graveyard."
+    };
+
+    private static final String[] GHOST_OPTIONS = {
+            "Yep, now tell me what the problem is."
     };
 
     private static final int INVENTORY_SLOTS_REQUIRED = 4;
@@ -74,8 +80,11 @@ public class TheRestlessGhost extends QuestActivity {
                     placeSkull();
                     break;
                 case 5:
-                    log("Quest is complete");
-                    isComplete = true;
+                    // Make sure we are not in the cut scene
+                    if (getWidgets().get(277, 2).isVisible()) {
+                        log("Quest is complete");
+                        isComplete = true;
+                    }
                     break;
                 default:
                     log("Unknown progress config value: " + getProgress());
@@ -104,7 +113,7 @@ public class TheRestlessGhost extends QuestActivity {
     private void useSkull() throws InterruptedException {
         if(getInventory().isItemSelected()) {
             if(getObjects().closest("Coffin").interact("Use")){
-                Sleep.sleepUntil(() -> !getInventory().isItemSelected() && !myPlayer().isAnimating(), 8000, 1500);
+                Sleep.sleepUntil(() -> getProgress() != 4, 15000, 1500);
             }
         } else {
             if(getInventory().interact("Use", "Ghost's skull")) {
@@ -120,21 +129,19 @@ public class TheRestlessGhost extends QuestActivity {
             getWalking().webWalk(COFFIN);
         } else if (ghost == null) {
             openCoffin();
-        } else if (!getDialogues().inDialogue() && canTalkToGhost() || !myPlayer().isInteracting(ghost)) {
+        } else if (canTalkToGhost() && (!getDialogues().inDialogue() || !myPlayer().isInteracting(ghost))) {
             if (ghost.interact("Talk-to")) {
                 Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(ghost), 5000);
             }
         } else {
-            getDialogues().completeDialogue(AERECT_OPTIONS);
+            getDialogues().completeDialogue(GHOST_OPTIONS);
         }
     }
 
     private void openCoffin() throws InterruptedException {
         RS2Object coffin = getObjects().closest("Coffin");
 
-        if (coffin != null && coffin.interact("Open")) {
-            Sleep.sleepUntil(() -> coffin.hasAction("Close"), 8000);
-        } else if (coffin != null && coffin.interact("Search")) {
+        if (coffin != null && (coffin.interact("Search") || coffin.interact("Open"))) {
             Sleep.sleepUntil(() -> getNpcs().closest("Restless ghost") != null, 10000, 1500);
         }
     }
@@ -155,7 +162,7 @@ public class TheRestlessGhost extends QuestActivity {
                 Sleep.sleepUntil(() -> !getInventory().contains("Ghostspeak amulet"), 5000);
             }
         }
-        return getEquipment().getItemInSlot(EquipmentSlot.AMULET.slot).equals("Ghostspeak amulet");
+        return getEquipment().getItemInSlot(EquipmentSlot.AMULET.slot).getName().equals("Ghostspeak amulet");
     }
 
     private void talkToAereck() throws InterruptedException {
