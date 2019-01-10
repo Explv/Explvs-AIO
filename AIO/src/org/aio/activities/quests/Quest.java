@@ -4,6 +4,7 @@ import org.osbot.rs07.api.Configs;
 
 public enum Quest {
 
+    SHHEP_SHEARER ("Sheep Shearer", 179, 21),
     RUNE_MYSTERIES ("Rune Mysteries", 63, 6),
     COOKS_ASSISTANT ("Cooks Assistant", 29, 2),
 	ROMEO_AND_JULIET ("Romeo & Juliet", 144, 100);
