@@ -9,8 +9,6 @@ import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 import org.osbot.rs07.api.ui.Tab;
 
-import java.util.stream.Stream;
-
 public class TheRestlessGhost extends QuestActivity {
 
     private static final Area CHURCH = new Area(3240, 3204, 3247, 3215);
@@ -147,10 +145,8 @@ public class TheRestlessGhost extends QuestActivity {
     }
 
     private boolean canTalkToGhost() {
-        if(getInventory().contains("Ghostspeak amulet")) {
-            if(getInventory().interact("Wear", "Ghostspeak amulet")) {
-                Sleep.sleepUntil(() -> !getInventory().contains("Ghostspeak amulet"), 5000);
-            }
+        if(getInventory().contains("Ghostspeak amulet") && getInventory().interact("Wear", "Ghostspeak amulet")) {
+            Sleep.sleepUntil(() -> !getInventory().contains("Ghostspeak amulet"), 5000);
         }
         return getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet");
     }
