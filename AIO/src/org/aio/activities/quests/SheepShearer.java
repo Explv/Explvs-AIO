@@ -85,13 +85,13 @@ public class SheepShearer extends QuestActivity {
         if (!getInventory().contains("Shears")) {
             getGroundItem(FARMER, "Shears");
         } else if (!getInventory().contains("Ball of wool") && getInventory().getAmount("Wool") < 20) {
-            getItemFromNPC(SHEEP, "Wool", "Shear");
+            getItemFromNPC(SHEEP, "Shear");
         } else if (getInventory().getAmount("Ball of wool") < 20) {
-            useObject(SPINNER, "Spin", "Ball of Wool");
+            useObject(SPINNER, "Spin");
         }
     }
 
-    private void getItemFromNPC(Area place, String itemName, String interaction) throws InterruptedException {
+    private void getItemFromNPC(Area place, String interaction) throws InterruptedException {
         if (place.contains(myPlayer())) {
             NPC npc = getNpcs().closest(n -> !n.hasAction("Talk-to") && n.hasAction(interaction) && place.contains(n));
             if (npc != null && npc.interact(interaction)) {
@@ -103,16 +103,14 @@ public class SheepShearer extends QuestActivity {
         }
     }
 
-    private void useObject(Area place, String objectAction, String menuOption) throws InterruptedException {
+    private void useObject(Area place, String objectAction) throws InterruptedException {
         if (place.contains(myPlayer())) {
             RS2Object object = getObjects().closest(n -> n.hasAction(objectAction));
             if (object != null && object.interact(objectAction)) {
                 Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("What would you like to spin?") != null, 8000);
 
-                if (makeAllInterface.isMakeAllScreenOpen()) {
-                    if (makeAllInterface.makeAll()) {
-                        Sleep.sleepUntil(() -> !getInventory().contains("Wool"), 180000, 1000);
-                    }
+                if (makeAllInterface.isMakeAllScreenOpen() && makeAllInterface.makeAll()) {
+                    Sleep.sleepUntil(() -> !getInventory().contains("Wool"), 180000, 1000);
                 }
             }
         } else {
