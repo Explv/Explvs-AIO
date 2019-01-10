@@ -75,7 +75,7 @@ public class TheRestlessGhost extends QuestActivity {
                     break;
                 case 5:
                     // Make sure we are not in the cut scene
-                    if (getWidgets().get(277, 2).isVisible()) {
+                    if (getWidgets().getWidgetContainingText("Quest").isVisible()) {
                         log("Quest is complete");
                         isComplete = true;
                     }
@@ -101,13 +101,13 @@ public class TheRestlessGhost extends QuestActivity {
     }
 
     private void useSkull() throws InterruptedException {
-        if(getInventory().isItemSelected()) {
+        if("Ghost's skull".equals(getInventory().getSelectedItemName())) {
             if(getObjects().closest("Coffin").interact("Use")){
                 Sleep.sleepUntil(() -> getProgress() != 4, 15000, 1500);
             }
         } else {
             if(getInventory().interact("Use", "Ghost's skull")) {
-                Sleep.sleepUntil(() -> getInventory().isItemSelected(), 5000);
+                Sleep.sleepUntil(() -> "Ghost's skull".equals(getInventory().getSelectedItemName()), 5000);
             }
         }
     }
@@ -131,7 +131,7 @@ public class TheRestlessGhost extends QuestActivity {
     private void openCoffin() throws InterruptedException {
         RS2Object coffin = getObjects().closest("Coffin");
 
-        if (coffin != null && (coffin.interact("Search") || coffin.interact("Open"))) {
+        if (coffin != null && (coffin.interact("Search", "Open"))) {
             Sleep.sleepUntil(() -> getNpcs().closest("Restless ghost") != null, 10000, 1500);
         }
     }
@@ -152,7 +152,7 @@ public class TheRestlessGhost extends QuestActivity {
                 Sleep.sleepUntil(() -> !getInventory().contains("Ghostspeak amulet"), 5000);
             }
         }
-        return getEquipment().getItemInSlot(EquipmentSlot.AMULET.slot).getName().equals("Ghostspeak amulet");
+        return getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet");
     }
 
     private void talkToAereck() throws InterruptedException {
