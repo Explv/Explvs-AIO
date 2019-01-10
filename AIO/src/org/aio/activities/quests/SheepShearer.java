@@ -36,7 +36,7 @@ public class SheepShearer extends QuestActivity {
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
 
     public SheepShearer() {
-        super(Quest.SHHEP_SHEARER);
+        super(Quest.SHEEP_SHEARER);
     }
 
     @Override

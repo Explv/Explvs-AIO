@@ -41,7 +41,7 @@ public class QuestTaskPanel implements TaskPanel {
     @Override
     public Task toTask() {
         switch ((Quest) questSelector.getSelectedItem()) {
-            case SHHEP_SHEARER:
+            case SHEEP_SHEARER:
                 return new QuestTask(new SheepShearer(), (Quest) questSelector.getSelectedItem());
             case RUNE_MYSTERIES:
                 return new QuestTask(new RuneMysteries(), (Quest) questSelector.getSelectedItem());
