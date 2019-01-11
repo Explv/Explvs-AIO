@@ -9,6 +9,9 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class RomeoAndJuliet extends QuestActivity {
 
     private static final Area ROMEO = new Area(3205, 3431, 3220, 3415);
@@ -53,11 +56,6 @@ public class RomeoAndJuliet extends QuestActivity {
             return;
         }
 
-        if (getTabs().getOpen() != Tab.INVENTORY) {
-            getTabs().open(Tab.INVENTORY);
-            return;
-        }
-
         switch (getProgress()) {
             case 0:
                 talkToRomeo();
@@ -76,26 +74,22 @@ public class RomeoAndJuliet extends QuestActivity {
                 break;
             case 50:
                 // Make sure we are not in the cut scene
-                if (Tab.INVENTORY.isDisabled(bot)) {
-                    if (getDialogues().isPendingContinuation()) {
+                if (getDialogues().inDialogue() && getDialogues().isPendingContinuation()) {
                         getDialogues().clickContinue();
-                    }
-                } else if (getTabs().getOpen() == Tab.QUEST) {
+                } else {
                     deliverCadavaPotion();
                 }
                 break;
             case 60:
                 // Make sure we are not in the cut scene
-                if (Tab.INVENTORY.isDisabled(bot)) {
-                    if (getDialogues().isPendingContinuation()) {
-                        getDialogues().clickContinue();
-                    }
+                if (getDialogues().inDialogue() && getDialogues().isPendingContinuation()) {
+                    getDialogues().clickContinue();
                 } else {
                     talkToRomeo();
                 }
                 break;
             case 100:
-                if (getDialogues().inDialogue()) {
+                if (getDialogues().inDialogue() && getDialogues().isPendingContinuation()) {
                     getDialogues().clickContinue();
                 }
                 break;
@@ -106,10 +100,13 @@ public class RomeoAndJuliet extends QuestActivity {
     private void deliverCadavaPotion() throws InterruptedException {
         if (getInventory().contains("Cadava potion")) {
             talkToJuliet();
+        }else if(!getTabs().isOpen(Tab.INVENTORY)){
+            getTabs().open(Tab.INVENTORY);
         } else if (getInventory().contains("Cadava berries")) {
+            //Todo: Add a way back from the berrys towards the aphothecary, avoid wizards
             talkToApothecary();
         } else {
-            getItemFromObject(BERRIES, "Cadava berries", "Cadava bush", "Pick-from");
+            getBerry();
         }
     }
 
@@ -150,16 +147,27 @@ public class RomeoAndJuliet extends QuestActivity {
         }
     }
 
-    private void getItemFromObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
-        if (place.contains(myPlayer())) {
-            RS2Object object = getObjects().closest(o -> o.getName().equals(objectName) && o.hasAction(interaction));
+    private void getBerry(){
+        String interaction = "Pick-from";
+        if(BERRIES.contains(myPlayer())){
+            List<RS2Object> objects = getObjects().filter(o -> o.getName().equals("Cadava bush") && o.hasAction(interaction));
+            //Antipattern pick a random Bush
+            RS2Object object = objects.get(random(0,objects.size()-1));
             if (object != null && object.interact(interaction)) {
-                Sleep.sleepUntil(() -> getInventory().contains(itemName), 15000);
-            }
-        } else {
-            getWalking().webWalk(place);
-        }
+                Sleep.sleepUntil(() -> {
+                        if(getTabs().isOpen(Tab.INVENTORY)){
+                            return getInventory().contains("Cadava berries");
+                        }else{
+                            getTabs().open(Tab.INVENTORY);
+                            return false;
+                        }
+                    }, 15000);
 
+                }
+        }else{
+            //Todo: Build a path to the berrys so you avoid the wizards..
+            getWalking().webWalk(BERRIES);
+        }
     }
 
     private void completeDialog(String npcName, String... options) throws InterruptedException {
