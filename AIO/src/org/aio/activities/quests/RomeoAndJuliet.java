@@ -73,17 +73,21 @@ public class RomeoAndJuliet extends QuestActivity {
                 break;
             case 50:
                 // Make sure we are not in the cut scene
-                if (getDialogues().inDialogue() && getDialogues().isPendingContinuation()) {
+                if (getDialogues().inDialogue()){
+                    if(getDialogues().isPendingContinuation()){
                         getDialogues().clickContinue();
-                } else {
+                    }
+                }  else {
                     deliverCadavaPotion();
                 }
                 break;
             case 60:
                 // Make sure we are not in the cut scene
-                if (getDialogues().inDialogue() && getDialogues().isPendingContinuation()) {
-                    getDialogues().clickContinue();
-                } else {
+                if (getDialogues().inDialogue()){
+                    if(getDialogues().isPendingContinuation()){
+                        getDialogues().clickContinue();
+                    }
+                }  else {
                     talkToRomeo();
                 }
                 break;
