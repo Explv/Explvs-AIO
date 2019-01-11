@@ -9,7 +9,6 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RomeoAndJuliet extends QuestActivity {
