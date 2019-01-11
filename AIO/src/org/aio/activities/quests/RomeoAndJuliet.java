@@ -80,7 +80,7 @@ public class RomeoAndJuliet extends QuestActivity {
                     if (getDialogues().isPendingContinuation()) {
                         getDialogues().clickContinue();
                     }
-                } else if (getTabs().getOpen() == Tab.QUEST) {
+                } else {
                     deliverCadavaPotion();
                 }
                 break;
