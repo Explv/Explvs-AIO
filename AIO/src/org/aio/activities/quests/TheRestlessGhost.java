@@ -31,6 +31,7 @@ public class TheRestlessGhost extends QuestActivity {
     };
 
     private static final int INVENTORY_SLOTS_REQUIRED = 4;
+    private static boolean shouldExit = true;
 
     private static final String[] ITEMS_NEEDED = {
             "Ghost's skull",
@@ -46,6 +47,11 @@ public class TheRestlessGhost extends QuestActivity {
     @Override
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
+    }
+
+    @Override
+    public boolean canExit() {
+        return shouldExit;
     }
 
     @Override
@@ -73,8 +79,11 @@ public class TheRestlessGhost extends QuestActivity {
                     break;
                 case 5:
                     // Make sure we are not in the cut scene
-                    if (getWidgets().getWidgetContainingText("Quest").isVisible()) {
+                    if (!Tab.INVENTORY.isDisabled(bot)) {
+                        Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("You have completed the Restless Ghost Quest!").isVisible(), 15000, 1000);
+
                         log("Quest is complete");
+                        shouldExit = true;
                         isComplete = true;
                     }
                     break;
@@ -100,8 +109,9 @@ public class TheRestlessGhost extends QuestActivity {
 
     private void useSkull() throws InterruptedException {
         if("Ghost's skull".equals(getInventory().getSelectedItemName())) {
+            shouldExit = false;
             if(getObjects().closest("Coffin").interact("Use")){
-                Sleep.sleepUntil(() -> getProgress() != 4, 15000, 1500);
+                Sleep.sleepUntil(() -> Tab.INVENTORY.isDisabled(bot), 15000, 1500);
             }
         } else {
             if(getInventory().interact("Use", "Ghost's skull")) {
