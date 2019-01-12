@@ -47,8 +47,10 @@ public class QuestTaskPanel implements TaskPanel {
                 return new QuestTask(new RuneMysteries(), (Quest) questSelector.getSelectedItem());
 	        case COOKS_ASSISTANT:
 	            return new QuestTask(new CooksAssistant(), (Quest) questSelector.getSelectedItem());
-	        case ROMEO_AND_JULIET:
-	            return new QuestTask(new RomeoAndJuliet(), (Quest) questSelector.getSelectedItem());
+            case ROMEO_AND_JULIET:
+                return new QuestTask(new RomeoAndJuliet(), (Quest) questSelector.getSelectedItem());
+            case THE_RESTLESS_GHOST:
+                return new QuestTask(new TheRestlessGhost(), (Quest) questSelector.getSelectedItem());
         }
         return null;
     }
