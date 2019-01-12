@@ -32,7 +32,7 @@ public class GrandExchangeHelper extends MethodProvider {
     public static Map<String, Integer> getAllGEItems() {
         if (allGEItems.isEmpty()) {
 
-            File summaryFile = Paths.get(System.getProperty("user.home"), "osbot", "data", "explv_aio_rsbuddy_summary.json").toFile();
+            File summaryFile = Paths.get(System.getProperty("user.home"), "OSBot", "Data", "explv_aio_rsbuddy_summary.json").toFile();
 
             try {
                 if (!summaryFile.exists()) {
