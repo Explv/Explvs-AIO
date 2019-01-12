@@ -53,7 +53,7 @@ public class RomeoAndJuliet extends QuestActivity {
             return;
         }
 
-        if (getTabs().getOpen() != Tab.INVENTORY) {
+        if (!Tab.INVENTORY.isDisabled(bot) && getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
             return;
         }
@@ -80,7 +80,7 @@ public class RomeoAndJuliet extends QuestActivity {
                     if (getDialogues().isPendingContinuation()) {
                         getDialogues().clickContinue();
                     }
-                } else if (getTabs().getOpen() == Tab.QUEST) {
+                } else {
                     deliverCadavaPotion();
                 }
                 break;
