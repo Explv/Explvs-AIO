@@ -1,9 +1,6 @@
 package org.aio.gui.task_panels;
 
-import org.aio.activities.quests.CooksAssistant;
-import org.aio.activities.quests.Quest;
-import org.aio.activities.quests.RomeoAndJuliet;
-import org.aio.activities.quests.RuneMysteries;
+import org.aio.activities.quests.*;
 import org.aio.tasks.QuestTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -48,8 +45,10 @@ public class QuestTaskPanel implements TaskPanel {
 	            return new QuestTask(new RuneMysteries(), (Quest) questSelector.getSelectedItem());
 	        case COOKS_ASSISTANT:
 	            return new QuestTask(new CooksAssistant(), (Quest) questSelector.getSelectedItem());
-	        case ROMEO_AND_JULIET:
-	            return new QuestTask(new RomeoAndJuliet(), (Quest) questSelector.getSelectedItem());
+            case ROMEO_AND_JULIET:
+                return new QuestTask(new RomeoAndJuliet(), (Quest) questSelector.getSelectedItem());
+            case THE_RESTLESS_GHOST:
+                return new QuestTask(new TheRestlessGhost(), (Quest) questSelector.getSelectedItem());
         }
         return null;
     }
