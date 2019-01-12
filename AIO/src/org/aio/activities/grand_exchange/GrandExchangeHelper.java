@@ -222,9 +222,13 @@ public class GrandExchangeHelper extends MethodProvider {
                     if (getGrandExchange().setOfferPrice(price)) {
                         Sleep.sleepUntil(() -> getGrandExchange().getOfferPrice() == price, 3000);
                     }
-                } else if (getGrandExchange().getOfferQuantity() != quantity) {
+                } else if (getGrandExchange().getOfferQuantity() != quantity && getInventory().getAmount(itemName) == quantity) {
                     if (getGrandExchange().setOfferQuantity(quantity)) {
                         Sleep.sleepUntil(() -> getGrandExchange().getOfferQuantity() == quantity, 3000);
+                    }
+                } else if (getGrandExchange().getOfferQuantity() < getInventory().getAmount(itemName)) {
+                    if (getGrandExchange().setOfferQuantity((int)getInventory().getAmount(itemName))) {
+                        Sleep.sleepUntil(() -> getGrandExchange().getOfferQuantity() == (int)getInventory().getAmount(itemName), 3000);
                     }
                 } else if (getGrandExchange().confirm()) {
                     setFinished();

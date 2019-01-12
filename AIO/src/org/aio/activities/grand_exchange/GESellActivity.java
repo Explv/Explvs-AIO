@@ -1,6 +1,5 @@
 package org.aio.activities.grand_exchange;
 
-import org.aio.activities.activity.Activity;
 import org.aio.util.Sleep;
 import org.osbot.rs07.api.Bank;
 
@@ -25,11 +24,11 @@ public class GESellActivity extends GEActivity {
             return;
         } else if(!exchangeHelper.playerIsAtGE()){
             exchangeHelper.walkToGE();
+        } else if (getInventory().contains(geItem.getName()) && getBank().getAmount(geItem.getName()) == 0) {
+            box = exchangeHelper.createSellOffer(geItem.getName(), geItem.getPrice(), geItem.getQuantity());
         } else if(getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
             getItemFromBank();
-        } else {
-            box = exchangeHelper.createSellOffer(geItem.getName(), geItem.getPrice(), geItem.getQuantity());
-        }
+        } else setFailed();
     }
 
     private void getItemFromBank() throws InterruptedException {
@@ -40,6 +39,10 @@ public class GESellActivity extends GEActivity {
             getBank().enableMode(Bank.BankMode.WITHDRAW_NOTE);
         else if (getBank().getAmount(geItem.getName()) >= geItem.getQuantity())
             getBank().withdraw(geItem.getName(), geItem.getQuantity());
+        else if (getBank().getAmount(geItem.getName()) == 0)
+            setFailed();
+        else if (getBank().getAmount(geItem.getName()) < geItem.getQuantity())
+            getBank().withdrawAll(geItem.getName());
         else setFailed();
     }
 
