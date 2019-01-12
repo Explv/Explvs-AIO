@@ -131,6 +131,8 @@ public class ItemReqBanking extends Banking {
                         setFinished();
                     } else if (!getBank().isOpen()) {
                         getBank().open();
+                    } else if (getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM) {
+                        getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
                     } else if (getInventory().contains(item -> !equipableItemReqFilter.match(item))) {
                         getBank().depositAllExcept(equipableItemReqFilter);
                     } else if (getEquipment().contains(item -> !equipableItemReqFilter.match(item))) {
@@ -164,6 +166,8 @@ public class ItemReqBanking extends Banking {
                         setFinished();
                     } else if (getBank().isOpen()) {
                         getBank().close();
+                    } else if (getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM) {
+                        getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
                     } else {
                         ItemReq itemReq = equipableItemReqQueue.peek();
                         if (getInventory().contains(itemReq.getName())) {
@@ -187,6 +191,8 @@ public class ItemReqBanking extends Banking {
             public int execute() throws InterruptedException {
                 if (!getBank().isOpen()) {
                     getBank().open();
+                } else if (getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM) {
+                    getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
                 } else if (getInventory().contains(item -> !itemReqFilter.match(item))) {
                     getBank().depositAllExcept(itemReqFilter);
                 } else if (nonEquipableItemReqs.isEmpty()) {
