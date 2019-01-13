@@ -4,7 +4,7 @@ public enum CookingObject {
 
     FIRE ("Fire"),
     STOVE ("Stove", CookingType.CAKE, CookingType.MEAT, CookingType.PIE, CookingType.PIZZA),
-    RANGE ("Range", CookingType.CAKE, CookingType.MEAT, CookingType.PIE, CookingType.PIZZA);
+    RANGE ("Cooking range", CookingType.CAKE, CookingType.MEAT, CookingType.PIE, CookingType.PIZZA);
 
     String name;
     public CookingType[] allowedCookingTypes;
