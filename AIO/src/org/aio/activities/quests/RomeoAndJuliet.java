@@ -154,6 +154,9 @@ public class RomeoAndJuliet extends QuestActivity {
     private void getItemFromRandomObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
         if (place.contains(myPlayer())) {
             List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(objectName) && o.hasAction(interaction));
+            if(objects.isEmpty()){
+                return;
+            }
             RS2Object object = objects.get(random(0,objects.size()-1));
             if (object != null && object.interact(interaction)) {
                 Sleep.sleepUntil(() -> getInventory().contains(itemName), 15000);
