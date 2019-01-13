@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v3.0", info = "AIO", version = 3.0, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v3.1", info = "AIO", version = 3.1, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
