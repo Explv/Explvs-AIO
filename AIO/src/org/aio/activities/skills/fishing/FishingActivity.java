@@ -69,34 +69,9 @@ public class FishingActivity extends Activity {
         } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
             getInventory().dropAll(item -> item.getName().startsWith("Raw "));
         } else if (!location.location.getArea().contains(myPosition())) {
-            if (location == FishingLocation.MUSA_POINT) {
-                walkToMusaPoint();
-            } else {
-                getWalking().webWalk(location.location.getArea());
-            }
+            getWalking().webWalk(location.location.getArea());
         } else if (!myPlayer().isInteracting(currentFishingSpot) || getDialogues().isPendingContinuation()){
             fish();
-        }
-    }
-
-    private void walkToMusaPoint() throws InterruptedException {
-        Optional<RS2Widget> charterWidget = musaPointCharterWidget.get(getWidgets()).filter(RS2Widget::isVisible);
-
-        if (getDialogues().isPendingContinuation()) {
-            getDialogues().clickContinue();
-        } else if (charterWidget.isPresent()) {
-            if (charterWidget.get().interact()) {
-                sleep(2000);
-            }
-        } else {
-            WebWalkEvent webWalkEvent = new WebWalkEvent(FishingLocation.MUSA_POINT.location.getArea());
-            webWalkEvent.setBreakCondition(new Condition() {
-                @Override
-                public boolean evaluate() {
-                    return musaPointCharterWidget.get(getWidgets()).filter(RS2Widget::isVisible).isPresent();
-                }
-            });
-            execute(webWalkEvent);
         }
     }
 
