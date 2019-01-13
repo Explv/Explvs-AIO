@@ -12,6 +12,7 @@ import org.osbot.rs07.api.ui.Message;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.listener.MessageListener;
 
+import java.awt.*;
 import java.util.stream.Stream;
 
 public class CooksAssistant extends QuestActivity {
@@ -23,12 +24,6 @@ public class CooksAssistant extends QuestActivity {
     private static final Area WHEAT = new Area(3162, 3295, 3157, 3298);
     private static final Area UPPER = new Area(new Position(3168, 3305, 2), new Position(3165, 3308, 2));
     private static final Area BIN = new Area(3165, 3305, 3168, 3308);
-
-    private static final String[] COOK_OPTIONS = {
-            "What's wrong?",
-            "I'm always happy to help a cook in distress.",
-            "Actually, I know where to find this stuff."
-    };
 
     private static final int INVENTORY_SLOTS_REQUIRED = 7;
 
@@ -62,6 +57,14 @@ public class CooksAssistant extends QuestActivity {
 
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
 
+    private final DialogueCompleter cookDialogueCompleter = new DialogueCompleter(
+            "Cook",
+            COOK_ROOM,
+            "What's wrong?",
+            "I'm always happy to help a cook in distress.",
+            "Actually, I know where to find this stuff."
+    );
+
     public CooksAssistant() {
         super(Quest.COOKS_ASSISTANT);
     }
@@ -69,6 +72,7 @@ public class CooksAssistant extends QuestActivity {
     @Override
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
+        cookDialogueCompleter.exchangeContext(getBot());
         getBot().addMessageListener(MILL_MESSAGE_LISTENER);
     }
 
@@ -86,11 +90,11 @@ public class CooksAssistant extends QuestActivity {
         } else {
             switch (getProgress()) {
                 case 0:
-                    talkToCook();
+                    cookDialogueCompleter.run();
                     break;
                 case 1:
                     if (hasRequiredItems()) {
-                        talkToCook();
+                        cookDialogueCompleter.run();
                     } else {
                         getItemsNeeded();
                     }
@@ -201,20 +205,6 @@ public class CooksAssistant extends QuestActivity {
             }
         } else {
             getWalking().webWalk(place);
-        }
-    }
-
-    private void talkToCook() throws InterruptedException {
-        NPC cook = getNpcs().closest("Cook");
-
-        if (!COOK_ROOM.contains(myPosition())) {
-            getWalking().webWalk(COOK_ROOM);
-        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(cook)) {
-            if (cook.interact("Talk-to")) {
-                Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(cook), 5000);
-            }
-        } else {
-            getDialogues().completeDialogue(COOK_OPTIONS);
         }
     }
 
