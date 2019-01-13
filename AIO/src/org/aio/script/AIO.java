@@ -9,6 +9,8 @@ import org.aio.paint.Paint;
 import org.aio.tasks.Task;
 import org.aio.tasks.task_executor.TaskExecutor;
 import org.aio.util.SkillTracker;
+import org.aio.util.event.EnableFixedModeEvent;
+import org.aio.util.event.ToggleRoofsHiddenEvent;
 import org.aio.util.event.ToggleShiftDropEvent;
 import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Tab;
@@ -22,15 +24,16 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v2.9", info = "AIO", version = 2.9, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v3.0", info = "AIO", version = 3.0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
     private Paint paint;
     private MouseTrail mouseTrail;
     private SkillTracker skillTracker;
-
     private TaskExecutor taskExecutor;
+
+    private boolean osrsClientIsConfigured;
 
     @Override
     public void onStart() throws InterruptedException {
@@ -89,8 +92,6 @@ public class AIO extends Script {
 
     /**
      * Load the task list from the command line
-     *
-     * Note: Does not currently support looping
      */
     private List<Task> loadTasksFromCLI() {
         String parameter = getParameters().trim();
@@ -115,7 +116,6 @@ public class AIO extends Script {
 
     /**
      * Load the task list from the GUI
-     *
      * @throws InterruptedException
      */
     private List<Task> loadTasksFromGUI() throws InterruptedException {
@@ -139,7 +139,9 @@ public class AIO extends Script {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (taskExecutor.isComplete()) {
+        if (!osrsClientIsConfigured) {
+            osrsClientIsConfigured = configureOSRSClient();
+        } else if (taskExecutor.isComplete()) {
             stop(true);
         } else if (!Tab.SETTINGS.isDisabled(getBot()) && !getSettings().isShiftDropActive()) {
             execute(new ToggleShiftDropEvent());
@@ -147,6 +149,19 @@ public class AIO extends Script {
             taskExecutor.run();
         }
         return random(200, 300);
+    }
+
+    private boolean configureOSRSClient() {
+        if (!EnableFixedModeEvent.isFixedModeEnabled(getBot().getMethods())) {
+            execute(new EnableFixedModeEvent());
+        } else if (!getSettings().areRoofsEnabled()) {
+            execute(new ToggleRoofsHiddenEvent());
+        } else if (!getSettings().isShiftDropActive()) {
+            execute(new ToggleShiftDropEvent());
+        } else {
+            return true;
+        }
+        return false;
     }
 
     @Override
