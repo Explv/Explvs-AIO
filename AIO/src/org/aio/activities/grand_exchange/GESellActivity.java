@@ -1,21 +1,29 @@
 package org.aio.activities.grand_exchange;
 
-import org.aio.util.Sleep;
-import org.osbot.rs07.api.Bank;
+import org.aio.activities.banking.DepositAllBanking;
+import org.aio.activities.banking.ItemReqBanking;
+import org.aio.util.item_requirement.ItemReq;
 
 public class GESellActivity extends GEActivity {
 
     private GrandExchangeHelper exchangeHelper;
     private final GEItem geItem;
+    private DepositAllBanking depositAllBanking;
+    private ItemReqBanking itemReqBanking;
+    private boolean checkedBank;
 
     public GESellActivity(final GEItem geItem) {
         this.geItem = geItem;
+        depositAllBanking = new DepositAllBanking();
+        itemReqBanking = new ItemReqBanking(new ItemReq(geItem.getName(), 1, geItem.getQuantity()).setNoted());
     }
 
     @Override
     public void onStart() {
         this.exchangeHelper = new GrandExchangeHelper();
         this.exchangeHelper.exchangeContext(getBot());
+        itemReqBanking.exchangeContext(getBot());
+        depositAllBanking.exchangeContext(getBot());
     }
 
     @Override
@@ -24,31 +32,19 @@ public class GESellActivity extends GEActivity {
             return;
         } else if(!exchangeHelper.playerIsAtGE()){
             exchangeHelper.walkToGE();
-        } else if (getInventory().contains(geItem.getName()) && getBank().getAmount(geItem.getName()) == 0) {
+        } else if(!checkedBank && getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
+            if (!getInventory().isEmpty()) {
+                depositAllBanking.run();
+            } else {
+                itemReqBanking.run();
+                if (itemReqBanking.hasFailed()) {
+                    setFailed();
+                } else {
+                    checkedBank = true;
+                }
+            }
+        } else {
             box = exchangeHelper.createSellOffer(geItem.getName(), geItem.getPrice(), geItem.getQuantity());
-        } else if(getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
-            getItemFromBank();
-        } else setFailed();
-    }
-
-    private void getItemFromBank() throws InterruptedException {
-
-        if (!getBank().isOpen()) openBank();
-        else if (!getInventory().isEmpty()) getBank().depositAll();
-        else if (geItem.getQuantity() > 28 && getBank().getWithdrawMode() != Bank.BankMode.WITHDRAW_NOTE)
-            getBank().enableMode(Bank.BankMode.WITHDRAW_NOTE);
-        else if (getBank().getAmount(geItem.getName()) >= geItem.getQuantity())
-            getBank().withdraw(geItem.getName(), geItem.getQuantity());
-        else if (getBank().getAmount(geItem.getName()) == 0)
-            setFailed();
-        else if (getBank().getAmount(geItem.getName()) < geItem.getQuantity())
-            getBank().withdrawAll(geItem.getName());
-        else setFailed();
-    }
-
-    private void openBank() throws InterruptedException {
-        if (getBank().open()) {
-            Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
         }
     }
 
