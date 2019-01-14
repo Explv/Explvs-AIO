@@ -8,6 +8,7 @@ import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
+import java.util.List;
 
 public class RomeoAndJuliet extends QuestActivity {
 
@@ -53,7 +54,7 @@ public class RomeoAndJuliet extends QuestActivity {
             return;
         }
 
-        if (getTabs().getOpen() != Tab.INVENTORY) {
+        if (!Tab.INVENTORY.isDisabled(bot) && getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
             return;
         }
@@ -80,7 +81,7 @@ public class RomeoAndJuliet extends QuestActivity {
                     if (getDialogues().isPendingContinuation()) {
                         getDialogues().clickContinue();
                     }
-                } else if (getTabs().getOpen() == Tab.QUEST) {
+                } else {
                     deliverCadavaPotion();
                 }
                 break;
@@ -109,7 +110,7 @@ public class RomeoAndJuliet extends QuestActivity {
         } else if (getInventory().contains("Cadava berries")) {
             talkToApothecary();
         } else {
-            getItemFromObject(BERRIES, "Cadava berries", "Cadava bush", "Pick-from");
+            getItemFromRandomObject(BERRIES, "Cadava berries", "Cadava bush", "Pick-from");
         }
     }
 
@@ -150,9 +151,13 @@ public class RomeoAndJuliet extends QuestActivity {
         }
     }
 
-    private void getItemFromObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
+    private void getItemFromRandomObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
         if (place.contains(myPlayer())) {
-            RS2Object object = getObjects().closest(o -> o.getName().equals(objectName) && o.hasAction(interaction));
+            List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(objectName) && o.hasAction(interaction));
+            if(objects.isEmpty()){
+                return;
+            }
+            RS2Object object = objects.get(random(0,objects.size()-1));
             if (object != null && object.interact(interaction)) {
                 Sleep.sleepUntil(() -> getInventory().contains(itemName), 15000);
             }

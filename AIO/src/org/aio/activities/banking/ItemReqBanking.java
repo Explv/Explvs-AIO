@@ -214,7 +214,11 @@ public class ItemReqBanking extends Banking {
         int amountOnPlayer = (int) itemReq.getAmount(getInventory(), getEquipment());
         int targetAmount = reqTargetAmountMap.get(itemReq);
 
-        if (targetAmount != ItemReq.QUANTITY_ALL && amountOnPlayer > targetAmount) {
+        if (itemReq.isNoted() && getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_NOTE) {
+            getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_NOTE);
+        } else if (!itemReq.isNoted() && getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM) {
+            getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
+        } else if (targetAmount != ItemReq.QUANTITY_ALL && amountOnPlayer > targetAmount) {
             int excessAmount = amountOnPlayer - reqTargetAmountMap.get(itemReq);
             getBank().deposit(itemReq.getName(), excessAmount);
         } else if (targetAmount == ItemReq.QUANTITY_ALL || amountOnPlayer < reqTargetAmountMap.get(itemReq)) {
@@ -227,7 +231,6 @@ public class ItemReqBanking extends Banking {
                     return false;
                 }
             }
-
             if (targetAmount == ItemReq.QUANTITY_ALL) {
                 getBank().withdrawAll(itemReq.getName());
             } else {

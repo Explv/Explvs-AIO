@@ -32,7 +32,7 @@ public class GrandExchangeHelper extends MethodProvider {
     public static Map<String, Integer> getAllGEItems() {
         if (allGEItems.isEmpty()) {
 
-            File summaryFile = Paths.get(System.getProperty("user.home"), "osbot", "data", "explv_aio_rsbuddy_summary.json").toFile();
+            File summaryFile = Paths.get(System.getProperty("user.home"), "OSBot", "Data", "explv_aio_rsbuddy_summary.json").toFile();
 
             try {
                 if (!summaryFile.exists()) {
@@ -194,6 +194,13 @@ public class GrandExchangeHelper extends MethodProvider {
 
     public GrandExchange.Box createSellOffer(final String itemName, final int price, final int quantity) {
         GrandExchangeEvent grandExchangeEvent = new GrandExchangeEvent() {
+            private int sellQuantity;
+
+            @Override
+            public void onStart() {
+                sellQuantity = (int) Math.min(quantity, getInventory().getAmount(itemName));
+            }
+
             @Override
             public int execute() throws InterruptedException {
                 if (!getGrandExchange().isOpen()) {
@@ -222,9 +229,9 @@ public class GrandExchangeHelper extends MethodProvider {
                     if (getGrandExchange().setOfferPrice(price)) {
                         Sleep.sleepUntil(() -> getGrandExchange().getOfferPrice() == price, 3000);
                     }
-                } else if (getGrandExchange().getOfferQuantity() != quantity) {
-                    if (getGrandExchange().setOfferQuantity(quantity)) {
-                        Sleep.sleepUntil(() -> getGrandExchange().getOfferQuantity() == quantity, 3000);
+                } else if (getGrandExchange().getOfferQuantity() != sellQuantity) {
+                    if (getGrandExchange().setOfferQuantity(sellQuantity)) {
+                        Sleep.sleepUntil(() -> getGrandExchange().getOfferQuantity() == sellQuantity, 3000);
                     }
                 } else if (getGrandExchange().confirm()) {
                     setFinished();
