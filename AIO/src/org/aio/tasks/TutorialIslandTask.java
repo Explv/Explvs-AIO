@@ -12,7 +12,7 @@ public class TutorialIslandTask extends Task {
 
     @Override
     public boolean isComplete() {
-        return getConfigs().get(281) == 1000;
+        return getConfigs().get(281) == 1000 && myPlayer().isVisible();
     }
 
     @Override
