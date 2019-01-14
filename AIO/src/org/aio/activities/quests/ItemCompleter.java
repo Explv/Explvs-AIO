@@ -111,6 +111,7 @@ public class ItemCompleter extends Executable {
     }
 
     private void takeItemFromObject(RS2Object object){
+        RS2Object interactObject = object;
         if(entitySelector == EntitySelector.RANDOM){
             List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
 
@@ -119,16 +120,17 @@ public class ItemCompleter extends Executable {
                 return;
             }
 
-            object = objects.get(random(objects.size()-1));
+            interactObject = objects.get(random(objects.size()-1));
         }
 
-        if (object.interact(interaction)) {
+        if (interactObject.interact(interaction)) {
             Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
             Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
         }
     }
 
     private void takeItemFromNPC(NPC npc){
+        NPC interactNPC = npc;
         if(entitySelector == EntitySelector.RANDOM){
             List<NPC> npcs = getNpcs().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
 
@@ -137,10 +139,10 @@ public class ItemCompleter extends Executable {
                 return;
             }
 
-            npc = npcs.get(random(npcs.size()-1));
+            interactNPC = npcs.get(random(npcs.size()-1));
         }
 
-        if (npc.interact(interaction)) {
+        if (interactNPC.interact(interaction)) {
             Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
             Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
         }

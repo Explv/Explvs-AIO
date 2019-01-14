@@ -2,7 +2,6 @@ package org.aio.activities.quests;
 
 import org.aio.util.Executable;
 import org.aio.util.Sleep;
-import org.osbot.rs07.api.Walking;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.NPC;

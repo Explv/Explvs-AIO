@@ -38,14 +38,6 @@ public class SheepShearer extends QuestActivity {
             "I'm something of an expert actually!"
     );
 
-    private final DialogueCompleter farmerBackDialogueCompleter = new DialogueCompleter(
-            "Fred the Farmer",
-            FARMER_AREA,
-            "I'm looking for a quest.",
-            "Yes okay. I can do that.",
-            "Of course!",
-            "I'm something of an expert actually!"
-    );
     private final ItemCompleter shearsItemCompleter = new ItemCompleter("Shears", FARMER_AREA);
 
     private final ItemCompleter woolItemCompleter = new ItemCompleter(
