@@ -65,6 +65,42 @@ public class CooksAssistant extends QuestActivity {
             "Actually, I know where to find this stuff."
     );
 
+    private final ItemCompleter potItemCompleter = new ItemCompleter(
+            "Pot",
+            COOK_ROOM
+    );
+
+    private final ItemCompleter bucketItemCompleter = new ItemCompleter(
+            "Bucket",
+            BASEMENT
+    );
+
+    private final ItemCompleter milkItemCompleter = new ItemCompleter(
+            "Dairy COW",
+            "Bucket of milk",
+            "Milk",
+            COW
+    );
+
+    private final ItemCompleter eggItemCompleter = new ItemCompleter(
+            "Egg",
+            CHICKEN
+    );
+
+    private final ItemCompleter wheatItemCompleter = new ItemCompleter(
+            "Wheat",
+            "Grain",
+            "Pick",
+            WHEAT
+    );
+
+    private final ItemCompleter flourItemCompleter = new ItemCompleter(
+            "Flour BIN",
+            "Pot of flour",
+            "Empty",
+            BIN
+    );
+
     public CooksAssistant() {
         super(Quest.COOKS_ASSISTANT);
     }
@@ -73,6 +109,12 @@ public class CooksAssistant extends QuestActivity {
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
         cookDialogueCompleter.exchangeContext(getBot());
+        potItemCompleter.exchangeContext(getBot());
+        bucketItemCompleter.exchangeContext(getBot());
+        milkItemCompleter.exchangeContext(getBot());
+        eggItemCompleter.exchangeContext(getBot());
+        wheatItemCompleter.exchangeContext(getBot());
+        flourItemCompleter.exchangeContext(getBot());
         getBot().addMessageListener(MILL_MESSAGE_LISTENER);
     }
 
@@ -117,18 +159,18 @@ public class CooksAssistant extends QuestActivity {
 
     private void getItemsNeeded() throws InterruptedException {
         if (!getInventory().contains("Pot", "Pot of flour", "Bucket of milk")) {
-            getGroundItem(COOK_ROOM, "Pot");
+            potItemCompleter.run();
         } else if (!getInventory().contains("Bucket", "Bucket of milk")) {
-            getGroundItem(BASEMENT, "Bucket");
+            bucketItemCompleter.run();
         } else if (getInventory().contains("Bucket") && !getInventory().contains("Bucket of milk")) {
-            getItemFromObject(COW, "Bucket of milk", "Dairy COW", "Milk");
+            milkItemCompleter.run();
         } else if (!getInventory().contains("Egg")) {
-            getGroundItem(CHICKEN, "Egg");
+            eggItemCompleter.run();
         } else if (!getInventory().contains("Pot of flour")) {
 
             // Get grain
             if (!put && !getInventory().contains("Grain")) {
-                getItemFromObject(WHEAT, "Grain", "Wheat", "Pick");
+                wheatItemCompleter.run();
             }
 
             // Put grain
@@ -143,7 +185,7 @@ public class CooksAssistant extends QuestActivity {
 
             // Get flour
             if (operated && put) {
-                getItemFromObject(BIN, "Pot of flour", "Flour BIN", "Empty");
+                flourItemCompleter.run();
             }
         }
     }
@@ -183,28 +225,6 @@ public class CooksAssistant extends QuestActivity {
             if (controls.interact("Operate")) {
                 Sleep.sleepUntil(() -> operated, 10000);
             }
-        }
-    }
-
-    private void getItemFromObject(Area place, String itemName, String objectName, String interaction) throws InterruptedException {
-        if (place.contains(myPlayer())) {
-            RS2Object object = getObjects().closest(objectName);
-            if (object != null && object.interact(interaction)) {
-                Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
-            }
-        } else {
-            getWalking().webWalk(place);
-        }
-    }
-
-    private void getGroundItem(Area place, String itemName) throws InterruptedException {
-        if (place.contains(myPosition())) {
-            GroundItem itemToGet = getGroundItems().closest(itemName);
-            if (itemToGet != null && itemToGet.interact("Take")) {
-                Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
-            }
-        } else {
-            getWalking().webWalk(place);
         }
     }
 
