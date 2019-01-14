@@ -149,7 +149,7 @@ public class ItemCompleter extends Executable {
     private void takeItemFromGround(WalkType useForcedWalkType) {
         GroundItem item = getGroundItems().closest(itemName);
         log(itemName);
-        if (item == null || !item.isVisible() || !item.isOnScreen()) {
+        if (item == null || !area.contains(item)) {
             doWalk(useForcedWalkType);
             return;
         }
