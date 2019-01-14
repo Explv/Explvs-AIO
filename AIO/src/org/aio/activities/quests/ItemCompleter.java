@@ -13,11 +13,11 @@ import java.util.List;
 public class ItemCompleter extends Executable {
 
     private final String itemName;
-    private String objectName;
+    private String entityName;
     private final String interaction;
     private Area area;
     private List<Position> path;
-    private ObjectSelector objectSelector;
+    private EntitySelector entitySelector;
 
     /*
         Item from Ground Constructor
@@ -25,7 +25,7 @@ public class ItemCompleter extends Executable {
     public ItemCompleter(final String itemName){
         this.itemName = itemName;
         this.interaction = "Take";
-        this.objectSelector = ObjectSelector.CLOSEST;
+        this.entitySelector = EntitySelector.CLOSEST;
     }
 
     public ItemCompleter(final String itemName, final Area area){
@@ -39,37 +39,37 @@ public class ItemCompleter extends Executable {
     }
 
     /*
-        Item from Object Constructor
+        Item from Entity Constructor
      */
-    public ItemCompleter(final String objectName, final String itemName, final String interaction){
+    public ItemCompleter(final String entityName, final String itemName, final String interaction){
         this.itemName = itemName;
-        this.objectName = objectName;
+        this.entityName = entityName;
         this.interaction = interaction;
-        this.objectSelector = ObjectSelector.CLOSEST;
+        this.entitySelector = EntitySelector.CLOSEST;
     }
 
-    public ItemCompleter(final String objectName, final String itemName, final String interaction, final ObjectSelector objectSelector){
-        this(objectName, itemName, interaction);
-        this.objectSelector = objectSelector;
+    public ItemCompleter(final String entityName, final String itemName, final String interaction, final EntitySelector entitySelector){
+        this(entityName, itemName, interaction);
+        this.entitySelector = entitySelector;
     }
 
-    public ItemCompleter(final String objectName, final String itemName, final String interaction, final Area area){
-        this(objectName, itemName, interaction);
+    public ItemCompleter(final String entityName, final String itemName, final String interaction, final Area area){
+        this(entityName, itemName, interaction);
         this.area = area;
     }
 
-    public ItemCompleter(final String objectName, final String itemName, final String interaction, final Area area, final ObjectSelector objectSelector){
-        this(objectName, itemName, interaction, objectSelector);
+    public ItemCompleter(final String entityName, final String itemName, final String interaction, final Area area, final EntitySelector entitySelector){
+        this(entityName, itemName, interaction, entitySelector);
         this.area = area;
     }
 
-    public ItemCompleter(final String objectName, final String itemName, final String interaction, final Area area, final List<Position> path){
-        this(objectName, itemName, interaction, area);
+    public ItemCompleter(final String entityName, final String itemName, final String interaction, final Area area, final List<Position> path){
+        this(entityName, itemName, interaction, area);
         this.path = path;
     }
 
-    public ItemCompleter(final String objectName, final String itemName, final String interaction, final Area area, final List<Position> path, final ObjectSelector objectSelector){
-        this(objectName, itemName, interaction, area, objectSelector);
+    public ItemCompleter(final String entityName, final String itemName, final String interaction, final Area area, final List<Position> path, final EntitySelector entitySelector){
+        this(entityName, itemName, interaction, area, entitySelector);
         this.path = path;
     }
     /*
@@ -82,36 +82,78 @@ public class ItemCompleter extends Executable {
     }
 
     public void run(WalkType useForcedWalkType) throws InterruptedException {
-        if(objectName != null){
-            takeItemFromObject(useForcedWalkType);
+        if(entityName != null){
+            log("Entity");
+            takeItemFromEntity(useForcedWalkType);
         }else{
+
+            log("Ground");
             takeItemFromGround(useForcedWalkType);
         }
     }
 
-    private void takeItemFromObject(WalkType useForcedWalkType){
-        RS2Object object = getObjects().closest(o -> o.getName().equals(objectName) && o.hasAction(interaction));
-        List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(objectName) && o.hasAction(interaction));
+    private void takeItemFromEntity(WalkType useForcedWalkType){
+        RS2Object object = getObjects().closest(o -> o.getName().equals(entityName) && o.hasAction(interaction));
+        NPC npc = getNpcs().closest(o -> o.getName().equals(entityName) && o.hasAction(interaction));
 
-        if ((object == null && objectSelector == ObjectSelector.CLOSEST)||(objects.isEmpty() && objectSelector == ObjectSelector.RANDOM)) {
+        if (object == null && npc == null) {
             doWalk(useForcedWalkType);
+            return;
         }
 
-        if(objectSelector == ObjectSelector.RANDOM){
+        if(object != null){
+            log("Object");
+            takeItemFromObject(object);
+        }else{
+            log("NPC");
+            takeItemFromNPC(npc);
+        }
+    }
+
+    private void takeItemFromObject(RS2Object object){
+        if(entitySelector == EntitySelector.RANDOM){
+            List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
+
+            if(objects.isEmpty()){
+                log("[ITEM-COMPLETER]Object was found but now its not in the list?");
+                return;
+            }
+
             object = objects.get(random(objects.size()-1));
         }
 
         if (object.interact(interaction)) {
+            Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
+            Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
+        }
+    }
+
+    private void takeItemFromNPC(NPC npc){
+        if(entitySelector == EntitySelector.RANDOM){
+            List<NPC> npcs = getNpcs().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
+
+            if(npcs.isEmpty()){
+                log("[ITEM-COMPLETER]NPC was found but now its not in the list?");
+                return;
+            }
+
+            npc = npcs.get(random(npcs.size()-1));
+        }
+
+        if (npc.interact(interaction)) {
+            Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
             Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
         }
     }
 
     private void takeItemFromGround(WalkType useForcedWalkType) {
         GroundItem item = getGroundItems().closest(itemName);
-        if (item == null) {
+        log(itemName);
+        if (item == null || !item.isVisible() || !item.isOnScreen()) {
             doWalk(useForcedWalkType);
             return;
         }
+        log("Interact");
         if (item.interact(interaction)) {
             Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
         }
@@ -120,15 +162,15 @@ public class ItemCompleter extends Executable {
     private void doWalk(WalkType useForcedWalkType) {
         if (area != null && !area.contains(myPosition())) {
             if(path != null && useForcedWalkType == WalkType.PATH){
+                log("Walk Path");
                 getWalking().walkPath(path);
             }else{
+                log("Walk Area");
                 getWalking().webWalk(area);
             }
-            return;
         } else {
-            log(String.format("Could not find any Objects with name '%s'", objectName));
+            log("Failed to walk");
             setFailed();
-            return;
         }
     }
 
@@ -137,7 +179,7 @@ public class ItemCompleter extends Executable {
         WEBWALK
     }
 
-    enum ObjectSelector{
+    enum EntitySelector {
         CLOSEST,
         RANDOM
     }

@@ -37,7 +37,23 @@ public class SheepShearer extends QuestActivity {
             "Of course!",
             "I'm something of an expert actually!"
     );
+
+    private final DialogueCompleter farmerBackDialogueCompleter = new DialogueCompleter(
+            "Fred the Farmer",
+            FARMER_AREA,
+            "I'm looking for a quest.",
+            "Yes okay. I can do that.",
+            "Of course!",
+            "I'm something of an expert actually!"
+    );
     private final ItemCompleter shearsItemCompleter = new ItemCompleter("Shears", FARMER_AREA);
+
+    private final ItemCompleter woolItemCompleter = new ItemCompleter(
+            "Sheep",
+            "Wool",
+            "Shear",
+            SHEEP_AREA
+    );
 
 
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
@@ -51,6 +67,7 @@ public class SheepShearer extends QuestActivity {
         depositAllBanking.exchangeContext(getBot());
         farmerDialogueCompleter.exchangeContext(getBot());
         shearsItemCompleter.exchangeContext(getBot());
+        woolItemCompleter.exchangeContext(getBot());
         makeAllInterface = new MakeAllInterface("Ball of Wool");
         makeAllInterface.exchangeContext(getBot());
     }
@@ -70,6 +87,7 @@ public class SheepShearer extends QuestActivity {
                     if (hasRequiredItems()) {
                         farmerDialogueCompleter.run();
                     } else {
+                        log("fuck");
                         getItemsNeeded();
                     }
                     break;
@@ -93,21 +111,9 @@ public class SheepShearer extends QuestActivity {
         if (!getInventory().contains("Shears")) {
             shearsItemCompleter.run();
         } else if (!getInventory().contains("Ball of wool") && getInventory().getAmount("Wool") < 20) {
-            getItemFromNPC(SHEEP_AREA, "Shear");
+            woolItemCompleter.run();
         } else if (getInventory().getAmount("Ball of wool") < 20) {
             useObject(SPINNER_AREA, "Spin");
-        }
-    }
-
-    private void getItemFromNPC(Area place, String interaction) throws InterruptedException {
-        if (place.contains(myPlayer())) {
-            NPC npc = getNpcs().closest(n -> !n.hasAction("Talk-to") && n.hasAction(interaction) && place.contains(n));
-            if (npc != null && npc.interact(interaction)) {
-                Sleep.sleepUntil(() -> myPlayer().getAnimation() == 893, 15000);
-                Sleep.sleepUntil(() -> !myPlayer().isAnimating(), 10000);
-            }
-        } else {
-            getWalking().webWalk(place);
         }
     }
 

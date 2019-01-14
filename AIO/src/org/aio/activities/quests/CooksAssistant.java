@@ -76,7 +76,7 @@ public class CooksAssistant extends QuestActivity {
     );
 
     private final ItemCompleter milkItemCompleter = new ItemCompleter(
-            "Dairy COW",
+            "Dairy cow",
             "Bucket of milk",
             "Milk",
             COW
@@ -95,7 +95,7 @@ public class CooksAssistant extends QuestActivity {
     );
 
     private final ItemCompleter flourItemCompleter = new ItemCompleter(
-            "Flour BIN",
+            "Flour bin",
             "Pot of flour",
             "Empty",
             BIN

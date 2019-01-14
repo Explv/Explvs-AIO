@@ -2,11 +2,8 @@ package org.aio.activities.quests;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.DepositAllBanking;
-import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
-import org.osbot.rs07.api.model.NPC;
-import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
 
 import java.util.*;
@@ -62,7 +59,7 @@ public class RomeoAndJuliet extends QuestActivity {
             "Pick-from",
             BERRIES_AREA,
             BERRIES_PATH,
-            ItemCompleter.ObjectSelector.RANDOM
+            ItemCompleter.EntitySelector.RANDOM
     );
 
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(QUEST_ITEMS);
