@@ -1,6 +1,13 @@
 # Explvs-AIO
 This All-in-one(AIO) script is open source and free for all to use.
 
+## CLI Usage example
+
+Pass the name of your saved .config file as the script parameter:
+
+`java -jar "OSBot 2.5.31.jar" -login osbot_user:osbot_passwd -bot osrs_user:osrs_passwd:pin -script "\"Explv's AIO v3.2\":example.config"`
+
+
 ## Development
 Intellij is the recommended IDE of choice, but any can work. IntelliJ community edition is free on their website [https://www.jetbrains.com/idea/download/](here)
 
