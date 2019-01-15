@@ -83,11 +83,8 @@ public class ItemCompleter extends Executable {
 
     public void run(WalkType useForcedWalkType) throws InterruptedException {
         if(entityName != null){
-            log("Entity");
             takeItemFromEntity(useForcedWalkType);
         }else{
-
-            log("Ground");
             takeItemFromGround(useForcedWalkType);
         }
     }
@@ -102,10 +99,8 @@ public class ItemCompleter extends Executable {
         }
 
         if(object != null){
-            log("Object");
             takeItemFromObject(object);
         }else{
-            log("NPC");
             takeItemFromNPC(npc);
         }
     }
@@ -116,7 +111,13 @@ public class ItemCompleter extends Executable {
             List<RS2Object> objects = getObjects().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
 
             if(objects.isEmpty()){
-                log("[ITEM-COMPLETER]Object was found but now its not in the list?");
+                log(String.format("[Item-%s] Object %s was found but now not in the List Pos[%s,%s,%s]",
+                        itemName,
+                        object.getName(),
+                        object.getX(),
+                        object.getY(),
+                        object.getZ()
+                ));
                 return;
             }
 
@@ -124,6 +125,13 @@ public class ItemCompleter extends Executable {
         }
 
         if (interactObject.interact(interaction)) {
+            log(String.format("[Item-%s] Interact with %s Pos[%s,%s,%s]",
+                    itemName,
+                    interactObject.getName(),
+                    interactObject.getX(),
+                    interactObject.getY(),
+                    interactObject.getZ()
+            ));
             Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
             Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
         }
@@ -135,7 +143,13 @@ public class ItemCompleter extends Executable {
             List<NPC> npcs = getNpcs().filter(o -> o.getName().equals(entityName) && o.hasAction(interaction));
 
             if(npcs.isEmpty()){
-                log("[ITEM-COMPLETER]NPC was found but now its not in the list?");
+                log(String.format("[Item-%s] NPC %s was found but now not in the List Pos[%s,%s,%s]",
+                        itemName,
+                        interactNPC.getName(),
+                        interactNPC.getX(),
+                        interactNPC.getY(),
+                        interactNPC.getZ()
+                ));
                 return;
             }
 
@@ -143,6 +157,13 @@ public class ItemCompleter extends Executable {
         }
 
         if (interactNPC.interact(interaction)) {
+            log(String.format("[Item-%s] Interact with %s Pos[%s,%s,%s]",
+                    itemName,
+                    interactNPC.getName(),
+                    interactNPC.getX(),
+                    interactNPC.getY(),
+                    interactNPC.getZ()
+            ));
             Sleep.sleepUntil(() -> !myPlayer().isMoving(), 15000 );
             Sleep.sleepUntil(() -> getInventory().contains(itemName) && !myPlayer().isAnimating(), 15000);
         }
@@ -150,13 +171,18 @@ public class ItemCompleter extends Executable {
 
     private void takeItemFromGround(WalkType useForcedWalkType) {
         GroundItem item = getGroundItems().closest(itemName);
-        log(itemName);
         if (item == null || !area.contains(item)) {
             doWalk(useForcedWalkType);
             return;
         }
-        log("Interact");
+
         if (item.interact(interaction)) {
+            log(String.format("[Item-%s] Interact with Pos[%s,%s,%s]",
+                    itemName,
+                    item.getX(),
+                    item.getY(),
+                    item.getZ()
+            ));
             Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
         }
     }
@@ -164,14 +190,25 @@ public class ItemCompleter extends Executable {
     private void doWalk(WalkType useForcedWalkType) {
         if (area != null && !area.contains(myPosition())) {
             if(path != null && useForcedWalkType == WalkType.PATH){
-                log("Walk Path");
+                log(String.format("[Item-%s] Using Path moving towards Pos[%s,%s,%s]",
+                        itemName,
+                        path.get(path.size()-1).getX(),
+                        path.get(path.size()-1).getY(),
+                        path.get(path.size()-1).getZ()
+                ));
                 getWalking().walkPath(path);
             }else{
-                log("Walk Area");
+                Position rnd = area.getRandomPosition();
+                log(String.format("[Item-%s] Using Webwalk moving towards Pos[%s,%s,%s]",
+                        itemName,
+                        rnd.getX(),
+                        rnd.getY(),
+                        rnd.getZ()
+                ));
                 getWalking().webWalk(area);
             }
         } else {
-            log("Failed to walk");
+            log(String.format("[Item-%s] Failed to walk", itemName));
             setFailed();
         }
     }

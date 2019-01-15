@@ -41,13 +41,26 @@ public class DialogueCompleter extends Executable {
         if (npc == null) {
             if (area != null && !area.contains(myPosition())) {
                 if(path != null && usePreferredWalkType == WalkType.PATH){
+                    log(String.format("[Dialog] Using Path moving towards %s Pos[%s,%s,%s]",
+                            npcName,
+                            path.get(path.size()-1).getX(),
+                            path.get(path.size()-1).getY(),
+                            path.get(path.size()-1).getZ()
+                    ));
                     getWalking().walkPath(path);
                 }else{
+                    Position rnd = area.getRandomPosition();
+                    log(String.format("[Dialog] Using Webwalk moving towards %s Pos[%s,%s,%s]",
+                            npcName,
+                            rnd.getX(),
+                            rnd.getY(),
+                            rnd.getZ()
+                    ));
                     getWalking().webWalk(area);
                 }
                 return;
             } else {
-                log(String.format("Could not find NPC with name '%s'", npcName));
+                log(String.format("[Dialog] Could not find NPC with name '%s'", npcName));
                 setFailed();
                 return;
             }
