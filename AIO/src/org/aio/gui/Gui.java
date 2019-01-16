@@ -286,49 +286,13 @@ public class Gui {
         });
 
         menuItemUp.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                int index = taskPanels.indexOf(taskPanelContent);
-                int replaceIndex = index - 1;
-                if(replaceIndex < 0){
-                    return;
-                }
-
-                Collections.swap(taskPanels,index, replaceIndex);
-
-                taskList.removeAll();
-                for(TaskPanelContent redrawTaskPanelContent : taskPanels){
-                    for(Component component : redrawTaskPanelContent.components){
-                        taskList.add(component);
-                    }
-                }
-
-                taskList.revalidate();
-                taskList.repaint();
-                gui.pack();
-            });
+            int from = taskPanels.indexOf(taskPanelContent);
+            swapTasks(from, from - 1);
         });
 
         menuItemDown.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                int index = taskPanels.indexOf(taskPanelContent);
-                int replaceIndex = index + 1;
-                if(replaceIndex >= taskPanels.size()){
-                    return;
-                }
-
-                Collections.swap(taskPanels,index, replaceIndex);
-
-                taskList.removeAll();
-                for(TaskPanelContent redrawTaskPanelContent : taskPanels){
-                    for(Component component : redrawTaskPanelContent.components){
-                        taskList.add(component);
-                    }
-                }
-
-                taskList.revalidate();
-                taskList.repaint();
-                gui.pack();
-            });
+            int from = taskPanels.indexOf(taskPanelContent);
+            swapTasks(from, from + 1);
         });
 
         taskPanel.getPanel().addMouseListener(new MouseAdapter() {
@@ -344,6 +308,27 @@ public class Gui {
         gui.pack();
 
         return taskPanel;
+    }
+
+    private void swapTasks(int from, int to){
+        SwingUtilities.invokeLater(() -> {
+            if(from < 0 || from >= taskPanels.size() || to < 0 || to >= taskPanels.size()){
+                return;
+            }
+
+            Collections.swap(taskPanels,from, to);
+
+            taskList.removeAll();
+            for(TaskPanelContent redrawTaskPanelContent : taskPanels){
+                for(Component component : redrawTaskPanelContent.components){
+                    taskList.add(component);
+                }
+            }
+
+            taskList.revalidate();
+            taskList.repaint();
+            gui.pack();
+        });
     }
 
     private void saveConfig() {
