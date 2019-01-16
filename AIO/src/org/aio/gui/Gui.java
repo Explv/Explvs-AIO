@@ -1,6 +1,5 @@
 package org.aio.gui;
 
-import com.sun.deploy.panel.ControlPanel;
 import org.aio.gui.conf_man.ConfigManager;
 import org.aio.gui.task_panels.TaskPanel;
 import org.aio.gui.task_panels.TaskPanelFactory;
@@ -16,7 +15,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 
 public class Gui {
 
