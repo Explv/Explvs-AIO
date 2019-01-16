@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-import java.util.Queue;
 
 public class Gui {
 
@@ -26,7 +25,7 @@ public class Gui {
     private boolean started;
     private JPanel taskList = new JPanel();
 
-    private LinkedHashMap<Integer, TaskPanelContent> taskPanels = new LinkedHashMap<>();
+    private ArrayList<TaskPanelContent> taskPanels = new ArrayList<>();
 
     public Gui() {
         gui = new JDialog();
@@ -136,7 +135,6 @@ public class Gui {
                 "breakIconHover.png",
                 e -> addTask(TaskType.BREAK)
         ));
-
         controlsPanel.add(createSpacerPanel());
 
         final JPanel startPanel = new JPanel();
@@ -213,7 +211,7 @@ public class Gui {
         tasks.add(new TutorialIslandTask());
 
         int taskIndex = 1;
-        for (TaskPanelContent taskPanel : taskPanels.values()) {
+        for (TaskPanelContent taskPanel : taskPanels) {
             Task task = taskPanel.panel.toTask();
             task.setExecutionOrder(taskIndex);
             taskIndex++;
@@ -247,14 +245,36 @@ public class Gui {
         if (taskPanel == null){
             throw new IllegalArgumentException(String.format("Task type %s not supported.", taskType.toString()));
         }
-
         JPopupMenu contextMenu = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem("Delete");
-        menuItem.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                TaskPanelContent content = taskPanels.remove(taskPanel.hashCode());
+        JMenuItem menuItemDelete = new JMenuItem("Delete");
+        JMenuItem menuItemUp = new JMenuItem("Move up");
+        JMenuItem menuItemDown = new JMenuItem("Move down");
 
-                for(Component component : content.components){
+        contextMenu.add(menuItemDelete);
+        contextMenu.add(new JSeparator());
+        contextMenu.add(menuItemUp);
+        contextMenu.add(menuItemDown);
+
+        ArrayList<Component> components = new ArrayList<>();
+        components.add(taskPanel.getPanel());
+        components.add(Box.createRigidArea(new Dimension(5, 10)));
+        TaskPanelContent taskPanelContent = new TaskPanelContent(taskPanel, components);
+        taskPanels.add(taskPanelContent);
+
+        for(Component component : components){
+            taskList.add(component);
+        }
+
+        taskPanel.getPanel().setMaximumSize(new Dimension(taskPanel.getPanel().getMaximumSize().width, taskPanel.getPanel().getPreferredSize().height));
+
+        /*
+         UI Actions
+        */
+        menuItemDelete.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                taskPanels.remove(taskPanelContent);
+
+                for(Component component : taskPanelContent.components){
                     taskList.remove(component);
                 }
 
@@ -263,7 +283,16 @@ public class Gui {
                 gui.pack();
             });
         });
-        contextMenu.add(menuItem);
+
+        menuItemUp.addActionListener(e -> {
+            int from = taskPanels.indexOf(taskPanelContent);
+            swapTasks(from, from - 1);
+        });
+
+        menuItemDown.addActionListener(e -> {
+            int from = taskPanels.indexOf(taskPanelContent);
+            swapTasks(from, from + 1);
+        });
 
         taskPanel.getPanel().addMouseListener(new MouseAdapter() {
             @Override
@@ -275,20 +304,30 @@ public class Gui {
             }
         });
 
-        ArrayList<Component> components = new ArrayList<>();
-        components.add(taskPanel.getPanel());
-        components.add(Box.createRigidArea(new Dimension(5, 10)));
-
-        taskPanels.put(taskPanel.hashCode(), new TaskPanelContent(taskPanel, components));
-
-        for(Component component : components){
-            taskList.add(component);
-        }
-
-        taskPanel.getPanel().setMaximumSize(new Dimension(taskPanel.getPanel().getMaximumSize().width, taskPanel.getPanel().getPreferredSize().height));
         gui.pack();
 
         return taskPanel;
+    }
+
+    private void swapTasks(int from, int to){
+        SwingUtilities.invokeLater(() -> {
+            if(from < 0 || from >= taskPanels.size() || to < 0 || to >= taskPanels.size()){
+                return;
+            }
+
+            Collections.swap(taskPanels,from, to);
+
+            taskList.removeAll();
+            for(TaskPanelContent redrawTaskPanelContent : taskPanels){
+                for(Component component : redrawTaskPanelContent.components){
+                    taskList.add(component);
+                }
+            }
+
+            taskList.revalidate();
+            taskList.repaint();
+            gui.pack();
+        });
     }
 
     private void saveConfig() {
@@ -301,7 +340,7 @@ public class Gui {
 
                 JSONArray taskJSONArray = new JSONArray();
 
-                for (TaskPanelContent taskPanel : taskPanels.values()) {
+                for (TaskPanelContent taskPanel : taskPanels) {
                     taskJSONArray.add(taskPanel.panel.toJSON());
                 }
 
@@ -365,6 +404,7 @@ public class Gui {
             this.panel = panel;
             this.components = components;
         }
+
     }
 
     public static void main(String[] args){
