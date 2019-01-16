@@ -247,12 +247,11 @@ public class Gui {
         }
         JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem menuItemDelete = new JMenuItem("Delete");
-        JMenuItem menuItemSpace = new JMenuItem("");
         JMenuItem menuItemUp = new JMenuItem("Move up");
         JMenuItem menuItemDown = new JMenuItem("Move down");
 
         contextMenu.add(menuItemDelete);
-        contextMenu.add(menuItemSpace);
+        contextMenu.add(new JSeparator());
         contextMenu.add(menuItemUp);
         contextMenu.add(menuItemDown);
 
