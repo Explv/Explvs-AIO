@@ -19,12 +19,14 @@ public class Paint implements Painter {
     private final Color holoBlueLight = Color.decode("#33b5e5");
     private final Font trebuchet = new Font("Trebuchet MS", Font.PLAIN, 14);
 
+    private int offsetY;
+    private int offsetX;
     private long lastCheckTime = -1;
     private long elapsedTime = -1;
 
     private Task currentTask;
     private boolean paintHidden;
-    private final Rectangle toggleButton = new Rectangle(435, 344, 76, 24);
+    private final Rectangle toggleButton = new Rectangle(435, 7, 76, 24);
     private boolean toggleButtonHovered;
     private Image mouseImage;
 
@@ -44,12 +46,12 @@ public class Paint implements Painter {
             @Override
             public void checkMouseEvent(final MouseEvent e) {
                 if (e.getID() == MouseEvent.MOUSE_CLICKED) {
-                    if (toggleButton.contains(e.getPoint())) {
+                    if (getToggleButton().contains(e.getPoint())) {
                         paintHidden = !paintHidden;
                     }
                     e.consume();
                 } else if (e.getID() == MouseEvent.MOUSE_MOVED) {
-                    toggleButtonHovered = toggleButton.contains(e.getPoint());
+                    toggleButtonHovered = getToggleButton().contains(e.getPoint());
                     e.consume();
                 }
             }
@@ -82,8 +84,16 @@ public class Paint implements Painter {
         }
         drawScriptInfo(g);
     }
+    private void setOffset(){
+        offsetX = 0;
+        offsetY = bot.getCanvas().getHeight()-(502-337);
+    }
 
+    private Rectangle getToggleButton(){
+        return new Rectangle(offsetX + toggleButton.x, offsetY + toggleButton.y, toggleButton.width, toggleButton.height);
+    }
     private void drawScriptInfo(Graphics2D g) {
+        setOffset();
         if (!paintHidden) {
             drawScriptInfoBackground(g);
             drawTitle(g);
@@ -99,17 +109,17 @@ public class Paint implements Painter {
 
     private void drawScriptInfoBackground(Graphics2D g) {
         g.setColor(Color.WHITE);
-        g.fillRect(0, 337, 518, 143);
+        g.fillRect(offsetX, offsetY, 518, 143);
         g.setColor(Color.decode("#1b1919"));
-        g.fillRect(2, 339, 514, 139);
+        g.fillRect(offsetX+2, offsetY+2, 514, 139);
     }
 
     private void drawTitle(Graphics2D g) {
         g.setColor(holoBlueLight);
         g.setFont(g.getFont().deriveFont(20f));
-        g.drawString("Explv", 10, 367);
+        g.drawString("Explv", offsetX+10, offsetY+30);
         g.setColor(Color.WHITE);
-        g.drawString("'s AIO", 10 + g.getFontMetrics().stringWidth("Explv"), 367);
+        g.drawString("'s AIO", offsetX+ 10 + g.getFontMetrics().stringWidth("Explv"), offsetY + 30);
     }
 
     private void drawRunTime(Graphics2D g) {
@@ -125,24 +135,24 @@ public class Paint implements Painter {
             elapsedTime += System.currentTimeMillis() - lastCheckTime;
         }
 
-        g.drawString("Run time: " + formatTime(elapsedTime), 10, 397);
+        g.drawString("Run time: " + formatTime(elapsedTime), offsetX + 10, offsetY + 60);
     }
 
     private void drawTaskInfo(Graphics2D g) {
         if (currentTask != null) {
-            g.drawString(currentTask.toString(), 10, 417);
+            g.drawString(currentTask.toString(), offsetX + 10, offsetY + 80);
         }
     }
 
     private void drawActivityInfo(Graphics2D g) {
         if (currentTask != null && currentTask.getActivity() != null) {
-            g.drawString("Activity: " + currentTask.getActivity().toString(), 10, 437);
+            g.drawString("Activity: " + currentTask.getActivity().toString(), offsetX + 10, offsetY + 100);
         }
     }
 
     private void drawSkillsInfo(Graphics2D g) {
-        final int x = 10;
-        int y = 457;
+        int x = offsetX + 10;
+        int y = offsetY + 120;
         for (final Skill skill : skillTracker.getTrackedSkills()) {
             String output = String.format("%s lvl %d (+%d lvls) +%s xp (%s xp / hr)",
                     skill.toString(),
@@ -163,7 +173,7 @@ public class Paint implements Painter {
         } else {
             g.setColor(Color.WHITE);
         }
-
+        Rectangle toggleButton = getToggleButton();
         g.fill(toggleButton);
 
         g.setColor(Color.decode("#1b1919"));
