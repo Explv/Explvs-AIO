@@ -1,6 +1,5 @@
 package org.aio.activities.skills.runecrafting;
 
-import org.aio.activities.activity.Activity;
 import org.aio.activities.banking.ItemReqBanking;
 import org.aio.util.Executable;
 import org.aio.util.item_requirement.ItemReq;

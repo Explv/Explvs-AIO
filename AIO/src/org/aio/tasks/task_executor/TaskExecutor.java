@@ -1,9 +1,9 @@
 package org.aio.tasks.task_executor;
 
+import org.aio.tasks.LoopTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
 import org.aio.tasks.break_task.CustomBreakManager;
-import org.aio.tasks.LoopTask;
 import org.aio.util.Executable;
 
 import java.util.*;

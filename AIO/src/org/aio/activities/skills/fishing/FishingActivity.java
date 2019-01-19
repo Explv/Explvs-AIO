@@ -8,14 +8,12 @@ import org.aio.util.*;
 import org.aio.util.item_requirement.ItemReq;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
-import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.utility.Condition;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class FishingActivity extends Activity {
 

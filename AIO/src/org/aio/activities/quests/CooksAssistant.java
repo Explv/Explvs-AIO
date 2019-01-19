@@ -6,13 +6,11 @@ import org.aio.util.Sleep;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.GroundItem;
-import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Message;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.listener.MessageListener;
 
-import java.awt.*;
 import java.util.stream.Stream;
 
 public class CooksAssistant extends QuestActivity {

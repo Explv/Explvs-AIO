@@ -1,10 +1,8 @@
 package org.aio.activities.banking;
 
-import org.aio.activities.skills.woodcutting.Axe;
 import org.aio.util.Tool;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Optional;

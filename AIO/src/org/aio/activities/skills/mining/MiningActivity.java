@@ -12,7 +12,8 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class MiningActivity extends Activity {
 

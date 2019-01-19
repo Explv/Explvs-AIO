@@ -1,6 +1,5 @@
 package org.aio.activities.grand_exchange;
 
-import org.aio.activities.activity.Activity;
 import org.aio.util.Sleep;
 
 public class GEBuyActivity extends GEActivity {

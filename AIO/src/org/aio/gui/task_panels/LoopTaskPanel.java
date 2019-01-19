@@ -1,9 +1,9 @@
 package org.aio.gui.task_panels;
 
 import org.aio.gui.utils.NumberDocumentFilter;
+import org.aio.tasks.LoopTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
-import org.aio.tasks.LoopTask;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;

@@ -21,8 +21,9 @@ import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ScriptManifest(author = "Explv", name = "Explv's AIO v3.2", info = "AIO", version = 3.2, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
