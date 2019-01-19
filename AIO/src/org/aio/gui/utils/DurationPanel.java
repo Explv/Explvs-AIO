@@ -37,7 +37,7 @@ public class DurationPanel extends JPanel implements JSONSerializable {
 
         timeTypeSelector.addActionListener(e -> {
             TimeType selectedTimeType = (TimeType) timeTypeSelector.getSelectedItem();
-            if (selectedTimeType == TimeType.DURATION) {
+            if (selectedTimeType == TimeType.MINUTES) {
                 dateTimePanel.setVisible(false);
                 durationPanel.setVisible(true);
             } else {
@@ -63,7 +63,7 @@ public class DurationPanel extends JPanel implements JSONSerializable {
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
 
-        if (timeTypeSelector.getSelectedItem() == TimeType.DURATION) {
+        if (timeTypeSelector.getSelectedItem() == TimeType.MINUTES) {
             jsonObject.put("duration", durationField.getText());
         } else {
             jsonObject.put(
@@ -79,7 +79,7 @@ public class DurationPanel extends JPanel implements JSONSerializable {
     public void fromJSON(final JSONObject jsonObject) {
         if (jsonObject.containsKey("duration")) {
             durationField.setText((String) jsonObject.get("duration"));
-            timeTypeSelector.setSelectedItem(TimeType.DURATION);
+            timeTypeSelector.setSelectedItem(TimeType.MINUTES);
         }
 
         if (jsonObject.containsKey("datetime")) {
@@ -94,7 +94,7 @@ public class DurationPanel extends JPanel implements JSONSerializable {
     }
 
     public enum TimeType {
-        DURATION("Duration"),
+        MINUTES("Minutes"),
         DATE_TIME("Date / Time");
 
         private String name;

@@ -33,7 +33,7 @@ public class TimedTaskPanel implements TaskPanel {
 
     @Override
     public Task toTask() {
-        if (durationPanel.getSelectedTimeType() == DurationPanel.TimeType.DURATION) {
+        if (durationPanel.getSelectedTimeType() == DurationPanel.TimeType.MINUTES) {
             return new TimedTask(
                     activitySelectorPanel.getActivityPanel().toActivity(),
                     durationPanel.getDuration() * 60_000L

@@ -4,6 +4,7 @@ import org.aio.tasks.task_executor.TaskChangeListener;
 import org.aio.tasks.task_executor.TaskExecutor;
 import org.aio.util.Copyable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,8 +12,11 @@ public class LoopTask extends Task {
 
     public static final int INFINITE_ITERATIONS = -1;
 
-    private final int taskCount;
-    private final int numIterations;
+    private int taskCount;
+
+    private int numIterations;
+    private long startTimeMS = -1, durationMS = -1;
+    private LocalDateTime endDateTime;
 
     private int startTaskIndex;
     private int endTaskIndex;
@@ -22,10 +26,29 @@ public class LoopTask extends Task {
 
     private List<Task> loopTasks;
 
-    public LoopTask(final int taskCount, final int numIterations) {
+    private LoopTask() {
         super(TaskType.LOOP);
-        this.taskCount = taskCount;
-        this.numIterations = numIterations;
+    }
+
+    public static LoopTask forIterations(final int taskCount, final int numIterations) {
+        LoopTask loopTask = new LoopTask();
+        loopTask.taskCount = taskCount;
+        loopTask.numIterations = numIterations;
+        return loopTask;
+    }
+
+    public static LoopTask forDuration(final int taskCount, final long durationMS) {
+        LoopTask loopTask = new LoopTask();
+        loopTask.taskCount = taskCount;
+        loopTask.durationMS = durationMS;
+        return loopTask;
+    }
+
+    public static LoopTask untilDateTime(final int taskCount, final LocalDateTime endDateTime) {
+        LoopTask loopTask = new LoopTask();
+        loopTask.taskCount = taskCount;
+        loopTask.endDateTime = endDateTime;
+        return loopTask;
     }
 
     public void setup(final List<Task> allTasks,
@@ -44,11 +67,19 @@ public class LoopTask extends Task {
 
         log(String.format("Will loop for %d iterations starting from task %d and ending at task %d",
                 numIterations, startTaskIndex, endTaskIndex));
+
+        startTimeMS = System.currentTimeMillis();
     }
 
     @Override
     public boolean isComplete() {
-        return numIterations != INFINITE_ITERATIONS && currentIteration >= numIterations;
+        if (durationMS != -1) {
+            return System.currentTimeMillis() - startTimeMS >= durationMS;
+        } else if (endDateTime != null) {
+            return LocalDateTime.now().isAfter(endDateTime);
+        } else {
+            return numIterations != INFINITE_ITERATIONS && currentIteration >= numIterations;
+        }
     }
 
     @Override
@@ -84,7 +115,12 @@ public class LoopTask extends Task {
 
     @Override
     public Task copy() {
-        return new LoopTask(taskCount, numIterations);
+        if (endDateTime != null) {
+            return LoopTask.untilDateTime(taskCount, endDateTime);
+        } else if (durationMS != -1) {
+            return LoopTask.forDuration(taskCount, durationMS);
+        }
+        return LoopTask.forIterations(taskCount, numIterations);
     }
 
     @Override
