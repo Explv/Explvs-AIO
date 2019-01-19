@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v3.2", info = "AIO", version = 3.2, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v3.3", info = "AIO", version = 3.3, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
