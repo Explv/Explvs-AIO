@@ -2,9 +2,19 @@ package org.aio.tasks;
 
 import org.aio.activities.activity.Activity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TimedTask extends Task {
 
-    private final long durationMs;
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+    private long durationMs;
+    private LocalDateTime endTime;
+    private String endDateStr;
+    private String endTimeStr;
+
     private long startTimeMs;
     private boolean isStarted;
 
@@ -13,9 +23,24 @@ public class TimedTask extends Task {
         this.durationMs = durationMs;
     }
 
+    public TimedTask(final Activity activity, final LocalDateTime endTime){
+        super(TaskType.TIMED, activity);
+        this.endTime = endTime;
+        endDateStr = dateFormatter.format(endTime);
+        endTimeStr = timeFormatter.format(endTime);
+    }
+
     @Override
     public boolean isComplete() {
-        return isStarted && (System.currentTimeMillis() - startTimeMs >= durationMs);
+        if (!isStarted) {
+            return false;
+        }
+
+        if (endTime != null) {
+            return LocalDateTime.now().isAfter(endTime);
+        }
+
+        return System.currentTimeMillis() - startTimeMs >= durationMs;
     }
 
     @Override
@@ -29,6 +54,10 @@ public class TimedTask extends Task {
 
     @Override
     public String toString() {
+        if(endTime != null) {
+            return String.format("Timed task: Ends on %s at %s", endDateStr, endTimeStr);
+        }
+
         long runTime = System.currentTimeMillis() - startTimeMs;
         return String.format("Timed task: (%s/%s)", formatTime(runTime), formatTime(durationMs));
     }
