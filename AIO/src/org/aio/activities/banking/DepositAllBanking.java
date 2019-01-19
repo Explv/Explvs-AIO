@@ -2,9 +2,13 @@ package org.aio.activities.banking;
 
 public class DepositAllBanking extends Banking {
 
-    private  String[] exceptItems;
+    private String[] exceptItems;
 
     public DepositAllBanking(final String... exceptItems) {
+        this.exceptItems = exceptItems;
+    }
+
+    public void setExceptItems(final String... exceptItems) {
         this.exceptItems = exceptItems;
     }
 

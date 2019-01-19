@@ -2,8 +2,8 @@ package org.aio.activities.skills.woodcutting;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.activity.ActivityType;
-import org.aio.activities.banking.Banking;
-import org.aio.util.Executable;
+import org.aio.activities.banking.DepositAllBanking;
+import org.aio.activities.banking.ToolUpgradeBanking;
 import org.aio.util.Location;
 import org.aio.util.ResourceMode;
 import org.aio.util.Sleep;
@@ -12,20 +12,13 @@ import org.osbot.rs07.api.filter.NameFilter;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.Optional;
-
 public class WoodcuttingActivity extends Activity {
 
     private final Tree tree;
     private final Location treeLocation;
     private final ResourceMode resourceMode;
-    private final EnumSet<Axe> axesInBank = EnumSet.noneOf(Axe.class);
-    private boolean checkedBankForAxes;
-    private Axe currentAxe;
-    private Executable bankNode;
+    private DepositAllBanking depositAllBanking;
+    private ToolUpgradeBanking<Axe> axeBanking;
     private Entity targetTree;
 
     public WoodcuttingActivity(final Tree tree, final Location treeLocation, final ResourceMode resourceMode) {
@@ -36,32 +29,39 @@ public class WoodcuttingActivity extends Activity {
     }
 
     @Override
-    public void onStart() {
-        // On activity start get the best axe the player can use, and has in their inventory or equipment
-        currentAxe = Arrays.stream(Axe.values())
-                    .filter(axe -> axe.canUse(getSkills()))
-                    .filter(axe -> getInventory().contains(axe.name) || getEquipment().isWearingItem(EquipmentSlot.WEAPON, axe.name))
-                    .max(Comparator.comparingInt(Axe::getLevelRequired))
-                    .orElse(null);
-        bankNode = new WCBanking();
-        bankNode.exchangeContext(getBot());
+    public void onStart() throws InterruptedException {
+        depositAllBanking = new DepositAllBanking();
+        depositAllBanking.exchangeContext(getBot());
+
+        axeBanking = new ToolUpgradeBanking<>(Axe.class);
+        axeBanking.exchangeContext(getBot());
+        axeBanking.onStart();
+
+        if (axeBanking.getCurrentTool() != null) {
+            depositAllBanking.setExceptItems(axeBanking.getCurrentTool().name);
+        }
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (currentAxe == null || !checkedBankForAxes || bankContainsBetterAxe() || inventoryContainsNonWcItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK)) {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
+        if (inventoryContainsNonWcItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK)) {
+            depositAllBanking.run();
+        } else if (axeBanking.toolUpgradeAvailable()) {
+            axeBanking.run();
+            if (axeBanking.hasFailed()) {
                 setFailed();
+            } else if (axeBanking.getCurrentTool() != null) {
+                depositAllBanking.setExceptItems(axeBanking.getCurrentTool().getName());
             }
         } else if (getBank() != null && getBank().isOpen()) {
             getBank().close();
-        } else if (currentAxe.canEquip(getSkills()) && !getEquipment().isWearingItem(EquipmentSlot.WEAPON, currentAxe.name)) {
-            if (getInventory().getItem(currentAxe.name).interact("Wield")) {
-                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.WEAPON, currentAxe.name), 2000);
+        } else if (axeBanking.getCurrentTool().canEquip(getSkills()) &&
+                   !getEquipment().isWearingItem(EquipmentSlot.WEAPON, axeBanking.getCurrentTool().getName())) {
+            if (getInventory().getItem(axeBanking.getCurrentTool().getName()).interact("Wield")) {
+                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.WEAPON, axeBanking.getCurrentTool().getName()), 2000);
             }
         } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
-            getInventory().dropAll(item -> !item.getName().equals(currentAxe.name));
+            getInventory().dropAll(item -> !item.getName().equals(axeBanking.getCurrentTool().getName()));
         } else if (!treeLocation.getArea().contains(myPosition())) {
             getWalking().webWalk(treeLocation.getArea());
         } else if (getGroundItems().closest("Bird's nest") != null) {
@@ -71,20 +71,29 @@ public class WoodcuttingActivity extends Activity {
         }
     }
 
-    private boolean bankContainsBetterAxe() {
-        return axesInBank.stream().anyMatch(axe -> axe.canUse(getSkills()) && axe.getLevelRequired() > currentAxe.getLevelRequired());
-    }
-
     private boolean inventoryContainsNonWcItem() {
-        return getInventory().contains(item ->
-                !item.getName().equals(currentAxe.name) &&
-                        !item.getName().equals(tree.logsName) &&
-                        !item.getName().equals("Bird's nest"));
+        return getInventory().contains(item -> {
+            if (axeBanking.getCurrentTool() != null) {
+                if (item.getName().equals(axeBanking.getCurrentTool().getName())) {
+                    return false;
+                }
+            }
+            if (item.getName().equals(tree.logsName)) {
+                return false;
+            }
+            if (item.getName().equals("Bird's nest")) {
+                return false;
+            }
+            return true;
+        });
     }
 
     private void chopTree() {
-        targetTree = getObjects().closest(new AreaFilter<>(treeLocation.getArea()), new NameFilter<>(tree.toString()),
-                i -> i.getDefinition().getModifiedModelColors() != null);
+        targetTree = getObjects().closest(
+                new AreaFilter<>(treeLocation.getArea()),
+                new NameFilter<>(tree.toString()),
+                i -> i.getDefinition().getModifiedModelColors() != null
+        );
         if (targetTree != null && targetTree.interact("Chop down")) {
             Sleep.sleepUntil(() -> myPlayer().isAnimating() || !targetTree.exists(), 5000);
         }
@@ -100,46 +109,5 @@ public class WoodcuttingActivity extends Activity {
     @Override
     public WoodcuttingActivity copy() {
         return new WoodcuttingActivity(tree, treeLocation, resourceMode);
-    }
-
-    private class WCBanking extends Banking {
-
-        @Override
-        public boolean bank() {
-            if (axesInBank.isEmpty()) {
-                for (Axe axe : Axe.values()) {
-                    if (getBank().contains(axe.name)) {
-                        axesInBank.add(axe);
-                    }
-                }
-                checkedBankForAxes = true;
-            }
-
-            if (currentAxe == null || bankContainsBetterAxe()) {
-                if (axesInBank.isEmpty()) {
-                    setFailed();
-                    return false;
-                }
-
-                if (!getInventory().isEmpty()) {
-                    getBank().depositAll();
-                } else {
-                    Optional<Axe> bestAxe = axesInBank.stream().filter(axe -> axe.canUse(getSkills()))
-                            .max(Comparator.comparingInt(Axe::getLevelRequired));
-                    if (bestAxe.isPresent()) {
-                        if (getBank().withdraw(bestAxe.get().name, 1)) {
-                            currentAxe = bestAxe.get();
-                        }
-                    } else {
-                        setFailed();
-                        return false;
-                    }
-                }
-            } else if (!getInventory().isEmptyExcept(currentAxe.name)) {
-                getBank().depositAllExcept(currentAxe.name);
-            }
-
-            return true;
-        }
     }
 }

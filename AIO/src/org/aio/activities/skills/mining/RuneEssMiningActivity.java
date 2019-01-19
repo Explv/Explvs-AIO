@@ -1,6 +1,5 @@
 package org.aio.activities.skills.mining;
 
-import org.aio.activities.activity.Activity;
 import org.aio.util.Executable;
 import org.aio.util.ResourceMode;
 import org.aio.util.Sleep;
@@ -41,13 +40,20 @@ public class RuneEssMiningActivity extends MiningActivity {
     }
 
     @Override
-    public void onStart() {
-        // On activity start get the best pickaxe the player can use, and has in their inventory or equipment
-        getCurrentPickaxe();
+    public void onStart() throws InterruptedException {
+        super.onStart();
+
         miningNode = new MiningNode();
         miningNode.exchangeContext(getBot());
-        bankNode = new ItemReqBankingImpl();
-        bankNode.exchangeContext(getBot());
+    }
+
+    @Override
+    public void runActivity() throws InterruptedException {
+        if ((shouldBank() || pickaxeBanking.toolUpgradeAvailable()) && getObjects().closest("Rune Essence") != null) {
+            leaveEssenceMine();
+        } else {
+            super.runActivity();
+        }
     }
 
     @Override
@@ -57,14 +63,35 @@ public class RuneEssMiningActivity extends MiningActivity {
 
     @Override
     protected boolean inventoryContainsNonMiningItem() {
-        return getInventory().contains(item ->
-                        !item.getName().equals(currentPickaxe.name) &&
-                        !item.getName().endsWith("essence")
-        );
+        return getInventory().contains(item -> {
+            if (pickaxeBanking.getCurrentTool() != null) {
+                if (item.getName().equals(pickaxeBanking.getCurrentTool().getName())) {
+                    return false;
+                }
+            }
+            return !item.getName().endsWith("essence");
+        });
+    }
+
+    private void leaveEssenceMine() {
+        Optional<Entity> portal = Stream.concat(getObjects().getAll().stream(), getNpcs().getAll().stream())
+                .filter(entity -> entity.getName().contains("Portal"))
+                .min(Comparator.comparingInt(p -> myPosition().distance(p.getPosition())));
+        if (portal.isPresent()) {
+            if (portal.get().interact("Use", "Exit")) {
+                Sleep.sleepUntil(() -> auburyHouse.contains(myPosition()), 10_000);
+            }
+        } else {
+            Position[] portalPositions = new Position[4];
+            for (int i = 0; i < gridPortalCoordinates.length; i++) {
+                portalPositions[i] = new Position(getMap().getBaseX() + gridPortalCoordinates[i][0], getMap().getBaseY() + gridPortalCoordinates[i][1], myPlayer().getZ());
+            }
+            Position closestPosition = Arrays.stream(portalPositions).min(Comparator.comparingInt(p -> myPosition().distance(p))).get();
+            getWalking().walk(closestPosition);
+        }
     }
 
     private class MiningNode extends Executable {
-
         @Override
         public void run() throws InterruptedException {
             if (myPlayer().isAnimating()) {
@@ -79,31 +106,6 @@ public class RuneEssMiningActivity extends MiningActivity {
                 }
             } else {
                 getWalking().webWalk(auburyHouse);
-            }
-        }
-    }
-
-    private class ItemReqBankingImpl extends MiningActivity.ItemReqBankingImpl {
-        @Override
-        public void run() throws InterruptedException {
-            if (getObjects().closest("Rune Essence") != null) {
-                Optional<Entity> portal = Stream.concat(getObjects().getAll().stream(), getNpcs().getAll().stream())
-                                            .filter(entity -> entity.getName().contains("Portal"))
-                                            .min(Comparator.comparingInt(p -> myPosition().distance(p.getPosition())));
-                if (portal.isPresent()) {
-                    if (portal.get().interact("Use", "Exit")) {
-                        Sleep.sleepUntil(() -> auburyHouse.contains(myPosition()), 10_000);
-                    }
-                } else {
-                    Position[] portalPositions = new Position[4];
-                    for (int i = 0; i < gridPortalCoordinates.length; i++) {
-                        portalPositions[i] = new Position(getMap().getBaseX() + gridPortalCoordinates[i][0], getMap().getBaseY() + gridPortalCoordinates[i][1], myPlayer().getZ());
-                    }
-                    Position closestPosition = Arrays.stream(portalPositions).min(Comparator.comparingInt(p -> myPosition().distance(p))).get();
-                    getWalking().walk(closestPosition);
-                }
-            } else {
-                super.run();
             }
         }
     }

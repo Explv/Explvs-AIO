@@ -2,7 +2,8 @@ package org.aio.activities.skills.mining;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.activity.ActivityType;
-import org.aio.activities.banking.Banking;
+import org.aio.activities.banking.DepositAllBanking;
+import org.aio.activities.banking.ToolUpgradeBanking;
 import org.aio.util.Executable;
 import org.aio.util.ResourceMode;
 import org.aio.util.Sleep;
@@ -17,13 +18,12 @@ public class MiningActivity extends Activity {
 
     private final Mine mine;
     private final Rock rock;
-    protected final ResourceMode resourceMode;
-    private final EnumSet<Pickaxe> pickaxesInBank = EnumSet.noneOf(Pickaxe.class);
+    final ResourceMode resourceMode;
     private final List<String> cutGems = Arrays.asList("Opal", "Jade", "Red topaz", "Sapphire", "Emerald", "Ruby", "Diamond", "Dragonstone", "Onyx");
     private final List<String> uncutGems = Arrays.asList("Uncut opal", "Uncut jade", "Uncut red topaz", "Uncut sapphire", "Uncut emerald", "Uncut ruby", "Uncut diamond", "Uncut dragonstone", "Uncut onyx");
-    protected Pickaxe currentPickaxe;
-    private boolean checkedBankForPickaxes;
-    protected Executable miningNode, bankNode;
+    ToolUpgradeBanking<Pickaxe> pickaxeBanking;
+    DepositAllBanking depositAllBanking;
+    Executable miningNode;
 
     public MiningActivity(final Mine mine, final Rock rock, final ResourceMode resourceMode) {
         super(ActivityType.MINING);
@@ -33,62 +33,65 @@ public class MiningActivity extends Activity {
     }
 
     @Override
-    public void onStart() {
-        // On activity start get the best pickaxe the player can use, and has in their inventory or equipment
-        getCurrentPickaxe();
+    public void onStart() throws InterruptedException {
+        depositAllBanking = new DepositAllBanking();
+        depositAllBanking.exchangeContext(getBot());
+
+        pickaxeBanking = new ToolUpgradeBanking<>(Pickaxe.class);
+        pickaxeBanking.exchangeContext(getBot());
+        pickaxeBanking.onStart();
+
+        if (pickaxeBanking.getCurrentTool() != null) {
+            depositAllBanking.setExceptItems(pickaxeBanking.getCurrentTool().getName());
+        }
+
         miningNode = new MiningNode();
         miningNode.exchangeContext(getBot());
-        bankNode = new ItemReqBankingImpl();
-        bankNode.exchangeContext(getBot());
-    }
-
-    protected void getCurrentPickaxe() {
-        currentPickaxe = Arrays.stream(Pickaxe.values())
-                .filter(pickaxe -> pickaxe.canUse(getSkills()))
-                .filter(pickaxe -> getInventory().contains(pickaxe.name) || getEquipment().isWearingItem(EquipmentSlot.WEAPON, pickaxe.name))
-                .max(Comparator.comparingInt(Pickaxe::getLevelRequired))
-                .orElse(null);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (currentPickaxe == null || !checkedBankForPickaxes || bankContainsBetterPickaxe() || inventoryContainsNonMiningItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK)) {
-            doBanking();
+        if (shouldBank()) {
+            depositAllBanking.run();
+        } else if (pickaxeBanking.toolUpgradeAvailable()) {
+            pickaxeBanking.run();
+            if (pickaxeBanking.hasFailed()) {
+                setFailed();
+            } else if (pickaxeBanking.getCurrentTool() != null) {
+                depositAllBanking.setExceptItems(pickaxeBanking.getCurrentTool().getName());
+            }
         } else if (getBank() != null && getBank().isOpen()) {
             getBank().close();
-        } else if (currentPickaxe.canEquip(getSkills()) && !getEquipment().isWearingItem(EquipmentSlot.WEAPON, currentPickaxe.name)) {
-            if (getInventory().getItem(currentPickaxe.name).interact("Wield")) {
-                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.WEAPON, currentPickaxe.name), 2000);
+        } else if (pickaxeBanking.getCurrentTool().canEquip(getSkills()) && !getEquipment().isWearingItem(EquipmentSlot.WEAPON, pickaxeBanking.getCurrentTool().name)) {
+            if (getInventory().getItem(pickaxeBanking.getCurrentTool().name).interact("Wield")) {
+                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.WEAPON, pickaxeBanking.getCurrentTool().name), 2000);
             }
         } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
-            getInventory().dropAll(item -> !item.getName().equals(currentPickaxe.name));
+            getInventory().dropAll(item -> !item.getName().equals(pickaxeBanking.getCurrentTool().name));
         } else {
             mine();
         }
     }
 
-    private boolean bankContainsBetterPickaxe() {
-        return pickaxesInBank.stream().anyMatch(pickaxe -> pickaxe.canUse(getSkills()) && pickaxe.getLevelRequired() > currentPickaxe.getLevelRequired());
+    protected boolean shouldBank() {
+        return inventoryContainsNonMiningItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK);
     }
 
     protected boolean inventoryContainsNonMiningItem() {
-        return getInventory().contains(item ->
-                        !item.getName().equals(currentPickaxe.name) &&
-                        !item.getName().contains(rock.ORE) &&
-                        !cutGems.contains(item.getName()) &&
-                        !uncutGems.contains(item.getName())
-        );
+        return getInventory().contains(item -> {
+            if (pickaxeBanking.getCurrentTool() != null) {
+                if (item.getName().equals(pickaxeBanking.getCurrentTool().getName())) {
+                    return false;
+                }
+            }
+            return !item.getName().contains(rock.ORE) &&
+                   !cutGems.contains(item.getName()) &&
+                   !uncutGems.contains(item.getName());
+        });
     }
 
     protected void mine() throws InterruptedException {
         miningNode.run();
-    }
-
-    protected void doBanking() throws InterruptedException {
-        bankNode.run();
-        if (bankNode.hasFailed()) {
-            setFailed();
-        }
     }
 
     @Override
@@ -127,45 +130,6 @@ public class MiningActivity extends Activity {
         @Override
         public String toString() {
             return "Mining";
-        }
-    }
-
-    protected class ItemReqBankingImpl extends Banking {
-
-        @Override
-        public boolean bank() {
-            if (pickaxesInBank.isEmpty()) {
-                for (Pickaxe pickaxe : Pickaxe.values()) {
-                    if (getBank().contains(pickaxe.name)) {
-                        pickaxesInBank.add(pickaxe);
-                    }
-                }
-                checkedBankForPickaxes = true;
-            }
-
-            if (currentPickaxe == null || bankContainsBetterPickaxe()) {
-                if (pickaxesInBank.isEmpty()) {
-                    setFailed();
-                    return false;
-                }
-
-                if (!getInventory().isEmpty()) {
-                    getBank().depositAll();
-                } else {
-                    Optional<Pickaxe> bestPickaxe = pickaxesInBank.stream().filter(pickaxe -> pickaxe.canUse(getSkills())).max(Comparator.comparingInt(Pickaxe::getLevelRequired));
-                    if (bestPickaxe.isPresent()) {
-                        if (getBank().withdraw(bestPickaxe.get().name, 1)) {
-                            currentPickaxe = bestPickaxe.get();
-                        }
-                    } else {
-                        setFailed();
-                    }
-                }
-            } else if (!getInventory().isEmptyExcept(currentPickaxe.name)) {
-                getBank().depositAllExcept(currentPickaxe.name);
-            }
-
-            return true;
         }
     }
 }

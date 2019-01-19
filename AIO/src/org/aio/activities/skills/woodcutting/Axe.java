@@ -27,6 +27,11 @@ public enum Axe implements Tool {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
     public int getLevelRequired(){
         return wcLevelRequired;
     }
