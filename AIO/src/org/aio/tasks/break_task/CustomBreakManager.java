@@ -5,8 +5,12 @@ import org.osbot.rs07.script.RandomEvent;
 import org.osbot.rs07.script.RandomSolver;
 import org.osbot.rs07.script.ScriptManifest;
 
+import java.time.LocalDateTime;
+
 @ScriptManifest(author = "Explv", name = "Break Manager", info = "", version = 0.1, logo = "")
 public class CustomBreakManager extends RandomSolver {
+
+    private LocalDateTime endDateTime;
 
     private long breakDuration = -1;
     private long breakStartTime = -1;
@@ -16,9 +20,21 @@ public class CustomBreakManager extends RandomSolver {
         super(RandomEvent.BREAK_MANAGER);
     }
 
+    public void reset() {
+        endDateTime = null;
+        breakDuration = -1;
+        breakStartTime = -1;
+        shouldLogout = false;
+    }
+
     public void startBreaking(final long breakDuration, final boolean shouldLogout) {
         this.breakDuration = breakDuration;
         this.breakStartTime = System.currentTimeMillis();
+        this.shouldLogout = shouldLogout;
+    }
+
+    public void startBreaking(final LocalDateTime endDateTime, final boolean shouldLogout) {
+        this.endDateTime = endDateTime;
         this.shouldLogout = shouldLogout;
     }
 
@@ -28,10 +44,14 @@ public class CustomBreakManager extends RandomSolver {
 
     @Override
     public boolean shouldActivate() {
-        return breakDuration > 0 && !finishedBreaking();
+        return (endDateTime != null || breakDuration > 0) && !finishedBreaking();
     }
 
     public boolean finishedBreaking() {
+        if (endDateTime != null) {
+            return LocalDateTime.now().isAfter(endDateTime);
+        }
+
         return System.currentTimeMillis() - breakStartTime >= breakDuration;
     }
 

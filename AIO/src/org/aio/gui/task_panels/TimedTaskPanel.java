@@ -2,6 +2,7 @@ package org.aio.gui.task_panels;
 
 import org.aio.gui.utils.DateTimePanel;
 import org.aio.gui.utils.NumberDocumentFilter;
+import org.aio.gui.utils.TimeType;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
 import org.aio.tasks.TimedTask;
@@ -24,22 +25,6 @@ public class TimedTaskPanel implements TaskPanel {
     private JComboBox<TimeType> timeTypeSelector;
     private DateTimePanel dateTimePanel;
     private JTextField durationField;
-
-    enum TimeType {
-        DURATION("Duration"),
-        DATE_TIME("Date / Time");
-
-        private String name;
-
-        TimeType(final String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
 
     TimedTaskPanel(){
         mainPanel = new JPanel(new BorderLayout());
