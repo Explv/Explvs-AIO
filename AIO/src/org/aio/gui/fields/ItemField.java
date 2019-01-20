@@ -1,7 +1,6 @@
 package org.aio.gui.fields;
 
 import org.aio.activities.grand_exchange.GrandExchangeHelper;
-import org.aio.gui.utils.AutoCompleteTextField;
 
 import javax.swing.*;
 import java.awt.*;

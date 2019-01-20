@@ -65,7 +65,13 @@ public class Gui {
                 "Save",
                 "saveIcon.png",
                 "saveIconHover.png",
-                e -> saveConfig()
+                e -> {
+                    if (!validate(gui)) {
+                        JOptionPane.showMessageDialog(gui, "Fields highlighted in red are invalid", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        saveConfig();
+                    }
+                }
         ));
 
         saveLoadPanel.add(createButtonPanel(

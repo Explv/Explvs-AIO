@@ -3,8 +3,6 @@ package org.aio.gui.task_panels;
 import org.aio.activities.grand_exchange.*;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
-import org.aio.gui.utils.AutoCompleteTextField;
-import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.GrandExchangeTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -13,11 +11,9 @@ import org.json.simple.JSONObject;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Map;
 
 public class GETaskPanel implements TaskPanel {

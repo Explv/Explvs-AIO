@@ -2,7 +2,6 @@ package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
 import org.aio.gui.fields.NumberField;
-import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.LevelTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -12,7 +11,6 @@ import org.osbot.rs07.api.ui.Skill;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 
 public class LevelTaskPanel implements TaskPanel {

@@ -2,7 +2,6 @@ package org.aio.gui.task_panels;
 
 import org.aio.gui.fields.NumberField;
 import org.aio.gui.utils.DurationPanel;
-import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.LoopTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -11,7 +10,6 @@ import org.json.simple.JSONObject;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 

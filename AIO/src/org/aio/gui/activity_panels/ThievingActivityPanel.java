@@ -5,6 +5,7 @@ import org.aio.activities.eating.Food;
 import org.aio.activities.skills.thieving.ThievingActivity;
 import org.aio.activities.skills.thieving.ThievingObject;
 import org.aio.activities.skills.thieving.ThievingType;
+import org.aio.gui.fields.NumberField;
 import org.aio.util.Location;
 import org.aio.util.ResourceMode;
 import org.json.simple.JSONObject;
@@ -72,7 +73,7 @@ public class ThievingActivityPanel implements ActivityPanel {
         hpPercentLabel.setText("HP % To Eat:");
         panel4.add(hpPercentLabel);
 
-        hpPercentField = new JTextField();
+        hpPercentField = new NumberField();
         hpPercentField.setColumns(2);
         hpPercentField.setEditable(true);
         hpPercentField.setEnabled(true);

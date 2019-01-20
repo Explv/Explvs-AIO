@@ -1,4 +1,4 @@
-package org.aio.gui.utils;
+package org.aio.gui.fields;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

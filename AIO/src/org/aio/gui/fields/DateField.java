@@ -1,20 +1,21 @@
 package org.aio.gui.fields;
 
-import org.aio.gui.utils.NumberDocumentFilter;
-
 import javax.swing.*;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
-public class NumberField extends JTextField {
-    private int minValue = -1;
-    private int maxValue = -1;
+public class DateField extends JTextField {
 
-    public NumberField() {
-        ((AbstractDocument) getDocument()).setDocumentFilter(new NumberDocumentFilter());
+    private static final DateTimeFormatter dtFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
+            .parseStrict()
+            .toFormatter();
 
+    public DateField() {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(final KeyEvent e) {
@@ -30,12 +31,12 @@ public class NumberField extends JTextField {
         });
     }
 
-    public void setMinValue(int minValue) {
-        this.minValue = minValue;
+    public void setDate(final LocalDate date) {
+        setText(date.format(dtFormatter));
     }
 
-    public void setMaxValue(int maxValue) {
-        this.maxValue = maxValue;
+    public LocalDate getDate() {
+        return LocalDate.parse(getText().trim(), dtFormatter);
     }
 
     private boolean validateField() {
@@ -44,14 +45,12 @@ public class NumberField extends JTextField {
             return false;
         }
 
-        int value = Integer.parseInt(getText().trim());
-
-        if (minValue != -1 && value < minValue) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
-            return false;
-        }
-
-        if (maxValue != -1 && value > maxValue) {
+        try {
+            LocalDate.parse(
+                    getText().trim(),
+                    dtFormatter
+            );
+        } catch (DateTimeException e) {
             setBorder(BorderFactory.createLineBorder(Color.RED));
             return false;
         }
