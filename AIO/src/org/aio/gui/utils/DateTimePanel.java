@@ -1,5 +1,7 @@
 package org.aio.gui.utils;
 
+import org.aio.gui.fields.NumberField;
+
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
@@ -18,36 +20,31 @@ public class DateTimePanel extends JPanel {
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         add(new JLabel("Date (year/month/day):"));
 
-        yearField = new JTextField();
+        yearField = new NumberField();
         yearField.setColumns(4);
         yearField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) yearField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         add(yearField);
 
-        monthField = new JTextField();
+        monthField = new NumberField();
         monthField.setColumns(2);
         monthField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) monthField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         add(monthField);
 
-        dayField = new JTextField();
+        dayField = new NumberField();
         dayField.setColumns(2);
         dayField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) dayField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         add(dayField);
 
         add(new JLabel("Time (24h): "));
 
-        hourField = new JTextField();
+        hourField = new NumberField();
         hourField.setColumns(2);
         hourField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) hourField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         add(hourField);
 
-        minuteField = new JTextField();
+        minuteField = new NumberField();
         minuteField.setColumns(2);
         minuteField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) minuteField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         add(minuteField);
 
         setDateTime(LocalDateTime.now());

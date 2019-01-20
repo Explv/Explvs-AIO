@@ -153,8 +153,12 @@ public class Gui {
                 "startIcon.png",
                 "startIconHover.png",
                 e -> {
-                    started = true;
-                    close();
+                    if (!validate(gui)) {
+                        JOptionPane.showMessageDialog(gui, "Fields highlighted in red are invalid", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        started = true;
+                        close();
+                    }
                 }
         ));
 
@@ -178,6 +182,28 @@ public class Gui {
         gui.setContentPane(mainPanel);
         gui.pack();
         gui.setResizable(true);
+    }
+
+    private boolean validate(final Container container) {
+        boolean valid = true;
+
+        Component[] comps = container.getComponents();
+        for (Component component : comps) {
+            if (component instanceof JComponent) {
+                JComponent jComponent = (JComponent) component;
+                if (jComponent.getInputVerifier() != null) {
+                    if (!jComponent.getInputVerifier().verify(jComponent)) {
+                        valid = false;
+                    }
+                }
+            }
+            if (component instanceof Container) {
+                if (!validate((Container) component)) {
+                    valid = false;
+                }
+            }
+        }
+        return valid;
     }
 
     private JPanel createSpacerPanel() {
@@ -207,10 +233,10 @@ public class Gui {
 
     /**
      * Public getter for the entire ordered task list
-     *
+     * <p>
      * Note: Intentionally rebuilds the tasks, so each call returns a fresh list of task instances
      */
-    public final ArrayList<Task> getTasksAsList(){
+    public final ArrayList<Task> getTasksAsList() {
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(new TutorialIslandTask());
 
@@ -246,7 +272,7 @@ public class Gui {
     private TaskPanel addTask(final TaskType taskType) {
         TaskPanel taskPanel = TaskPanelFactory.createTaskPanel(taskType);
 
-        if (taskPanel == null){
+        if (taskPanel == null) {
             throw new IllegalArgumentException(String.format("Task type %s not supported.", taskType.toString()));
         }
         JPopupMenu contextMenu = new JPopupMenu();
@@ -265,7 +291,7 @@ public class Gui {
         TaskPanelContent taskPanelContent = new TaskPanelContent(taskPanel, components);
         taskPanels.add(taskPanelContent);
 
-        for(Component component : components){
+        for (Component component : components) {
             taskList.add(component);
         }
 
@@ -278,7 +304,7 @@ public class Gui {
             SwingUtilities.invokeLater(() -> {
                 taskPanels.remove(taskPanelContent);
 
-                for(Component component : taskPanelContent.components){
+                for (Component component : taskPanelContent.components) {
                     taskList.remove(component);
                 }
 
@@ -313,17 +339,17 @@ public class Gui {
         return taskPanel;
     }
 
-    private void swapTasks(int from, int to){
+    private void swapTasks(int from, int to) {
         SwingUtilities.invokeLater(() -> {
-            if(from < 0 || from >= taskPanels.size() || to < 0 || to >= taskPanels.size()){
+            if (from < 0 || from >= taskPanels.size() || to < 0 || to >= taskPanels.size()) {
                 return;
             }
 
-            Collections.swap(taskPanels,from, to);
+            Collections.swap(taskPanels, from, to);
 
             taskList.removeAll();
-            for(TaskPanelContent redrawTaskPanelContent : taskPanels){
-                for(Component component : redrawTaskPanelContent.components){
+            for (TaskPanelContent redrawTaskPanelContent : taskPanels) {
+                for (Component component : redrawTaskPanelContent.components) {
                     taskList.add(component);
                 }
             }
@@ -400,7 +426,7 @@ public class Gui {
     /**
      * Task panel content for use with tracking rendered/interactive content for each task panel instance
      */
-    class TaskPanelContent{
+    class TaskPanelContent {
         TaskPanel panel;
         List<Component> components;
 
@@ -411,7 +437,7 @@ public class Gui {
 
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Gui gui = new Gui();
         gui.open();
     }

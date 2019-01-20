@@ -1,10 +1,10 @@
 package org.aio.gui.utils;
 
 import org.aio.gui.JSONSerializable;
+import org.aio.gui.fields.NumberField;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,9 +25,8 @@ public class DurationPanel extends JPanel implements JSONSerializable {
 
         JPanel durationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         durationPanel.add(new JLabel("Duration (minutes):"));
-        durationField = new JTextField();
+        durationField = new NumberField();
         durationField.setColumns(6);
-        ((AbstractDocument) durationField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         durationPanel.add(durationField);
         add(durationPanel);
 

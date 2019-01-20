@@ -1,6 +1,7 @@
 package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
+import org.aio.gui.fields.NumberField;
 import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.LevelTask;
 import org.aio.tasks.Task;
@@ -37,9 +38,8 @@ public class LevelTaskPanel implements TaskPanel {
 
         controls.add(new JLabel("Level:"));
 
-        levelField = new JTextField();
+        levelField = new NumberField();
         levelField.setColumns(2);
-        ((AbstractDocument) levelField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(levelField);
 
         mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Level Task"));

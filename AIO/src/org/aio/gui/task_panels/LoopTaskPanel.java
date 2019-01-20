@@ -1,5 +1,6 @@
 package org.aio.gui.task_panels;
 
+import org.aio.gui.fields.NumberField;
 import org.aio.gui.utils.DurationPanel;
 import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.LoopTask;
@@ -30,9 +31,8 @@ public class LoopTaskPanel implements TaskPanel {
 
         // Add counter of previous tasks
         controls.add(new JLabel("Num Previous Tasks:"));
-        taskCountField = new JTextField();
+        taskCountField = new NumberField();
         taskCountField.setColumns(4);
-        ((AbstractDocument) taskCountField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(taskCountField);
 
         controls.add(new JLabel("Duration:"));
@@ -42,9 +42,8 @@ public class LoopTaskPanel implements TaskPanel {
 
         JPanel iterationsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         iterationsPanel.add(new JLabel("Num Iterations:"));
-        iterationCountField = new JTextField();
+        iterationCountField = new NumberField();
         iterationCountField.setColumns(4);
-        ((AbstractDocument) iterationCountField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         iterationsPanel.add(iterationCountField);
         controls.add(iterationsPanel);
 

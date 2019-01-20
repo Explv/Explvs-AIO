@@ -1,7 +1,7 @@
 package org.aio.gui.task_panels;
 
-import org.aio.activities.grand_exchange.GrandExchangeHelper;
-import org.aio.gui.utils.AutoCompleteTextField;
+import org.aio.gui.fields.ItemField;
+import org.aio.gui.fields.NumberField;
 import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.ResourceTask;
 import org.aio.tasks.Task;
@@ -17,7 +17,7 @@ import java.awt.*;
 public class ResourceTaskPanel implements TaskPanel {
 
     private JPanel mainPanel;
-    private AutoCompleteTextField resourceField;
+    private ItemField resourceField;
     private JTextField quantityField;
     private ActivitySelectorPanel activitySelectorPanel;
 
@@ -29,9 +29,7 @@ public class ResourceTaskPanel implements TaskPanel {
 
         bottomControls.add(new JLabel("Name of item:"));
 
-        resourceField = new AutoCompleteTextField();
-        resourceField.addPosibilities(GrandExchangeHelper.getAllGEItems().keySet());
-        resourceField.setColumns(15);
+        resourceField = new ItemField();
         bottomControls.add(resourceField);
 
         final JPanel panel1 = new JPanel(new BorderLayout());
@@ -40,9 +38,8 @@ public class ResourceTaskPanel implements TaskPanel {
 
         bottomControls.add(new JLabel("Quantity of item:"));
 
-        quantityField = new JTextField();
+        quantityField = new NumberField();
         quantityField.setColumns(5);
-        ((AbstractDocument) quantityField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         bottomControls.add(quantityField);
 
         mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Resource Task"));
@@ -59,7 +56,11 @@ public class ResourceTaskPanel implements TaskPanel {
 
     @Override
     public Task toTask() {
-        return new ResourceTask(activitySelectorPanel.getActivityPanel().toActivity(), resourceField.getText(), Integer.parseInt(quantityField.getText()));
+        return new ResourceTask(
+                activitySelectorPanel.getActivityPanel().toActivity(),
+                resourceField.getText(),
+                Integer.parseInt(quantityField.getText())
+        );
     }
 
     @Override

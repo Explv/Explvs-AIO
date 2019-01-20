@@ -1,6 +1,8 @@
 package org.aio.gui.task_panels;
 
 import org.aio.activities.grand_exchange.*;
+import org.aio.gui.fields.ItemField;
+import org.aio.gui.fields.NumberField;
 import org.aio.gui.utils.AutoCompleteTextField;
 import org.aio.gui.utils.NumberDocumentFilter;
 import org.aio.tasks.GrandExchangeTask;
@@ -13,6 +15,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Map;
@@ -21,7 +24,7 @@ public class GETaskPanel implements TaskPanel {
 
     private JPanel mainPanel;
     private JComboBox<GEMode> typeSelector;
-    private AutoCompleteTextField itemNameField;
+    private ItemField itemNameField;
     private JTextField itemQuantityField;
     private JTextField itemPriceField;
     private JCheckBox waitForCompletion;
@@ -39,40 +42,27 @@ public class GETaskPanel implements TaskPanel {
 
         controls.add(new JLabel("Item Name:"));
 
-        itemNameField = new AutoCompleteTextField();
-        itemNameField.setColumns(20);
-        itemNameField.addPosibilities(GrandExchangeHelper.getAllGEItems().keySet());
-        itemNameField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(final KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(final KeyEvent e) {
-
-            }
-
+        itemNameField = new ItemField();
+        itemNameField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(final KeyEvent e) {
-                validateItemNameField();
-                updatePriceField();
+                if (itemNameField.validateItemNameField()) {
+                    updatePriceField();
+                }
             }
         });
         controls.add(itemNameField);
 
         controls.add(new JLabel("Quantity:"));
 
-        itemQuantityField = new JTextField();
+        itemQuantityField = new NumberField();
         itemQuantityField.setColumns(5);
-        ((AbstractDocument) itemQuantityField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(itemQuantityField);
 
         controls.add(new JLabel("Price:"));
 
-        itemPriceField = new JTextField();
+        itemPriceField = new NumberField();
         itemPriceField.setColumns(10);
-        ((AbstractDocument) itemPriceField.getDocument()).setDocumentFilter(new NumberDocumentFilter());
         controls.add(itemPriceField);
 
         waitForCompletion = new JCheckBox("Wait for completion");
@@ -85,16 +75,8 @@ public class GETaskPanel implements TaskPanel {
         typeSelector.setModel(new DefaultComboBoxModel<>(GEMode.values()));
     }
 
-    private void validateItemNameField() {
-        if (!GrandExchangeHelper.getAllGEItems().containsKey(itemNameField.getText())) {
-            itemNameField.setForeground(Color.RED);
-        } else {
-            itemNameField.setForeground(Color.BLACK);
-        }
-    }
-
     private void updatePriceField() {
-        String itemName = itemNameField.getText();
+        String itemName = itemNameField.getText().trim();
         if (itemName.isEmpty()) {
             return;
         }
