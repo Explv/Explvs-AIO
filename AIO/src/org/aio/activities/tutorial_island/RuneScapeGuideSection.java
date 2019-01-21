@@ -55,14 +55,12 @@ public final class RuneScapeGuideSection extends TutorialSection {
                 }
                 break;
             case 3:
-                if (!EnableFixedModeEvent.isFixedModeEnabled(this)) {
-                    execute(new EnableFixedModeEvent());
-                } else {
-                    getTabs().open(Tab.SETTINGS);
-                }
+                getTabs().open(Tab.SETTINGS);
                 break;
             case 10:
-                if (!isAudioDisabled) {
+                if (!EnableFixedModeEvent.isFixedModeEnabled(this)) {
+                    execute(new EnableFixedModeEvent());
+                } else if (!isAudioDisabled) {
                     isAudioDisabled = disableAudio();
                 } else if (!getSettings().areRoofsEnabled()) {
                     toggleRoofsHidden();

@@ -244,15 +244,19 @@ public class Gui {
      */
     public final ArrayList<Task> getTasksAsList() {
         ArrayList<Task> tasks = new ArrayList<>();
-        tasks.add(new TutorialIslandTask());
 
-        int taskIndex = 1;
+        int taskIndex = 0;
+
+        Task tutorialIslandTask = new TutorialIslandTask();
+        tutorialIslandTask.setExecutionOrder(taskIndex);
+        tasks.add(tutorialIslandTask);
+        taskIndex++;
+
         for (TaskPanelContent taskPanel : taskPanels) {
             Task task = taskPanel.panel.toTask();
             task.setExecutionOrder(taskIndex);
-            taskIndex++;
-
             tasks.add(task);
+            taskIndex++;
         }
 
         return tasks;

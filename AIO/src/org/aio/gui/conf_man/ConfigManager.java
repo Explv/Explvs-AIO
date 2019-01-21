@@ -83,7 +83,13 @@ public class ConfigManager {
 
     public List<Task> getTasksFromJSON(final JSONObject json) {
         List<Task> tasks = new ArrayList<>();
+
+        int taskIndex = 0;
+
+        Task tutorialIslandTask = new TutorialIslandTask();
+        tutorialIslandTask.setExecutionOrder(taskIndex);
         tasks.add(new TutorialIslandTask());
+        taskIndex++;
 
         JSONArray taskJSONArray;
 
@@ -104,7 +110,9 @@ public class ConfigManager {
 
             taskPanel.fromJSON(taskJSON);
             Task task = taskPanel.toTask();
+            task.setExecutionOrder(taskIndex);
             tasks.add(task);
+            taskIndex++;
         }
 
         return tasks;
