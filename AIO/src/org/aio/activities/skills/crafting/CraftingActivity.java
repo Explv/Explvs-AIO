@@ -54,7 +54,11 @@ public class CraftingActivity extends Activity {
             getWalking().webWalk(location.getArea());
         } else if (makeAllInterface.isMakeAllScreenOpen()) {
             if (makeAllInterface.makeAll()) {
-                FINISHED_CRAFTING_SLEEP.sleep();
+                if (craftingItem.type == CraftingType.POTTERY && getInventory().contains("Soft clay")) {
+                    Sleep.sleepUntil(() -> !getInventory().contains("Soft clay") || getDialogues().isPendingContinuation(), 60_000, 600);
+                } else {
+                    FINISHED_CRAFTING_SLEEP.sleep();
+                }
             }
         } else {
             switch (craftingItem.type) {
@@ -146,7 +150,7 @@ public class CraftingActivity extends Activity {
     private void makeXUse(String object, String item) {
         if (!item.equals(getInventory().getSelectedItemName())) {
             getInventory().getItem(item).interact("Use");
-        } else if (getObjects().closest(object).interact()) {
+        } else if (getObjects().closest(object).interact("Use")) {
             MAKE_ALL_INTERFACE_OPEN_SLEEP.sleep();
         }
     }
