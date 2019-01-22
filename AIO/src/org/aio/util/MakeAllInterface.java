@@ -66,9 +66,14 @@ public class MakeAllInterface extends MethodProvider {
                                         widget.getBounds().getCenterX(),
                                         makeWidget.get().getBounds().getCenterY()
                                 )
-                        )
+                        ) &&
+                        widget.getAbsY() > makeWidget.get().getAbsY()
         );
 
-        return optionNumberWidget != null ? Integer.parseInt(optionNumberWidget.getMessage()) : 1;
+        if (optionNumberWidget == null) {
+            return -1;
+        }
+
+        return Integer.parseInt(optionNumberWidget.getMessage());
     }
 }

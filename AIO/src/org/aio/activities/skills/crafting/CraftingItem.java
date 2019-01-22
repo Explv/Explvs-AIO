@@ -19,7 +19,7 @@ public enum CraftingItem {
     POT ("Pot", "Pot", CraftingType.POTTERY, 1, 12.6f, new ItemReq("Soft clay", 1)),
     PIE_DISH ("Pie Dish", "Pie Dish", CraftingType.POTTERY, 7, 25, new ItemReq("Soft clay", 1)),
     BOWL ("Bowl", "Bowl", CraftingType.POTTERY, 8, 33, new ItemReq("Soft clay", 1)),
-    PLANT_POT ("Plantpot", "Plantpot", CraftingType.POTTERY, 19, 37.5f, new ItemReq("Soft clay", 1)),
+    PLANT_POT ("Plant pot", "Plant pot", CraftingType.POTTERY, 19, 37.5f, new ItemReq("Soft clay", 1)),
     POT_LID ("Pot lid", "Pot Lid", CraftingType.POTTERY, 25, 40, new ItemReq("Soft clay", 1)),
 
     LEATHER_GLOVES ("Leather gloves", "Leather gloves", CraftingType.ARMOUR, 1, 13.8f, new ItemReq("Needle"), new ItemReq("Leather", 1), new ItemReq("Thread", 1).setStackable()),
