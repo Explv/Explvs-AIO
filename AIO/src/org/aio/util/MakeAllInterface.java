@@ -70,10 +70,6 @@ public class MakeAllInterface extends MethodProvider {
                         widget.getAbsY() > makeWidget.get().getAbsY()
         );
 
-        if (optionNumberWidget == null) {
-            return -1;
-        }
-
-        return Integer.parseInt(optionNumberWidget.getMessage());
+        return optionNumberWidget != null ? Integer.parseInt(optionNumberWidget.getMessage()) : 1;
     }
 }
