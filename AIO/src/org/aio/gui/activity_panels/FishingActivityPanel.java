@@ -60,8 +60,8 @@ public class FishingActivityPanel implements ActivityPanel {
 
     @Override
     public void fromJSON(JSONObject jsonObject) {
-        locationSelector.setSelectedItem(FishingLocation.valueOf((String) jsonObject.get("location")));
         fishSelector.setSelectedItem(Fish.valueOf((String) jsonObject.get("fish")));
+        locationSelector.setSelectedItem(FishingLocation.valueOf((String) jsonObject.get("location")));
         resourceModeSelector.setSelectedItem(ResourceMode.valueOf((String) jsonObject.get("resource_mode")));
     }
 }

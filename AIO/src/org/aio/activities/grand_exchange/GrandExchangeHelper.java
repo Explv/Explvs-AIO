@@ -1,6 +1,8 @@
 package org.aio.activities.grand_exchange;
 
+import org.aio.util.CachedWidget;
 import org.aio.util.Sleep;
+import org.aio.util.WidgetActionFilter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -28,6 +30,10 @@ public class GrandExchangeHelper extends MethodProvider {
 
     private static final Area GRAND_EXCHANGE = new Area(3154, 3479, 3174, 3500);
     private static final int ITEM_ID_CONFIG = 1151;
+
+    private final CachedWidget GRAND_EXCHANGE_INTERFACE_WIDGET = new CachedWidget(465, "Grand Exchange");
+    private final CachedWidget COLLECT_TO_BANK_WIDGET = new CachedWidget(465, new WidgetActionFilter("Collect to bank"));
+    private final CachedWidget COLLECT_TO_INVENTORY_WIDGET = new CachedWidget(465, new WidgetActionFilter("Collect to inventory"));
 
     public static Map<String, Integer> getAllGEItems() {
         if (allGEItems.isEmpty()) {
@@ -132,10 +138,14 @@ public class GrandExchangeHelper extends MethodProvider {
         return getGrandExchange().getStatus(box) == GrandExchange.Status.EMPTY;
     }
 
+    private boolean isOpen() {
+        return GRAND_EXCHANGE_INTERFACE_WIDGET.get(getWidgets()).filter(RS2Widget::isVisible).isPresent();
+    }
+
     private void open() {
         NPC exchangeWorker = getNpcs().closest("Grand Exchange Clerk");
         if (exchangeWorker != null && exchangeWorker.interact("Exchange")) {
-            Sleep.sleepUntil(() -> getGrandExchange().isOpen(), 3000);
+            Sleep.sleepUntil(this::isOpen, 3000, 600);
         }
     }
 
@@ -143,7 +153,7 @@ public class GrandExchangeHelper extends MethodProvider {
         GrandExchangeEvent grandExchangeEvent = new GrandExchangeEvent() {
             @Override
             public int execute() throws InterruptedException {
-                if (!getGrandExchange().isOpen()) {
+                if (!isOpen()) {
                     open();
                 } else if (boxUsed != null && getGrandExchange().getStatus(boxUsed) != GrandExchange.Status.EMPTY) {
                     setFinished();
@@ -154,7 +164,7 @@ public class GrandExchangeHelper extends MethodProvider {
                             this.boxUsed = emptyBox.get();
                         }
                     } else if (finishedBoxExists()) {
-                        getGrandExchange().collect(true);
+                        collectToBank();
                     } else {
                         RS2Widget box1Widget = getBoxWidget(0);
                         if (box1Widget != null && box1Widget.interact("Abort offer")) {
@@ -203,7 +213,7 @@ public class GrandExchangeHelper extends MethodProvider {
 
             @Override
             public int execute() throws InterruptedException {
-                if (!getGrandExchange().isOpen()) {
+                if (!isOpen()) {
                     open();
                 } else if (boxUsed != null && getGrandExchange().getStatus(boxUsed) != GrandExchange.Status.EMPTY) {
                     setFinished();
@@ -214,7 +224,7 @@ public class GrandExchangeHelper extends MethodProvider {
                             this.boxUsed = emptyBox.get();
                         }
                     } else if (finishedBoxExists()) {
-                        getGrandExchange().collect(true);
+                        collectToBank();
                     } else {
                         RS2Widget box1Widget = getBoxWidget(0);
                         if (box1Widget != null && box1Widget.interact("Abort offer")) {
@@ -241,6 +251,22 @@ public class GrandExchangeHelper extends MethodProvider {
         };
         execute(grandExchangeEvent);
         return grandExchangeEvent.getBoxUsed();
+    }
+
+    private boolean collectToBank() {
+        if (COLLECT_TO_BANK_WIDGET.interact(getWidgets(), "Collect to bank")) {
+            Sleep.sleepUntil(() -> !COLLECT_TO_BANK_WIDGET.isVisible(getWidgets()), 2400, 600);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean collectToInventory() {
+        if (COLLECT_TO_INVENTORY_WIDGET.interact(getWidgets(), "Collect to inventory")) {
+            Sleep.sleepUntil(() -> !COLLECT_TO_INVENTORY_WIDGET.isVisible(getWidgets()), 2400, 600);
+            return true;
+        }
+        return false;
     }
 
     private RS2Widget getBoxWidget(int boxIndex) {

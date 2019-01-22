@@ -1,5 +1,6 @@
 package org.aio.activities.banking;
 
+import org.aio.util.Sleep;
 import org.aio.util.item_requirement.ItemReq;
 import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
@@ -211,7 +212,7 @@ public class ItemReqBanking extends Banking {
     }
 
     private boolean getItemReq(final ItemReq itemReq) {
-        int amountOnPlayer = (int) itemReq.getAmount(getInventory(), getEquipment());
+        int amountOnPlayer = (int) getAmountOnPlayer(itemReq);
         int targetAmount = reqTargetAmountMap.get(itemReq);
 
         if (itemReq.isNoted() && getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_NOTE) {
@@ -220,7 +221,9 @@ public class ItemReqBanking extends Banking {
             getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
         } else if (targetAmount != ItemReq.QUANTITY_ALL && amountOnPlayer > targetAmount) {
             int excessAmount = amountOnPlayer - reqTargetAmountMap.get(itemReq);
-            getBank().deposit(itemReq.getName(), excessAmount);
+            if (getBank().deposit(itemReq.getName(), excessAmount)) {
+                Sleep.sleepUntil(() -> getAmountOnPlayer(itemReq) < amountOnPlayer, 1200, 600);
+            }
         } else if (targetAmount == ItemReq.QUANTITY_ALL || amountOnPlayer < reqTargetAmountMap.get(itemReq)) {
             if (amountOnPlayer < itemReq.getMinQuantity()) {
                 int requiredAmountForMinQuantity = Math.max(0, itemReq.getMinQuantity() - amountOnPlayer);
@@ -235,9 +238,15 @@ public class ItemReqBanking extends Banking {
                 getBank().withdrawAll(itemReq.getName());
             } else {
                 int requiredTargetAmount = reqTargetAmountMap.get(itemReq) - amountOnPlayer;
-                getBank().withdraw(itemReq.getName(), requiredTargetAmount);
+                if (getBank().withdraw(itemReq.getName(), requiredTargetAmount)) {
+                    Sleep.sleepUntil(() -> getAmountOnPlayer(itemReq) > amountOnPlayer, 1200, 600);
+                }
             }
         }
         return true;
+    }
+
+    private long getAmountOnPlayer(final ItemReq itemReq) {
+        return itemReq.getAmount(getInventory(), getEquipment());
     }
 }

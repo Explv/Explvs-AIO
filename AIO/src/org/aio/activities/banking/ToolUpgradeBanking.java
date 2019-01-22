@@ -1,6 +1,7 @@
 package org.aio.activities.banking;
 
 import org.aio.util.Tool;
+import org.osbot.rs07.api.Bank;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 
 import java.util.Comparator;
@@ -60,6 +61,8 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
 
             if (!getInventory().isEmpty()) {
                 getBank().depositAll();
+            } else if (getBank().getWithdrawMode() != Bank.BankMode.WITHDRAW_ITEM) {
+                getBank().enableMode(Bank.BankMode.WITHDRAW_ITEM);
             } else {
                 Optional<T> bestTool = getBestUsableTool();
                 if (bestTool.isPresent()) {

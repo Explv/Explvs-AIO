@@ -103,6 +103,17 @@ public class CachedWidget {
         }
     }
 
+    public boolean isVisible(final Widgets widgets) {
+        return get(widgets).map(RS2Widget::isVisible)
+                           .orElse(false);
+    }
+
+    public boolean interact(final Widgets widgets, final String interaction) {
+        return get(widgets).filter(RS2Widget::isVisible)
+                           .map(w -> w.interact(interaction))
+                           .orElse(false);
+    }
+
     @Override
     public String toString() {
         return parentID + ", " + childID + ", " + subChildID;

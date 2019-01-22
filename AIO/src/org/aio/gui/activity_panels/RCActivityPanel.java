@@ -91,7 +91,6 @@ public class RCActivityPanel implements ActivityPanel {
         if (jsonObject.containsKey("type")) {
             rcTypeSelector.setSelectedItem(RunecraftingType.valueOf((String) jsonObject.get("type")));
             essenceTypeSelector.setSelectedItem(EssenceType.valueOf((String) jsonObject.get("essence_type")));
-
         }
     }
 }
