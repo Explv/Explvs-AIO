@@ -7,6 +7,7 @@ import org.aio.gui.utils.EventDispatchThreadRunner;
 import org.aio.paint.MouseTrail;
 import org.aio.paint.Paint;
 import org.aio.tasks.Task;
+import org.aio.tasks.TutorialIslandTask;
 import org.aio.tasks.task_executor.TaskExecutor;
 import org.aio.util.SkillTracker;
 import org.aio.util.event.EnableFixedModeEvent;
@@ -25,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v4.0", info = "AIO", version = 4.0, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO v4.1", info = "AIO", version = 4.1, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
     private Gui gui;
@@ -140,7 +141,7 @@ public class AIO extends Script {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (!osrsClientIsConfigured && !Tab.SETTINGS.isDisabled(getBot())) {
+        if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
             osrsClientIsConfigured = configureOSRSClient();
         } else if (taskExecutor.isComplete()) {
             stop(true);
@@ -148,6 +149,14 @@ public class AIO extends Script {
             taskExecutor.run();
         }
         return random(200, 300);
+    }
+
+    private boolean osrsClientIsConfigurable() {
+        return !Tab.SETTINGS.isDisabled(getBot()) &&
+               !getDialogues().isPendingContinuation() &&
+               !myPlayer().isAnimating() &&
+               taskExecutor.getCurrentTask() != null &&
+               !(taskExecutor.getCurrentTask() instanceof TutorialIslandTask);
     }
 
     private boolean configureOSRSClient() {

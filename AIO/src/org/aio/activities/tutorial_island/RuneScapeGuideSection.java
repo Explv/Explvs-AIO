@@ -64,8 +64,6 @@ public final class RuneScapeGuideSection extends TutorialSection {
                     isAudioDisabled = disableAudio();
                 } else if (!getSettings().areRoofsEnabled()) {
                     toggleRoofsHidden();
-                } else if (!getSettings().isShiftDropActive()) {
-                    toggleShiftDrop();
                 } else if (getObjects().closest("Door").interact("Open")) {
                     Sleep.sleepUntil(() -> getProgress() != 10, 5000, 600);
                 }

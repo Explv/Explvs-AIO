@@ -20,6 +20,10 @@ public final class TaskExecutor extends Executable {
         this.taskQueue.addAll(tasks);
     }
 
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+
     public void setTaskQueue(final List<Task> taskQueue) {
         this.taskQueue.clear();
         this.taskQueue.addAll(taskQueue);
