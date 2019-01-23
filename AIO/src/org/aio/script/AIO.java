@@ -26,8 +26,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ScriptManifest(author = "Explv", name = "Explv's AIO v4.1", info = "AIO", version = 4.1, logo = "http://i.imgur.com/58Zz0fb.png")
+@ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
+
+    static final String VERSION = "v1.10.8";
 
     private Gui gui;
     private Paint paint;
@@ -39,7 +41,7 @@ public class AIO extends Script {
 
     @Override
     public void onStart() throws InterruptedException {
-        VersionChecker versionChecker = new VersionChecker(Double.toString(getVersion()));
+        VersionChecker versionChecker = new VersionChecker(VERSION);
 
         if (!versionChecker.updateIsIgnored() && !versionChecker.isUpToDate()) {
             try {

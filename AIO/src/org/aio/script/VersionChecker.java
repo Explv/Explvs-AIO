@@ -45,8 +45,7 @@ public class VersionChecker {
             return Optional.empty();
         }
 
-        String latestGitHubReleaseTag = latestGitHubReleaseTagOpt.get();
-        String latestGitHubVersion = latestGitHubReleaseTag.replaceAll("[^\\d.]", "");
+        String latestGitHubVersion = latestGitHubReleaseTagOpt.get();
         return Optional.of(latestGitHubVersion);
     }
 
