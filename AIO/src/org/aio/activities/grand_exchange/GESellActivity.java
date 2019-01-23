@@ -30,16 +30,16 @@ public class GESellActivity extends GEActivity {
     public void runActivity() throws InterruptedException {
         if (box != null) {
             return;
-        } else if(!exchangeHelper.playerIsAtGE()){
+        } else if (!exchangeHelper.playerIsAtGE()) {
             exchangeHelper.walkToGE();
-        } else if(!checkedBank && getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
+        } else if (!checkedBank && getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
             if (!getInventory().isEmpty()) {
                 depositAllBanking.run();
             } else {
                 itemReqBanking.run();
                 if (itemReqBanking.hasFailed()) {
                     setFailed();
-                } else {
+                } else if (getBank() != null && getBank().isOpen()) {
                     checkedBank = true;
                 }
             }
