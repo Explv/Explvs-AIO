@@ -195,6 +195,10 @@ public class Gui {
 
         Component[] comps = container.getComponents();
         for (Component component : comps) {
+            if (!component.isVisible()) {
+                continue;
+            }
+
             if (component instanceof JComponent) {
                 JComponent jComponent = (JComponent) component;
                 if (jComponent.getInputVerifier() != null) {
