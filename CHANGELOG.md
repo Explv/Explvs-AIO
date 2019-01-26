@@ -1,3 +1,7 @@
+## [1.10.9] - 2019-01-26
+
+- @RealPoke Fixed item smithing (was previously withdrawing ores instead of bars)
+
 ## [1.10.8] - 2019-01-23
 
 - Use semantic versioning
