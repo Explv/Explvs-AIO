@@ -32,7 +32,7 @@ public class SmithItemMakingActivity extends Activity {
         smithItemWidget = new CachedWidget(smithItem.name);
 
         List<ItemReq> itemReqs = new ArrayList<>();
-        Collections.addAll(itemReqs, bar.oresRequired);
+        itemReqs.add(new ItemReq(bar.toString(), smithItem.barsRequired));
         itemReqs.add(new ItemReq("Hammer"));
         this.itemReqs = itemReqs.toArray(new ItemReq[0]);
     }
