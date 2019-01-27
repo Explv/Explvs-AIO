@@ -7,7 +7,6 @@ public class GEItem {
     private final int price;
 
     public GEItem(final String name, final int quantity, final int price) {
-
         this.name = name;
         this.quantity = quantity;
         this.price = price;

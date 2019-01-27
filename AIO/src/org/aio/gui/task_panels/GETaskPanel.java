@@ -9,9 +9,11 @@ import org.aio.activities.grand_exchange.price_guide.OSRSPriceGuide;
 import org.aio.activities.grand_exchange.price_guide.RSBuddyPriceGuide;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.fields.RSUnitField;
 import org.aio.tasks.GrandExchangeTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
+import org.aio.util.RSUnits;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -28,8 +30,8 @@ public class GETaskPanel implements TaskPanel {
     private JPanel mainPanel;
     private JComboBox<GEMode> typeSelector;
     private ItemField itemNameField;
-    private JTextField itemQuantityField;
-    private JTextField itemPriceField;
+    private RSUnitField itemQuantityField;
+    private RSUnitField itemPriceField;
     private JCheckBox waitForCompletion;
 
     GETaskPanel() {
@@ -63,13 +65,13 @@ public class GETaskPanel implements TaskPanel {
 
         controls.add(new JLabel("Quantity:"));
 
-        itemQuantityField = new NumberField();
-        itemQuantityField.setColumns(5);
+        itemQuantityField = new RSUnitField();
+        itemQuantityField.setColumns(10);
         controls.add(itemQuantityField);
 
         controls.add(new JLabel("Price:"));
 
-        itemPriceField = new NumberField();
+        itemPriceField = new RSUnitField();
         itemPriceField.setColumns(10);
         controls.add(itemPriceField);
 
@@ -95,7 +97,7 @@ public class GETaskPanel implements TaskPanel {
         final Optional<Integer> price = getPrice(itemName, geMode);
 
         if (price.isPresent()) {
-            SwingUtilities.invokeLater(() -> itemPriceField.setText(String.valueOf(price.get())));
+            SwingUtilities.invokeLater(() -> itemPriceField.setText(RSUnits.valueToFormatted(price.get())));
         } else {
             SwingUtilities.invokeLater(() -> itemPriceField.setText(""));
         }
@@ -132,10 +134,17 @@ public class GETaskPanel implements TaskPanel {
     @Override
     public Task toTask() {
         GEMode geMode = (GEMode) typeSelector.getSelectedItem();
-        GEItem geItem = new GEItem(itemNameField.getText(), Integer.parseInt(itemQuantityField.getText()), Integer.parseInt(itemPriceField.getText()));
+
+        GEItem geItem = new GEItem(
+                itemNameField.getText(),
+                (int) itemQuantityField.getValue(),
+                (int) itemPriceField.getValue()
+        );
+
         if (geMode == GEMode.BUY) {
             return new GrandExchangeTask(new GEBuyActivity(geItem), geMode, geItem, waitForCompletion.isSelected());
         }
+
         return new GrandExchangeTask(new GESellActivity(geItem), geMode, geItem, waitForCompletion.isSelected());
     }
 

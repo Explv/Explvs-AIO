@@ -32,11 +32,23 @@ public class OSRSPriceGuide {
 
                 JSONObject itemJSON = (JSONObject) json.get("item");
                 JSONObject currentPriceData = (JSONObject) itemJSON.get("current");
-                int currentPrice = parsePriceStr((String) currentPriceData.get("price"));
+
+                Object currentPriceObj = currentPriceData.get("price");
+
+                int currentPrice;
+
+                if (currentPriceObj instanceof String) {
+                    currentPrice = parsePriceStr((String) currentPriceData.get("price"));
+                } else if (currentPriceObj instanceof Long){
+                    currentPrice = ((Long) currentPriceObj).intValue();
+                } else {
+                    currentPrice = (int) currentPriceObj;
+                }
 
                 return Optional.of(currentPrice);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Failed to get price from RuneScape api");
         }
         return Optional.empty();

@@ -3,6 +3,7 @@ package org.aio.tasks;
 import org.aio.activities.grand_exchange.GEActivity;
 import org.aio.activities.grand_exchange.GEItem;
 import org.aio.activities.grand_exchange.GEMode;
+import org.aio.util.RSUnits;
 import org.osbot.rs07.api.GrandExchange;
 
 public class GrandExchangeTask extends Task {
@@ -65,7 +66,13 @@ public class GrandExchangeTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("Grand Exchange task: %s %d %s for %d each", geMode.toString(), geItem.getQuantity(), geItem.getName(), geItem.getPrice());
+        return String.format(
+                "Grand Exchange task: %s %s %s for %s each",
+                geMode.toString(),
+                RSUnits.valueToFormatted(geItem.getQuantity()),
+                geItem.getName(),
+                RSUnits.valueToFormatted(geItem.getPrice())
+        );
     }
 
     @Override

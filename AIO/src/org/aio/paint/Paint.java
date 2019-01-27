@@ -1,6 +1,7 @@
 package org.aio.paint;
 
 import org.aio.tasks.Task;
+import org.aio.util.RSUnits;
 import org.aio.util.SkillTracker;
 import org.osbot.rs07.Bot;
 import org.osbot.rs07.api.ui.Skill;
@@ -158,8 +159,8 @@ public class Paint implements Painter {
                     skill.toString(),
                     skillTracker.getLevel(skill),
                     skillTracker.getGainedLevels(skill),
-                    formatValue(skillTracker.getGainedXP(skill)),
-                    formatValue(skillTracker.getGainedXPPerHour(skill)));
+                    RSUnits.valueToFormatted(skillTracker.getGainedXP(skill)),
+                    RSUnits.valueToFormatted(skillTracker.getGainedXPPerHour(skill)));
             g.drawString(output, x, y);
             y += 20;
         }
@@ -205,11 +206,5 @@ public class Paint implements Painter {
         m %= 60;
         s %= 60;
         return String.format("%02d:%02d:%02d", h, m, s);
-    }
-
-    private String formatValue(long val) {
-        return val > 1_000_000 ? String.format("%.2fm", ((float) val / 1_000_000)) :
-                val > 1_000 ? String.format("%.2fk", ((float) val / 1_000)) :
-                        Long.toString(val);
     }
 }

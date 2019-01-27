@@ -2,6 +2,7 @@ package org.aio.gui.task_panels;
 
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.fields.RSUnitField;
 import org.aio.tasks.ResourceTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -16,7 +17,7 @@ public class ResourceTaskPanel implements TaskPanel {
 
     private JPanel mainPanel;
     private ItemField resourceField;
-    private JTextField quantityField;
+    private RSUnitField quantityField;
     private ActivitySelectorPanel activitySelectorPanel;
 
     ResourceTaskPanel(){
@@ -36,7 +37,7 @@ public class ResourceTaskPanel implements TaskPanel {
 
         bottomControls.add(new JLabel("Quantity of item:"));
 
-        quantityField = new NumberField();
+        quantityField = new RSUnitField();
         quantityField.setColumns(5);
         bottomControls.add(quantityField);
 
@@ -57,7 +58,7 @@ public class ResourceTaskPanel implements TaskPanel {
         return new ResourceTask(
                 activitySelectorPanel.getActivityPanel().toActivity(),
                 resourceField.getText(),
-                Integer.parseInt(quantityField.getText())
+                (int) quantityField.getValue()
         );
     }
 
