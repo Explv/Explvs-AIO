@@ -98,7 +98,8 @@ public class ItemReq {
     }
 
     public final boolean isRequirementItem(final Item item) {
-        return item.getName().equals(getName()) && item.isNote() == isNoted();
+        return item.getName().equals(getName()) &&
+                (item.isNote() == isNoted()) || (isStackable() && item.getDefinition().getNotedId() == -1);
     }
 
     public final boolean hasRequirement(final ItemContainer... itemContainers) {
@@ -114,7 +115,11 @@ public class ItemReq {
                 .mapToLong(itemContainer ->
                         itemContainer.getAmount(item ->
                                 item.getName().equals(getName()) &&
-                                        (itemContainer instanceof Bank || item.isNote() == isNoted())
+                                (
+                                    itemContainer instanceof Bank ||
+                                    item.isNote() == isNoted() ||
+                                    (isStackable() && item.getDefinition().getNotedId() == -1) // If an item is stackable, it's noted ID will be -1
+                                )
                         )
                 ).sum();
     }

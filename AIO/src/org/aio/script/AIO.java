@@ -29,7 +29,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v2.1.0";
+    static final String VERSION = "v2.1.1";
 
     private Gui gui;
     private Paint paint;
