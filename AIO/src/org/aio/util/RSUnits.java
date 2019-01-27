@@ -1,11 +1,14 @@
 package org.aio.util;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class RSUnits {
 
     public static final Pattern UNIT_PATTERN = Pattern.compile("^\\d+(?:(?:\\.\\d+[kmb])|[kmb])?$");
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.###");
 
     private static final Map<Character, Integer> suffixMultipliers;
     static {
@@ -45,7 +48,9 @@ public class RSUnits {
             Integer multiplier = suffixMultipliers.get(suffix);
 
             if (value > multiplier) {
-                return String.format("%.2f" + suffix, ((double) value / multiplier));
+                double newValue = ((double) value / multiplier);
+
+                return decimalFormat.format(newValue) + suffix;
             }
         }
 
