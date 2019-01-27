@@ -14,6 +14,7 @@ import org.osbot.rs07.script.MethodProvider;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -46,9 +47,9 @@ public final class RuneScapeGuideSection extends TutorialSection {
                     setDisplayName();
                 } else if (isCreationScreenVisible()) {
                     createRandomCharacter();
-                } else if (experienceWidget.get(getWidgets()).isPresent()) {
+                } else if (experienceWidget.isVisible(getWidgets())) {
                     if (getDialogues().selectOption(random(1, 3))) {
-                        Sleep.sleepUntil(() -> !experienceWidget.get(getWidgets()).map(widget -> !widget.isVisible()).orElse(true), 2000, 600);
+                        Sleep.sleepUntil(() -> !experienceWidget.isVisible(getWidgets()), 2000, 600);
                     }
                 } else {
                     talkToInstructor();
@@ -81,25 +82,25 @@ public final class RuneScapeGuideSection extends TutorialSection {
         switch (configValue) {
             case 0:
             case 1:
-                if (suggestedNameWidget.get(getWidgets()).isPresent()) {
-                    RS2Widget suggestedWidget = suggestedNameWidget.get(getWidgets()).get();
-                    int rootID = suggestedWidget.getRootId();
-                    int secondLevelID = suggestedWidget.getSecondLevelId();
-                    RS2Widget nameWidget = getWidgets().get(rootID, secondLevelID + 2 + random(0, 2));
-                    if (nameWidget.interact()) {
+                if (suggestedNameWidget.isVisible(getWidgets())) {
+                    Optional<RS2Widget> nameWidget = suggestedNameWidget.getRelative(
+                            getWidgets(),
+                            0, 2 + random(0, 2), 0
+                    );
+                    if (nameWidget.isPresent() && nameWidget.get().interact()) {
                         Sleep.sleepUntil(() -> getConfigs().get(configID) == 4, 1200);
                     }
-                } else if (checkNameWidget.get(getWidgets()).filter(RS2Widget::isVisible).isPresent()) {
+                } else if (checkNameWidget.isVisible(getWidgets())) {
                     if (getKeyboard().typeString(generateRandomString(4))) {
                         Sleep.sleepUntil(() -> getConfigs().get(configID) == 2, 1200);
                     }
-                } else if (nameLookupWidget.get(getWidgets()).get().interact("Look up name")) {
+                } else if (nameLookupWidget.interact(getWidgets(), "Look up name")) {
                     Sleep.sleepUntil(() -> getConfigs().get(configID) == 1, 1200);
                 }
                 break;
             case 4:
-                if (setNameWidget.get(getWidgets()).isPresent()) {
-                    if (setNameWidget.get(getWidgets()).get().interact()) {
+                if (setNameWidget.isVisible(getWidgets())) {
+                    if (setNameWidget.interact(getWidgets())) {
                         Sleep.sleepUntil(() -> getConfigs().get(configID) == 21, 2400);
                     }
                 }
@@ -118,7 +119,7 @@ public final class RuneScapeGuideSection extends TutorialSection {
     }
 
     private boolean isCreationScreenVisible() {
-        return creationScreenWidget.get(getWidgets()).filter(RS2Widget::isVisible).isPresent();
+        return creationScreenWidget.isVisible(getWidgets());
     }
 
     private void createRandomCharacter() throws InterruptedException {
@@ -129,7 +130,9 @@ public final class RuneScapeGuideSection extends TutorialSection {
             getWidgets().getWidgetContainingText("Female").interact();
         }
 
-        final RS2Widget[] childWidgets = getWidgets().getWidgets(creationScreenWidget.get(getWidgets()).get().getRootId());
+        int rootID = creationScreenWidget.get(getWidgets()).get().getRootId();
+
+        final RS2Widget[] childWidgets = getWidgets().getWidgets(rootID);
         Collections.shuffle(Arrays.asList(childWidgets));
 
         for (final RS2Widget childWidget : childWidgets) {

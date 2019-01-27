@@ -23,11 +23,11 @@ public final class ToggleRoofsHiddenEvent extends Event {
             setFailed();
         } else if (getTabs().getOpen() != Tab.SETTINGS) {
             getTabs().open(Tab.SETTINGS);
-        } else if (!advancedOptionsWidget.get(getWidgets()).isPresent()) {
-            displaySettingsWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
-        } else if (!toggleRoofHiddenWidget.get(getWidgets()).isPresent()) {
-            advancedOptionsWidget.get(getWidgets()).get().interact();
-        } else if (!toggledRoofs && toggleRoofHiddenWidget.get(getWidgets()).get().interact()) {
+        } else if (!advancedOptionsWidget.isVisible(getWidgets())) {
+            displaySettingsWidget.interact(getWidgets());
+        } else if (!toggleRoofHiddenWidget.isVisible(getWidgets())) {
+            advancedOptionsWidget.interact(getWidgets());
+        } else if (!toggledRoofs && toggleRoofHiddenWidget.interact(getWidgets())) {
             toggledRoofs = true;
         }
         return 200;

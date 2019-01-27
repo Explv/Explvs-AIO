@@ -111,12 +111,8 @@ public class CraftingActivity extends Activity {
         if (getWidgets().getWidgetContainingText("What would you like to make?") != null) {
             if (jewelleryWidget == null) {
                 jewelleryWidget = getJewelleryWidget();
-            } else {
-                jewelleryWidget.get(getWidgets()).ifPresent(widget -> {
-                    if (widget.interact("Make-All")) {
-                        FINISHED_CRAFTING_SLEEP.sleep();
-                    }
-                });
+            } else if (jewelleryWidget.interact(getWidgets(), "Make-All")) {
+                FINISHED_CRAFTING_SLEEP.sleep();
             }
         } else if (!craftingItem.itemReqs[1].toString().equals(getInventory().getSelectedItemName())) {
             getInventory().getItem(craftingItem.itemReqs[1].toString()).interact("Use");

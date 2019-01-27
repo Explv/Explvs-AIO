@@ -26,9 +26,9 @@ public class EnableFixedModeEvent extends Event {
             setFailed();
         } else if (getTabs().getOpen() != Tab.SETTINGS) {
             getTabs().open(Tab.SETTINGS);
-        } else if (!fixedModeWidget.get(getWidgets()).isPresent()) {
-            displaySettingsWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
-        } else if (fixedModeWidget.get(getWidgets()).get().interact("Fixed mode")) {
+        } else if (!fixedModeWidget.isVisible(getWidgets())) {
+            displaySettingsWidget.interact(getWidgets());
+        } else if (fixedModeWidget.interact(getWidgets(), "Fixed mode")) {
             Sleep.sleepUntil(() -> isFixedModeEnabled(this), 3000);
         }
         return 200;

@@ -22,14 +22,14 @@ public final class DisableAudioEvent extends Event {
             setFailed();
         } else if (getTabs().getOpen() != Tab.SETTINGS) {
             getTabs().open(Tab.SETTINGS);
-        } else if (!musicVolumeWidget.get(getWidgets()).isPresent()) {
-            soundSettingsWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
+        } else if (!musicVolumeWidget.isVisible(getWidgets())) {
+            soundSettingsWidget.interact(getWidgets());
         } else if (!isVolumeDisabled(musicVolumeConfig)) {
-            musicVolumeWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
+            musicVolumeWidget.interact(getWidgets());
         } else if (!isVolumeDisabled(soundEffectVolumeConfig)) {
-            soundEffectVolumeWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
+            soundEffectVolumeWidget.interact(getWidgets());
         } else if (!isVolumeDisabled(areaSoundEffectVolumeConfig)) {
-            areaSoundEffectVolumeWidget.get(getWidgets()).ifPresent(widget -> widget.interact());
+            areaSoundEffectVolumeWidget.interact(getWidgets());
         } else {
             setFinished();
         }

@@ -48,7 +48,7 @@ public class MakeAllInterface extends MethodProvider {
     }
 
     public boolean isMakeAllScreenOpen() {
-        return titleWidget.get(getWidgets()).map(RS2Widget::isVisible).isPresent();
+        return titleWidget.isVisible(getWidgets());
     }
 
     private int getItemOptionNumber() {

@@ -1,7 +1,7 @@
 package org.aio.activities.tutorial_island;
 
-import org.aio.util.widget.CachedWidget;
 import org.aio.util.Sleep;
+import org.aio.util.widget.CachedWidget;
 import org.aio.util.widget.filters.WidgetActionFilter;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
@@ -28,71 +28,69 @@ public final class FightingSection extends TutorialSection {
         }
 
         switch (getProgress()) {
-                case 370:
-                    talkToInstructor();
-                    break;
-                case 390:
-                    getTabs().open(Tab.EQUIPMENT);
-                    break;
-                case 400:
-                    VIEW_EQUIPMENT_STATS_WIDGET.get(getWidgets()).ifPresent(widget -> {
-                        if (widget.interact()) {
-                            Sleep.sleepUntil(() -> getProgress() != 400, 3000, 600);
-                        }
-                    });
-                    break;
-                case 405:
-                    wieldItem("Bronze dagger");
-                    break;
-                case 410:
-                    talkToInstructor();
-                    break;
-                case 420:
-                    if (!getEquipment().isWearingItem(EquipmentSlot.WEAPON, "Bronze sword")) {
-                        wieldItem("Bronze sword");
-                    } else if (!getEquipment().isWearingItem(EquipmentSlot.SHIELD, "Wooden shield")) {
-                        wieldItem("Wooden shield");
-                    }
-                    break;
-                case 430:
-                    getTabs().open(Tab.ATTACK);
-                    break;
-                case 440:
+            case 370:
+                talkToInstructor();
+                break;
+            case 390:
+                getTabs().open(Tab.EQUIPMENT);
+                break;
+            case 400:
+                if (VIEW_EQUIPMENT_STATS_WIDGET.interact(getWidgets())) {
+                    Sleep.sleepUntil(() -> getProgress() != 400, 3000, 600);
+                }
+                break;
+            case 405:
+                wieldItem("Bronze dagger");
+                break;
+            case 410:
+                talkToInstructor();
+                break;
+            case 420:
+                if (!getEquipment().isWearingItem(EquipmentSlot.WEAPON, "Bronze sword")) {
+                    wieldItem("Bronze sword");
+                } else if (!getEquipment().isWearingItem(EquipmentSlot.SHIELD, "Wooden shield")) {
+                    wieldItem("Wooden shield");
+                }
+                break;
+            case 430:
+                getTabs().open(Tab.ATTACK);
+                break;
+            case 440:
+                enterRatCage();
+                break;
+            case 450:
+            case 460:
+                if (!inRatCage()) {
                     enterRatCage();
-                    break;
-                case 450:
-                case 460:
-                    if (!inRatCage()) {
-                        enterRatCage();
-                    } else if (!isAttackingRat()) {
-                        attackRat();
-                    }
-                    break;
-                case 470:
-                    if (inRatCage()) {
-                        leaveRatCage();
-                    } else {
-                        talkToInstructor();
-                    }
-                    break;
-                case 480:
-                case 490:
-                    if (!getEquipment().isWearingItem(EquipmentSlot.WEAPON, "Shortbow")) {
-                        wieldItem("Shortbow");
-                    } else if (!getEquipment().isWearingItem(EquipmentSlot.ARROWS, "Bronze arrow")) {
-                        wieldItem("Bronze arrow");
-                    } else if (!isAttackingRat()) {
-                        attackRat();
-                    }
-                    break;
-                case 500:
-                    if (!LADDER_AREA.contains(myPosition())) {
-                        getWalking().walk(LADDER_AREA);
-                    } else if (getObjects().closest("Ladder").interact("Climb-up")) {
-                        Sleep.sleepUntil(() -> !LADDER_AREA.contains(myPosition()), 5000, 600);
-                    }
-                    break;
-            }
+                } else if (!isAttackingRat()) {
+                    attackRat();
+                }
+                break;
+            case 470:
+                if (inRatCage()) {
+                    leaveRatCage();
+                } else {
+                    talkToInstructor();
+                }
+                break;
+            case 480:
+            case 490:
+                if (!getEquipment().isWearingItem(EquipmentSlot.WEAPON, "Shortbow")) {
+                    wieldItem("Shortbow");
+                } else if (!getEquipment().isWearingItem(EquipmentSlot.ARROWS, "Bronze arrow")) {
+                    wieldItem("Bronze arrow");
+                } else if (!isAttackingRat()) {
+                    attackRat();
+                }
+                break;
+            case 500:
+                if (!LADDER_AREA.contains(myPosition())) {
+                    getWalking().walk(LADDER_AREA);
+                } else if (getObjects().closest("Ladder").interact("Climb-up")) {
+                    Sleep.sleepUntil(() -> !LADDER_AREA.contains(myPosition()), 5000, 600);
+                }
+                break;
+        }
     }
 
     private boolean inRatCage() {

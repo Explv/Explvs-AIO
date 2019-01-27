@@ -107,7 +107,7 @@ public final class BankSection extends TutorialSection {
     }
 
     private void openAccountManagementTab() {
-        if ( accountManagementWidget.get(getWidgets()).isPresent() && accountManagementWidget.get(getWidgets()).get().interact()) {
+        if (accountManagementWidget.isVisible(getWidgets()) && accountManagementWidget.interact(getWidgets())) {
             Sleep.sleepUntil(() -> getProgress() == 532, 5000, 600);
         }
     }
