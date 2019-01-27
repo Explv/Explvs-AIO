@@ -1,6 +1,6 @@
 package org.aio.gui.task_panels;
 
-import org.aio.gui.JSONSerializable;
+import org.aio.gui.interfaces.JSONSerializable;
 import org.aio.tasks.Task;
 
 import javax.swing.*;

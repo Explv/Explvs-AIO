@@ -1,7 +1,7 @@
 package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
-import org.aio.gui.JSONSerializable;
+import org.aio.gui.interfaces.JSONSerializable;
 import org.aio.gui.activity_panels.ActivityPanel;
 import org.aio.gui.activity_panels.ActivityPanelFactory;
 import org.json.simple.JSONObject;

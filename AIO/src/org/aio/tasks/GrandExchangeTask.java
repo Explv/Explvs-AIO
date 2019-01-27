@@ -65,7 +65,7 @@ public class GrandExchangeTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("Grand Exchange task: %s %d %s for %d ea", geMode.toString(), geItem.getQuantity(), geItem.getName(), geItem.getPrice());
+        return String.format("Grand Exchange task: %s %d %s for %d each", geMode.toString(), geItem.getQuantity(), geItem.getName(), geItem.getPrice());
     }
 
     @Override

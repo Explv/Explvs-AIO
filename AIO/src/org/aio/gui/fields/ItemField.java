@@ -1,6 +1,6 @@
 package org.aio.gui.fields;
 
-import org.aio.activities.grand_exchange.GrandExchangeHelper;
+import org.aio.activities.grand_exchange.item_guide.ItemGuide;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ public class ItemField extends AutoCompleteTextField {
 
     public ItemField() {
         setColumns(20);
-        addPosibilities(GrandExchangeHelper.getAllGEItems().keySet());
+        addPosibilities(ItemGuide.getAllGEItems().keySet());
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(final KeyEvent e) {
@@ -36,7 +36,7 @@ public class ItemField extends AutoCompleteTextField {
             setBorder(BorderFactory.createLineBorder(Color.BLACK));
         }
 
-        if (!GrandExchangeHelper.getAllGEItems().containsKey(itemName)) {
+        if (!ItemGuide.getAllGEItems().containsKey(itemName)) {
             setForeground(Color.RED);
             return false;
         }

@@ -6,6 +6,7 @@ import org.aio.activities.banking.Bank;
 import org.aio.activities.banking.ItemReqBanking;
 import org.aio.util.*;
 import org.aio.util.item_requirement.ItemReq;
+import org.aio.util.widget.CachedWidget;
 import org.osbot.rs07.api.ui.RS2Widget;
 
 public class CraftingActivity extends Activity {

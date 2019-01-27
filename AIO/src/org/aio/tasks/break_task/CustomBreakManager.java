@@ -3,11 +3,9 @@ package org.aio.tasks.break_task;
 import org.osbot.rs07.api.Client;
 import org.osbot.rs07.script.RandomEvent;
 import org.osbot.rs07.script.RandomSolver;
-import org.osbot.rs07.script.ScriptManifest;
 
 import java.time.LocalDateTime;
 
-@ScriptManifest(author = "Explv", name = "Break Manager", info = "", version = 0.1, logo = "")
 public class CustomBreakManager extends RandomSolver {
 
     private LocalDateTime endDateTime;

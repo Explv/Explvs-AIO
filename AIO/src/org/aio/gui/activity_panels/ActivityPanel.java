@@ -1,7 +1,7 @@
 package org.aio.gui.activity_panels;
 
 import org.aio.activities.activity.Activity;
-import org.aio.gui.JSONSerializable;
+import org.aio.gui.interfaces.JSONSerializable;
 
 import javax.swing.*;
 

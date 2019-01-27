@@ -6,6 +6,8 @@ import org.aio.activities.banking.Bank;
 import org.aio.activities.banking.ItemReqBanking;
 import org.aio.util.*;
 import org.aio.util.item_requirement.ItemReq;
+import org.aio.util.widget.CachedWidget;
+import org.aio.util.widget.filters.WidgetActionFilter;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.event.WebWalkEvent;

@@ -2,12 +2,15 @@ package org.aio.activities.grand_exchange;
 
 import org.aio.activities.activity.Activity;
 import org.osbot.rs07.api.GrandExchange;
+import org.osbot.rs07.api.map.Area;
 
 public abstract class GEActivity extends Activity {
 
-    protected GrandExchange.Box box;
+    protected static final Area GRAND_EXCHANGE = new Area(3154, 3479, 3174, 3500);
 
-    public GEActivity() {
+    GrandExchange.Box box;
+
+    GEActivity() {
         super(null);
     }
 

@@ -1,4 +1,4 @@
-package org.aio.gui;
+package org.aio.gui.interfaces;
 
 import org.json.simple.JSONObject;
 

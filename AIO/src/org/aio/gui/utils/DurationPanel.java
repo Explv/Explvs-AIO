@@ -1,6 +1,6 @@
 package org.aio.gui.utils;
 
-import org.aio.gui.JSONSerializable;
+import org.aio.gui.interfaces.JSONSerializable;
 import org.aio.gui.fields.NumberField;
 import org.json.simple.JSONObject;
 

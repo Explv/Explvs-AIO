@@ -2,11 +2,11 @@ package org.aio.activities.grand_exchange;
 
 import org.aio.activities.banking.DepositAllBanking;
 import org.aio.activities.banking.ItemReqBanking;
+import org.aio.activities.grand_exchange.event.GrandExchangeSellEvent;
 import org.aio.util.item_requirement.ItemReq;
 
 public class GESellActivity extends GEActivity {
 
-    private GrandExchangeHelper exchangeHelper;
     private final GEItem geItem;
     private DepositAllBanking depositAllBanking;
     private ItemReqBanking itemReqBanking;
@@ -20,8 +20,6 @@ public class GESellActivity extends GEActivity {
 
     @Override
     public void onStart() {
-        this.exchangeHelper = new GrandExchangeHelper();
-        this.exchangeHelper.exchangeContext(getBot());
         itemReqBanking.exchangeContext(getBot());
         depositAllBanking.exchangeContext(getBot());
     }
@@ -30,8 +28,10 @@ public class GESellActivity extends GEActivity {
     public void runActivity() throws InterruptedException {
         if (box != null) {
             return;
-        } else if (!exchangeHelper.playerIsAtGE()) {
-            exchangeHelper.walkToGE();
+        }
+
+        if (!GRAND_EXCHANGE.contains(myPosition())) {
+            getWalking().webWalk(GRAND_EXCHANGE);
         } else if (!checkedBank && getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
             if (!getInventory().isEmpty()) {
                 depositAllBanking.run();
@@ -44,7 +44,11 @@ public class GESellActivity extends GEActivity {
                 }
             }
         } else {
-            box = exchangeHelper.createSellOffer(geItem.getName(), geItem.getPrice(), geItem.getQuantity());
+            GrandExchangeSellEvent sellEvent = new GrandExchangeSellEvent(
+                    geItem.getName(), geItem.getPrice(), geItem.getQuantity()
+            );
+            execute(sellEvent);
+            box = sellEvent.getBoxUsed();
         }
     }
 

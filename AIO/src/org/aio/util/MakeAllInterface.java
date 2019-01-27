@@ -1,5 +1,6 @@
 package org.aio.util;
 
+import org.aio.util.widget.CachedWidget;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.event.Event;
 import org.osbot.rs07.script.MethodProvider;

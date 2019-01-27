@@ -4,14 +4,13 @@ import org.aio.activities.activity.Activity;
 import org.aio.activities.activity.ActivityType;
 import org.aio.activities.banking.ItemReqBanking;
 import org.aio.activities.skills.smithing.Bar;
-import org.aio.util.CachedWidget;
+import org.aio.util.widget.CachedWidget;
 import org.aio.util.Executable;
 import org.aio.util.Sleep;
 import org.aio.util.item_requirement.ItemReq;
 import org.osbot.rs07.api.ui.RS2Widget;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SmithItemMakingActivity extends Activity {

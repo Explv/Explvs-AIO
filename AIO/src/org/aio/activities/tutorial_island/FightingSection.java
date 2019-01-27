@@ -1,8 +1,8 @@
 package org.aio.activities.tutorial_island;
 
-import org.aio.util.CachedWidget;
+import org.aio.util.widget.CachedWidget;
 import org.aio.util.Sleep;
-import org.aio.util.WidgetActionFilter;
+import org.aio.util.widget.filters.WidgetActionFilter;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.ui.EquipmentSlot;

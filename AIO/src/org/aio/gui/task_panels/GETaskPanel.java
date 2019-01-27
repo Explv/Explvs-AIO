@@ -1,6 +1,12 @@
 package org.aio.gui.task_panels;
 
-import org.aio.activities.grand_exchange.*;
+import org.aio.activities.grand_exchange.GEBuyActivity;
+import org.aio.activities.grand_exchange.GEItem;
+import org.aio.activities.grand_exchange.GEMode;
+import org.aio.activities.grand_exchange.GESellActivity;
+import org.aio.activities.grand_exchange.item_guide.ItemGuide;
+import org.aio.activities.grand_exchange.price_guide.OSRSPriceGuide;
+import org.aio.activities.grand_exchange.price_guide.RSBuddyPriceGuide;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
 import org.aio.tasks.GrandExchangeTask;
@@ -15,6 +21,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Map;
+import java.util.Optional;
 
 public class GETaskPanel implements TaskPanel {
 
@@ -25,7 +32,7 @@ public class GETaskPanel implements TaskPanel {
     private JTextField itemPriceField;
     private JCheckBox waitForCompletion;
 
-    GETaskPanel(){
+    GETaskPanel() {
 
         mainPanel = new JPanel(new BorderLayout());
 
@@ -34,6 +41,11 @@ public class GETaskPanel implements TaskPanel {
         controls.add(new JLabel("Type:"));
 
         typeSelector = new JComboBox<>();
+        typeSelector.addActionListener(e -> {
+            if (itemNameField.validateItemNameField()) {
+                updatePriceField();
+            }
+        });
         controls.add(typeSelector);
 
         controls.add(new JLabel("Item Name:"));
@@ -73,25 +85,44 @@ public class GETaskPanel implements TaskPanel {
 
     private void updatePriceField() {
         String itemName = itemNameField.getText().trim();
+
         if (itemName.isEmpty()) {
             return;
         }
 
-        Map<String, Integer> allGEItems = GrandExchangeHelper.getAllGEItems();
+        GEMode geMode = (GEMode) typeSelector.getSelectedItem();
+
+        final Optional<Integer> price = getPrice(itemName, geMode);
+
+        if (price.isPresent()) {
+            SwingUtilities.invokeLater(() -> itemPriceField.setText(String.valueOf(price.get())));
+        } else {
+            SwingUtilities.invokeLater(() -> itemPriceField.setText(""));
+        }
+    }
+
+    private Optional<Integer> getPrice(final String itemName, final GEMode geMode) {
+        Map<String, Integer> allGEItems = ItemGuide.getAllGEItems();
 
         if (!allGEItems.containsKey(itemName)) {
-            return;
+            return Optional.empty();
         }
 
-        if (typeSelector.getSelectedItem() == GEMode.BUY) {
-            GrandExchangeHelper.getBuyPrice(allGEItems.get(itemName)).ifPresent(price -> {
-                SwingUtilities.invokeLater(() -> itemPriceField.setText(String.valueOf(price)));
-            });
+        final int itemID = allGEItems.get(itemName);
+
+        Optional<Integer> price;
+
+        if (geMode == GEMode.BUY) {
+            price = RSBuddyPriceGuide.getBuyPrice(itemID);
         } else {
-            GrandExchangeHelper.getSellPrice(allGEItems.get(itemName)).ifPresent(price -> {
-                SwingUtilities.invokeLater(() -> itemPriceField.setText(String.valueOf(price)));
-            });
+            price = RSBuddyPriceGuide.getSellPrice(itemID);
         }
+
+        if (!price.isPresent()) {
+            price = OSRSPriceGuide.getPrice(itemID);
+        }
+
+        return price;
     }
 
     public JPanel getPanel() {

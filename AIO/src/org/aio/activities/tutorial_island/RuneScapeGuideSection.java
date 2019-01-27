@@ -1,8 +1,8 @@
 package org.aio.activities.tutorial_island;
 
-import org.aio.util.CachedWidget;
+import org.aio.util.widget.CachedWidget;
 import org.aio.util.Sleep;
-import org.aio.util.WidgetActionFilter;
+import org.aio.util.widget.filters.WidgetActionFilter;
 import org.aio.util.event.DisableAudioEvent;
 import org.aio.util.event.EnableFixedModeEvent;
 import org.aio.util.event.ToggleRoofsHiddenEvent;

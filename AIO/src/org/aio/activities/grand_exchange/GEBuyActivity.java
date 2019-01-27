@@ -1,52 +1,61 @@
 package org.aio.activities.grand_exchange;
 
-import org.aio.util.Sleep;
+import org.aio.activities.banking.ItemReqBanking;
+import org.aio.activities.grand_exchange.event.GrandExchangeBuyEvent;
+import org.aio.util.item_requirement.ItemReq;
 
 public class GEBuyActivity extends GEActivity {
 
-    private GrandExchangeHelper exchangeHelper;
     private final GEItem geItem;
+    private final ItemReq coinReq;
+
+    private ItemReqBanking itemReqBanking;
 
     public GEBuyActivity(final GEItem geItem) {
         this.geItem = geItem;
+
+        int coinsRequired = geItem.getPrice() * geItem.getQuantity();
+
+        coinReq = new ItemReq(
+                "Coins",
+                coinsRequired,
+                coinsRequired
+        ).setStackable();
+
+        itemReqBanking = new ItemReqBanking(coinReq);
     }
 
     @Override
     public void onStart() {
-        this.exchangeHelper = new GrandExchangeHelper();
-        this.exchangeHelper.exchangeContext(getBot());
+        itemReqBanking.exchangeContext(getBot());
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (box != null) {
             return;
-        } else if(!exchangeHelper.playerIsAtGE()){
-            exchangeHelper.walkToGE();
-        } else if(getInventory().getAmount("Coins") < (geItem.getPrice() * geItem.getQuantity())) {
-            getCoins();
-        } else {
-            box = exchangeHelper.createBuyOffer(geItem.getName(), geItem.getPrice(), geItem.getQuantity());
         }
-    }
 
-    private void getCoins() throws InterruptedException {
-        if (!getBank().isOpen()) {
-            if (getBank().open()) {
-                Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+        if(!GRAND_EXCHANGE.contains(myPosition())){
+            getWalking().webWalk(GRAND_EXCHANGE);
+        } else if(!coinReq.hasRequirement(getInventory())) {
+            itemReqBanking.run();
+            if (itemReqBanking.hasFailed()) {
+                setFailed();
             }
-        } else if (!getInventory().isEmpty()) {
-            getBank().depositAll();
-        } else if (getBank().getAmount("Coins") + getInventory().getAmount("Coins") >= (geItem.getPrice() * geItem.getQuantity())) {
-            withdrawRemaining("Coins", (geItem.getPrice() * geItem.getQuantity()));
-        } else{
-            setFailed();
+        } else {
+            GrandExchangeBuyEvent buyEvent = new GrandExchangeBuyEvent(
+                    geItem.getName(),
+                    geItem.getPrice(),
+                    geItem.getQuantity()
+            );
+            execute(buyEvent);
+            if (buyEvent.hasFailed()) {
+                setFailed();
+            } else {
+                box = buyEvent.getBoxUsed();
+            }
         }
-    }
-
-    private boolean withdrawRemaining(String itemName, int quantity) {
-        long invAmount = getInventory().getAmount(itemName);
-        return invAmount < quantity && getBank().withdraw(itemName, quantity - (int) invAmount);
     }
 
     @Override

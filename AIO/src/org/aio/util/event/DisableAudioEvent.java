@@ -1,7 +1,7 @@
 package org.aio.util.event;
 
-import org.aio.util.CachedWidget;
-import org.aio.util.WidgetActionFilter;
+import org.aio.util.widget.CachedWidget;
+import org.aio.util.widget.filters.WidgetActionFilter;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.Event;
 
