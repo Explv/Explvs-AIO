@@ -26,7 +26,7 @@ public class SmeltingActivity extends Activity {
 
     @Override
     public void onStart() {
-        makeAllInterface = new MakeAllInterface(bar.ordinal() + 1);
+        makeAllInterface = new MakeAllInterface(bar.toString());
         makeAllInterface.exchangeContext(getBot());
 
         bankNode = new ItemReqBanking(bar.oresRequired);

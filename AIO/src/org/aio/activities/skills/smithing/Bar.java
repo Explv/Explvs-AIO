@@ -5,7 +5,6 @@ import org.aio.util.item_requirement.ItemReq;
 public enum Bar {
 
     BRONZE("Bronze bar", 1, true, new ItemReq("Copper ore", 1), new ItemReq("Tin ore", 1)),
-    BLURITE("Blurite bar", 8, false, new ItemReq("Blurite ore", 1)),
     IRON("Iron bar", 15, true, new ItemReq("Iron ore", 1)),
     SILVER ("Silver bar", 20, false, new ItemReq("Silver ore", 1)),
     STEEL("Steel bar", 30, true, new ItemReq("Coal", 2), new ItemReq("Iron ore", 1)),
