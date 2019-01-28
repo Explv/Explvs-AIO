@@ -228,10 +228,13 @@ public class LoadoutPanel extends JPanel {
             setItemDialog().ifPresent(item -> {
                 equipmentMap.put(equipmentSlot, item);
 
+                JButton sourceButton = (JButton) e.getSource();
+
+                sourceButton.setToolTipText(item);
+
                 Optional<URL> iconURL = getIcon(ItemGuide.getAllGEItems().get(item));
 
                 if (iconURL.isPresent()) {
-                    JButton sourceButton = (JButton) e.getSource();
                     sourceButton.setIcon(new ImageIcon(iconURL.get()));
                 }
             });

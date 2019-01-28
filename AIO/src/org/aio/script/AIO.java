@@ -13,8 +13,10 @@ import org.aio.util.SkillTracker;
 import org.aio.util.event.EnableFixedModeEvent;
 import org.aio.util.event.ToggleRoofsHiddenEvent;
 import org.aio.util.event.ToggleShiftDropEvent;
+import org.aio.util.widget.CachedWidget;
 import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Tab;
+import org.osbot.rs07.randoms.WelcomeScreen;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 
@@ -29,7 +31,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v2.1.1";
+    static final String VERSION = "v2.1.2";
 
     private Gui gui;
     private Paint paint;
@@ -143,7 +145,9 @@ public class AIO extends Script {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
+        if (!getClient().isLoggedIn() || getWidgets().isVisible(WelcomeScreen.INTERFACE)) {
+            return random(1200, 1800);
+        } else if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
             osrsClientIsConfigured = configureOSRSClient();
         } else if (taskExecutor.isComplete()) {
             stop(true);
