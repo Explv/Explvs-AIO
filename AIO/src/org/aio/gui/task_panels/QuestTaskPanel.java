@@ -11,13 +11,14 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class QuestTaskPanel implements TaskPanel {
+public class QuestTaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private JComboBox<Quest> questSelector;
 
     QuestTaskPanel(){
-        mainPanel = new JPanel(new BorderLayout());
+        super(TaskType.QUEST);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
@@ -28,14 +29,11 @@ public class QuestTaskPanel implements TaskPanel {
         questSelector = new JComboBox<>();
         controls.add(questSelector);
 
-        mainPanel.add(controls, BorderLayout.CENTER);
+        contentPanel.add(controls, BorderLayout.CENTER);
 
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Quest Task"));
         questSelector.setModel(new DefaultComboBoxModel<>(Quest.values()));
-    }
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override

@@ -7,30 +7,26 @@ import org.aio.tasks.break_task.BreakTask;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
-public class BreakTaskPanel implements TaskPanel {
+public class BreakTaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private DurationPanel durationPanel;
     private JCheckBox logoutCheckBox;
 
     BreakTaskPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Break Task"));
+        super(TaskType.BREAK);
+
+        JPanel contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
         durationPanel = new DurationPanel();
-        mainPanel.add(durationPanel);
+        contentPanel.add(durationPanel);
 
         logoutCheckBox = new JCheckBox("Logout");
-        mainPanel.add(logoutCheckBox);
-    }
+        contentPanel.add(logoutCheckBox);
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override

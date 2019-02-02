@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -14,7 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -23,6 +26,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class LoadoutPanel extends JPanel {
+
+    private static final String IMAGE_DIR = "loadout/";
+    private static final BufferedImage SLOT_BACKGROUND_IMAGE = ResourceManager.getImage(IMAGE_DIR + "slot_background.png");
 
     private Map<EquipmentSlot, String> equipmentMap = new HashMap<>();
 
@@ -171,48 +177,10 @@ public class LoadoutPanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
 
-        button.setIcon(new ImageIcon(ResourceManager.getImage("loadout/" + imageName)));
+        button.setIcon(new ImageIcon(ResourceManager.getImage(IMAGE_DIR + imageName)));
         button.addActionListener(new EquipmentButtonActionListener(equipmentSlot));
 
         return button;
-    }
-
-    private Optional<String> setItemDialog() {
-        ItemField itemField = new ItemField();
-
-        final JButton okay = new JButton("Ok");
-        okay.addActionListener(e -> {
-            /* close the dialog */
-            Window w = SwingUtilities.getWindowAncestor(okay);
-            if(w != null) {
-                w.setVisible(false);
-            }
-        });
-        okay.setEnabled(false);
-
-        itemField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(final KeyEvent e) {
-                super.keyReleased(e);
-                okay.setEnabled(itemField.validateItemNameField());
-            }
-        });
-
-        JOptionPane.showOptionDialog(
-                null,
-                itemField,
-                "Choose Item",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[]{okay},
-                okay
-        );
-
-        if (itemField.validateItemNameField()) {
-            return Optional.of(itemField.getText().trim());
-        }
-        return Optional.empty();
     }
 
     class EquipmentButtonActionListener implements ActionListener {
@@ -224,20 +192,100 @@ public class LoadoutPanel extends JPanel {
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            setItemDialog().ifPresent(item -> {
-                equipmentMap.put(equipmentSlot, item);
+        public void actionPerformed(final ActionEvent event) {
+            Optional<String> selectedItemNameOpt = setItemDialog(equipmentSlot);
 
-                JButton sourceButton = (JButton) e.getSource();
+            if (!selectedItemNameOpt.isPresent()) {
+                return;
+            }
 
-                sourceButton.setToolTipText(item);
+            String selectedItemName = selectedItemNameOpt.get();
 
-                Optional<URL> iconURL = getIcon(ItemGuide.getAllGEItems().get(item));
+            JButton sourceButton = (JButton) event.getSource();
 
-                if (iconURL.isPresent()) {
-                    sourceButton.setIcon(new ImageIcon(iconURL.get()));
+            if (selectedItemName.isEmpty()) {
+                equipmentMap.remove(equipmentSlot);
+                sourceButton.setIcon(new ImageIcon(SLOT_BACKGROUND_IMAGE));
+                return;
+            }
+
+            equipmentMap.put(equipmentSlot, selectedItemName);
+
+            sourceButton.setToolTipText(selectedItemName);
+
+            Optional<URL> iconURL = getIcon(ItemGuide.getAllGEItems().get(selectedItemName));
+
+            if (iconURL.isPresent()) {
+                try {
+                    BufferedImage iconImage = ImageIO.read(iconURL.get());
+                    BufferedImage combinedImage = combineImages(SLOT_BACKGROUND_IMAGE, iconImage);
+                    sourceButton.setIcon(new ImageIcon(combinedImage));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private Optional<String> setItemDialog(final EquipmentSlot equipmentSlot) {
+            ItemField itemField = new ItemField();
+
+            final JButton okButton = new JButton("Ok");
+
+            okButton.addActionListener(e -> {
+                JOptionPane optionPane = (JOptionPane) okButton.getParent().getParent();
+                optionPane.setValue(okButton);
+
+                /* close the dialog */
+                Window w = SwingUtilities.getWindowAncestor(okButton);
+                if (w != null) {
+                    w.setVisible(false);
                 }
             });
+
+            itemField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(final KeyEvent e) {
+                    super.keyReleased(e);
+                    okButton.setEnabled(
+                            itemField.getText().trim().isEmpty() || itemField.validateItemNameField()
+                    );
+                }
+            });
+
+            int selectedOption = JOptionPane.showOptionDialog(
+                    null,
+                    itemField,
+                    "Choose Item: " + equipmentSlot,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new Object[]{okButton},
+                    okButton
+            );
+
+            if (selectedOption == JOptionPane.YES_OPTION) {
+                return Optional.of(itemField.getText().trim());
+            }
+            return Optional.empty();
+        }
+
+        private BufferedImage combineImages(final BufferedImage backgroundImage, final BufferedImage foregroundImage) {
+            final BufferedImage combinedImage = new BufferedImage(
+                    backgroundImage.getWidth(),
+                    backgroundImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB
+            );
+
+            Graphics2D g = combinedImage.createGraphics();
+            g.drawImage(backgroundImage, 0, 0, null);
+
+            int widthDiff = SLOT_BACKGROUND_IMAGE.getWidth() - foregroundImage.getWidth();
+            int heightDiff = SLOT_BACKGROUND_IMAGE.getHeight() - foregroundImage.getHeight();
+
+            g.drawImage(foregroundImage, widthDiff / 2, heightDiff / 2, null);
+            g.dispose();
+
+            return combinedImage;
         }
 
         private Optional<URL> getIcon(final int itemID) {
@@ -262,5 +310,13 @@ public class LoadoutPanel extends JPanel {
             }
             return Optional.empty();
         }
+    }
+
+    public static void main(String[] args) {
+        JFrame jFrame = new JFrame();
+        jFrame.setContentPane(new LoadoutPanel());
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
     }
 }

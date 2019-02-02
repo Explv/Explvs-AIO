@@ -17,17 +17,14 @@ import org.aio.util.RSUnits;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.Optional;
 
-public class GETaskPanel implements TaskPanel {
+public class GETaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private JComboBox<GEMode> typeSelector;
     private ItemField itemNameField;
     private RSUnitField itemQuantityField;
@@ -35,8 +32,9 @@ public class GETaskPanel implements TaskPanel {
     private JCheckBox waitForCompletion;
 
     GETaskPanel() {
+        super(TaskType.GRAND_EXCHANGE);
 
-        mainPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new JPanel(new BorderLayout());
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
@@ -79,10 +77,11 @@ public class GETaskPanel implements TaskPanel {
         waitForCompletion.setSelected(true);
         controls.add(waitForCompletion);
 
-        mainPanel.add(controls, BorderLayout.CENTER);
+        contentPanel.add(controls, BorderLayout.CENTER);
 
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Grand Exchange Task"));
         typeSelector.setModel(new DefaultComboBoxModel<>(GEMode.values()));
+
+        setContentPanel(contentPanel);
     }
 
     private void updatePriceField() {
@@ -125,10 +124,6 @@ public class GETaskPanel implements TaskPanel {
         }
 
         return price;
-    }
-
-    public JPanel getPanel() {
-        return mainPanel;
     }
 
     @Override

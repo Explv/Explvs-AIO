@@ -13,17 +13,17 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
-public class LoopTaskPanel implements TaskPanel {
+public class LoopTaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private JTextField taskCountField;
     private JComboBox<LoopDurationType> loopDurationTypeSelector;
     private JTextField iterationCountField;
     private DurationPanel durationPanel;
 
     LoopTaskPanel(){
-        mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Loop Task"));
+        super(TaskType.LOOP);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
@@ -49,7 +49,7 @@ public class LoopTaskPanel implements TaskPanel {
         durationPanel.setVisible(false);
         controls.add(durationPanel);
 
-        mainPanel.add(controls, BorderLayout.SOUTH);
+        contentPanel.add(controls, BorderLayout.SOUTH);
 
         loopDurationTypeSelector.addActionListener(e -> {
             LoopDurationType loopDurationType = (LoopDurationType) loopDurationTypeSelector.getSelectedItem();
@@ -64,10 +64,8 @@ public class LoopTaskPanel implements TaskPanel {
                 durationPanel.setVisible(true);
             }
         });
-    }
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override

@@ -13,15 +13,16 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class ResourceTaskPanel implements TaskPanel {
+public class ResourceTaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private ItemField resourceField;
     private RSUnitField quantityField;
     private ActivitySelectorPanel activitySelectorPanel;
 
     ResourceTaskPanel(){
-        mainPanel = new JPanel(new BorderLayout());
+        super(TaskType.RESOURCE);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
 
         JPanel bottomControls = new JPanel();
         bottomControls.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -41,16 +42,12 @@ public class ResourceTaskPanel implements TaskPanel {
         quantityField.setColumns(5);
         bottomControls.add(quantityField);
 
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Resource Task"));
-
-        mainPanel.add(bottomControls, BorderLayout.SOUTH);
+        contentPanel.add(bottomControls, BorderLayout.SOUTH);
 
         activitySelectorPanel = new ActivitySelectorPanel(this);
-        mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
-    }
+        contentPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override

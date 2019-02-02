@@ -1,15 +1,112 @@
 package org.aio.gui.task_panels;
 
+import org.aio.gui.IconButton;
 import org.aio.gui.interfaces.JSONSerializable;
+import org.aio.gui.utils.ColourScheme;
 import org.aio.tasks.Task;
+import org.aio.tasks.TaskType;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * A TaskPanel used to create tasks of `type`
  */
-public interface TaskPanel extends JSONSerializable {
+public abstract class TaskPanel implements JSONSerializable {
 
-    Task toTask();
-    JPanel getPanel();
+    private JPanel mainPanel;
+    private JPanel contentPanel;
+
+    private JButton removeTaskButton;
+    private JButton moveTaskUpButton;
+    private JButton moveTaskDownButton;
+
+    private JMenuItem menuItemRemoveTask;
+    private JMenuItem menuItemMoveTaskUp;
+    private JMenuItem menuItemMoveTaskDown;
+
+    public TaskPanel(final TaskType taskType) {
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        JPanel northControlsPanel = new JPanel();
+        mainPanel.add(northControlsPanel, BorderLayout.NORTH);
+        northControlsPanel.setBackground(Color.decode("#404040"));
+        northControlsPanel.setLayout(new BoxLayout(northControlsPanel, BoxLayout.X_AXIS));
+        northControlsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+        Box box = Box.createHorizontalBox();
+        northControlsPanel.add(box);
+        JLabel titleLabel = new JLabel(taskType.toString());
+        titleLabel.setForeground(Color.WHITE);
+        box.add(titleLabel);
+
+        box.add(Box.createHorizontalGlue());
+
+        moveTaskUpButton = IconButton.createButton("Move task up", "moveUpIcon.png", "moveUpIconHover.png", null);
+        box.add(moveTaskUpButton);
+
+        box.add(Box.createHorizontalStrut(5));
+
+        moveTaskDownButton = IconButton.createButton("Move task down", "moveDownIcon.png", "moveDownIconHover.png", null);
+        box.add(moveTaskDownButton);
+
+        box.add(Box.createHorizontalStrut(5));
+
+        removeTaskButton = IconButton.createButton("Remove task", "closeIcon.png", "closeIconHover.png", null);
+        box.add(removeTaskButton);
+
+        JPopupMenu contextMenu = new JPopupMenu();
+        menuItemRemoveTask = new JMenuItem("Delete");
+        menuItemMoveTaskUp = new JMenuItem("Move up");
+        menuItemMoveTaskDown = new JMenuItem("Move down");
+
+        contextMenu.add(menuItemRemoveTask);
+        contextMenu.add(new JSeparator());
+        contextMenu.add(menuItemMoveTaskUp);
+        contextMenu.add(menuItemMoveTaskDown);
+
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    contextMenu.show(mainPanel, e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    public void addRemoveTaskActionListener(final ActionListener actionListener) {
+        removeTaskButton.addActionListener(actionListener);
+        menuItemRemoveTask.addActionListener(actionListener);
+    }
+
+    public void addMoveUpActionListener(final ActionListener actionListener) {
+        menuItemMoveTaskUp.addActionListener(actionListener);
+        moveTaskUpButton.addActionListener(actionListener);
+    }
+
+    public void addMoveDownActionListener(final ActionListener actionListener) {
+        menuItemMoveTaskDown.addActionListener(actionListener);
+        moveTaskDownButton.addActionListener(actionListener);
+    }
+
+    void setContentPanel(final JPanel contentPanel) {
+        if (this.contentPanel != null) {
+            mainPanel.remove(contentPanel);
+        }
+        this.contentPanel = contentPanel;
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+    }
+
+    public abstract Task toTask();
+
+    public JPanel getPanel() {
+        return mainPanel;
+    }
 }

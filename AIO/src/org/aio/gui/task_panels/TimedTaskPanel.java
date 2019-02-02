@@ -11,24 +11,21 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class TimedTaskPanel implements TaskPanel {
-    private JPanel mainPanel;
+public class TimedTaskPanel extends TaskPanel {
     private ActivitySelectorPanel activitySelectorPanel;
     private DurationPanel durationPanel;
 
     TimedTaskPanel(){
-        mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Timed Task"));
+        super(TaskType.TIMED);
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
         activitySelectorPanel = new ActivitySelectorPanel(this);
-        mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.NORTH);
+        contentPanel.add(activitySelectorPanel.getPanel(), BorderLayout.NORTH);
 
         durationPanel = new DurationPanel();
-        mainPanel.add(durationPanel, BorderLayout.SOUTH);
-    }
+        contentPanel.add(durationPanel, BorderLayout.SOUTH);
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override

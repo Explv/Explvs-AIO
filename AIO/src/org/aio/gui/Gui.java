@@ -1,22 +1,15 @@
 package org.aio.gui;
 
 import org.aio.gui.conf_man.ConfigManager;
-import org.aio.gui.task_panels.TaskPanel;
-import org.aio.gui.task_panels.TaskPanelFactory;
+import org.aio.gui.task_list.TaskList;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
-import org.aio.tasks.TutorialIslandTask;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +18,9 @@ public class Gui {
     public static final Color DARK_GREY = Color.decode("#181818");
 
     private JDialog gui;
+    private TaskList taskList;
 
     private boolean started;
-    private JPanel taskList = new JPanel();
-
-    private ArrayList<TaskPanelContent> taskPanels = new ArrayList<>();
 
     public Gui() {
         gui = new JDialog();
@@ -84,6 +75,8 @@ public class Gui {
 
         controlsPanel.add(createSpacerPanel());
 
+        taskList = new TaskList();
+
         final JPanel addTaskPanel = new JPanel();
         addTaskPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         addTaskPanel.setBackground(DARK_GREY);
@@ -95,7 +88,7 @@ public class Gui {
                 "Level Task",
                 "levelIcon.png",
                 "levelIconHover.png",
-                e -> addTask(TaskType.LEVEL)
+                e -> taskList.addTask(TaskType.LEVEL)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -103,7 +96,7 @@ public class Gui {
                 "Resource Task",
                 "resourceIcon.png",
                 "resourceIconHover.png",
-                e -> addTask(TaskType.RESOURCE)
+                e -> taskList.addTask(TaskType.RESOURCE)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -111,7 +104,7 @@ public class Gui {
                 "Timed Task",
                 "timedIcon.png",
                 "timedIconHover.png",
-                e -> addTask(TaskType.TIMED)
+                e -> taskList.addTask(TaskType.TIMED)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -119,7 +112,7 @@ public class Gui {
                 "Loop Previous Tasks",
                 "loopIcon.png",
                 "loopIconHover.png",
-                e -> addTask(TaskType.LOOP)
+                e -> taskList.addTask(TaskType.LOOP)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -127,7 +120,7 @@ public class Gui {
                 "Quest Task",
                 "questIcon.png",
                 "questIconHover.png",
-                e -> addTask(TaskType.QUEST)
+                e -> taskList.addTask(TaskType.QUEST)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -135,7 +128,7 @@ public class Gui {
                 "GE Task",
                 "geIcon.png",
                 "geIconHover.png",
-                e -> addTask(TaskType.GRAND_EXCHANGE)
+                e -> taskList.addTask(TaskType.GRAND_EXCHANGE)
         ));
 
         addTaskPanel.add(createButtonPanel(
@@ -143,7 +136,7 @@ public class Gui {
                 "Break Task",
                 "breakIcon.png",
                 "breakIconHover.png",
-                e -> addTask(TaskType.BREAK)
+                e -> taskList.addTask(TaskType.BREAK)
         ));
         controlsPanel.add(createSpacerPanel());
 
@@ -170,16 +163,7 @@ public class Gui {
 
         controlsPanel.add(startPanel);
 
-        taskList.setLayout(new BoxLayout(taskList, BoxLayout.Y_AXIS));
-        taskList.setBackground(DARK_GREY);
-
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.setBackground(DARK_GREY);
-        scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0), null));
-        scrollPane.setViewportView(taskList);
-        scrollPane.setPreferredSize(new Dimension(700, 500));
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(taskList.getContainer(), BorderLayout.CENTER);
 
         gui.setMinimumSize(new Dimension(700, 300));
         gui.setMaximumSize(new Dimension(2000, 2000));
@@ -241,29 +225,8 @@ public class Gui {
         return buttonPanel;
     }
 
-    /**
-     * Public getter for the entire ordered task list
-     * <p>
-     * Note: Intentionally rebuilds the tasks, so each call returns a fresh list of task instances
-     */
-    public final ArrayList<Task> getTasksAsList() {
-        ArrayList<Task> tasks = new ArrayList<>();
-
-        int taskIndex = 0;
-
-        Task tutorialIslandTask = new TutorialIslandTask();
-        tutorialIslandTask.setExecutionOrder(taskIndex);
-        tasks.add(tutorialIslandTask);
-        taskIndex++;
-
-        for (TaskPanelContent taskPanel : taskPanels) {
-            Task task = taskPanel.panel.toTask();
-            task.setExecutionOrder(taskIndex);
-            tasks.add(task);
-            taskIndex++;
-        }
-
-        return tasks;
+    public List<Task> getTasksAsList() {
+        return taskList.getTasksAsList();
     }
 
     public boolean isStarted() {
@@ -283,115 +246,13 @@ public class Gui {
         gui.dispose();
     }
 
-    private TaskPanel addTask(final TaskType taskType) {
-        TaskPanel taskPanel = TaskPanelFactory.createTaskPanel(taskType);
-
-        if (taskPanel == null) {
-            throw new IllegalArgumentException(String.format("Task type %s not supported.", taskType.toString()));
-        }
-        JPopupMenu contextMenu = new JPopupMenu();
-        JMenuItem menuItemDelete = new JMenuItem("Delete");
-        JMenuItem menuItemUp = new JMenuItem("Move up");
-        JMenuItem menuItemDown = new JMenuItem("Move down");
-
-        contextMenu.add(menuItemDelete);
-        contextMenu.add(new JSeparator());
-        contextMenu.add(menuItemUp);
-        contextMenu.add(menuItemDown);
-
-        ArrayList<Component> components = new ArrayList<>();
-        components.add(taskPanel.getPanel());
-        components.add(Box.createRigidArea(new Dimension(5, 10)));
-        TaskPanelContent taskPanelContent = new TaskPanelContent(taskPanel, components);
-        taskPanels.add(taskPanelContent);
-
-        for (Component component : components) {
-            taskList.add(component);
-        }
-
-        taskPanel.getPanel().setMaximumSize(new Dimension(taskPanel.getPanel().getMaximumSize().width, taskPanel.getPanel().getPreferredSize().height));
-
-        /*
-         UI Actions
-        */
-        menuItemDelete.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                taskPanels.remove(taskPanelContent);
-
-                for (Component component : taskPanelContent.components) {
-                    taskList.remove(component);
-                }
-
-                taskList.revalidate();
-                taskList.repaint();
-                gui.pack();
-            });
-        });
-
-        menuItemUp.addActionListener(e -> {
-            int from = taskPanels.indexOf(taskPanelContent);
-            swapTasks(from, from - 1);
-        });
-
-        menuItemDown.addActionListener(e -> {
-            int from = taskPanels.indexOf(taskPanelContent);
-            swapTasks(from, from + 1);
-        });
-
-        taskPanel.getPanel().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(final MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    contextMenu.show(taskPanel.getPanel(), e.getX(), e.getY());
-                }
-            }
-        });
-
-        gui.pack();
-
-        return taskPanel;
-    }
-
-    private void swapTasks(int from, int to) {
-        SwingUtilities.invokeLater(() -> {
-            if (from < 0 || from >= taskPanels.size() || to < 0 || to >= taskPanels.size()) {
-                return;
-            }
-
-            Collections.swap(taskPanels, from, to);
-
-            taskList.removeAll();
-            for (TaskPanelContent redrawTaskPanelContent : taskPanels) {
-                for (Component component : redrawTaskPanelContent.components) {
-                    taskList.add(component);
-                }
-            }
-
-            taskList.revalidate();
-            taskList.repaint();
-            gui.pack();
-        });
-    }
-
     private void saveConfig() {
         new SwingWorker<Void, Void>() {
 
             @Override
             protected Void doInBackground() {
-
-                JSONObject jsonObject = new JSONObject();
-
-                JSONArray taskJSONArray = new JSONArray();
-
-                for (TaskPanelContent taskPanel : taskPanels) {
-                    taskJSONArray.add(taskPanel.panel.toJSON());
-                }
-
-                jsonObject.put("tasks", taskJSONArray);
-
                 ConfigManager configManager = new ConfigManager();
-                configManager.saveConfig(jsonObject);
+                configManager.saveConfig(taskList.toJSON());
                 return null;
             }
         }.execute();
@@ -406,49 +267,11 @@ public class Gui {
 
                 Optional<JSONObject> jsonObjectOpt = configManager.readConfig();
 
-                if (!jsonObjectOpt.isPresent()) {
-                    return null;
-                }
+                jsonObjectOpt.ifPresent(jsonObject -> taskList.fromJSON(jsonObject));
 
-                taskList.removeAll();
-                taskPanels.clear();
-
-                JSONObject jsonObject = jsonObjectOpt.get();
-
-                JSONArray tasks;
-
-                if (jsonObject.containsKey("org/aio/tasks")) {
-                    tasks = (JSONArray) jsonObject.get("org/aio/tasks");
-                } else {
-                    tasks = (JSONArray) jsonObject.get("tasks");
-                }
-
-                for (Object task : tasks) {
-                    JSONObject taskJSON = (JSONObject) task;
-                    addTask(TaskType.valueOf((String) taskJSON.get("type"))).fromJSON(taskJSON);
-                }
-
-                taskList.validate();
-                taskList.repaint();
-                gui.validate();
-                gui.repaint();
                 return null;
             }
         }.execute();
-    }
-
-    /**
-     * Task panel content for use with tracking rendered/interactive content for each task panel instance
-     */
-    class TaskPanelContent {
-        TaskPanel panel;
-        List<Component> components;
-
-        TaskPanelContent(TaskPanel panel, List<Component> components) {
-            this.panel = panel;
-            this.components = components;
-        }
-
     }
 
     public static void main(String[] args) {

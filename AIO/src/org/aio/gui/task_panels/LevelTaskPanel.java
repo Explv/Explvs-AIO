@@ -13,19 +13,20 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class LevelTaskPanel implements TaskPanel {
+public class LevelTaskPanel extends TaskPanel {
 
-    private JPanel mainPanel;
     private JComboBox<Skill> skillSelector;
     private JTextField levelField;
     private ActivitySelectorPanel activitySelectorPanel;
 
     LevelTaskPanel(){
-        mainPanel = new JPanel(new BorderLayout());
+        super(TaskType.LEVEL);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
 
         activitySelectorPanel = new ActivitySelectorPanel(this);
 
-        mainPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
+        contentPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
@@ -40,18 +41,14 @@ public class LevelTaskPanel implements TaskPanel {
         levelField.setColumns(2);
         controls.add(levelField);
 
-        mainPanel.setBorder(new TitledBorder(new EtchedBorder(), "Level Task"));
-
-        mainPanel.add(controls, BorderLayout.SOUTH);
+        contentPanel.add(controls, BorderLayout.SOUTH);
 
         skillSelector.setModel(new DefaultComboBoxModel<>(((ActivityType)  activitySelectorPanel.getActivitySelector().getSelectedItem()).gainedXPSkills));
         activitySelectorPanel.getActivitySelector().addActionListener(e -> {
             skillSelector.setModel(new DefaultComboBoxModel<>(((ActivityType)  activitySelectorPanel.getActivitySelector().getSelectedItem()).gainedXPSkills));
         });
-    }
 
-    public JPanel getPanel() {
-        return mainPanel;
+        setContentPanel(contentPanel);
     }
 
     @Override
