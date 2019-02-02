@@ -85,7 +85,10 @@ public class TaskList implements JSONSerializable {
             swapTasks(from, from + 1);
         });
 
-        ((JDialog)SwingUtilities.getAncestorOfClass(JDialog.class, scrollPane)).pack();
+        taskList.revalidate();
+        taskList.repaint();
+        scrollPane.repaint();
+        scrollPane.revalidate();
 
         return taskPanel;
     }
@@ -107,8 +110,8 @@ public class TaskList implements JSONSerializable {
 
             taskList.revalidate();
             taskList.repaint();
-
-            ((JDialog)SwingUtilities.getAncestorOfClass(JDialog.class, scrollPane)).pack();
+            scrollPane.repaint();
+            scrollPane.revalidate();
         });
     }
 
@@ -121,7 +124,8 @@ public class TaskList implements JSONSerializable {
 
         taskList.revalidate();
         taskList.repaint();
-        ((JDialog)SwingUtilities.getAncestorOfClass(JDialog.class, scrollPane)).pack();
+        scrollPane.repaint();
+        scrollPane.revalidate();
     }
 
     /**
@@ -174,14 +178,10 @@ public class TaskList implements JSONSerializable {
             addTask(TaskType.valueOf((String) taskJSON.get("type"))).fromJSON(taskJSON);
         }
 
-        taskList.validate();
+        taskList.revalidate();
         taskList.repaint();
-
-        JDialog dialogAncestor = (JDialog) SwingUtilities.getAncestorOfClass(JDialog.class, scrollPane);
-
-        dialogAncestor.validate();
-        dialogAncestor.repaint();
-        dialogAncestor.pack();
+        scrollPane.repaint();
+        scrollPane.revalidate();
     }
 
     /**

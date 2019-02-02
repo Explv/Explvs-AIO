@@ -34,7 +34,7 @@ public class Gui {
 
         JPanel mainPanel = new StyledJPanel(new BorderLayout(0, 0));
         mainPanel.setBackground(DARK_GREY);
-        mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20), null));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));
 
         final JLabel titleLabel = new StyledJLabel();
         titleLabel.setFont(new Font("Trebuchet MS", Font.BOLD, 26));
@@ -168,8 +168,7 @@ public class Gui {
 
         mainPanel.add(taskList.getContainer(), BorderLayout.CENTER);
 
-        gui.setMinimumSize(new Dimension(700, 300));
-        gui.setMaximumSize(new Dimension(2000, 2000));
+        gui.setMinimumSize(new Dimension(700, 500));
 
         gui.setLocationRelativeTo(null);
         gui.setContentPane(mainPanel);
@@ -206,13 +205,13 @@ public class Gui {
     private JPanel createSpacerPanel() {
         final JPanel panel = new StyledJPanel(new BorderLayout(0, 0));
         panel.setBackground(DARK_GREY);
-        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20), null));
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         return panel;
     }
 
     private JPanel createButtonPanel(final String label, final String toolTip, final String icon, final String rolloverIcon, ActionListener callback) {
         JPanel buttonPanel = new StyledJPanel(new BorderLayout(0, 3));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         buttonPanel.setBackground(DARK_GREY);
 
         final JLabel panelLabel = new StyledJLabel();
