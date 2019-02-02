@@ -4,6 +4,9 @@ import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.firemaking.FMLocation;
 import org.aio.activities.skills.firemaking.FiremakingActivity;
 import org.aio.activities.skills.firemaking.Log;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -16,14 +19,14 @@ public class FMActivityPanel implements ActivityPanel {
     private JComboBox<FMLocation> locationSelector;
 
     public FMActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Log Type:"));
-        logSelector = new JComboBox<>(Log.values());
+        mainPanel.add(new StyledJLabel("Log Type:"));
+        logSelector = new StyledJComboBox<>(Log.values());
         mainPanel.add(logSelector);
 
-        mainPanel.add(new JLabel("Location:"));
-        locationSelector = new JComboBox<>(FMLocation.values());
+        mainPanel.add(new StyledJLabel("Location:"));
+        locationSelector = new StyledJComboBox<>(FMLocation.values());
         mainPanel.add(locationSelector);
     }
 

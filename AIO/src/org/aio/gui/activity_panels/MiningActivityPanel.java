@@ -5,6 +5,9 @@ import org.aio.activities.skills.mining.Mine;
 import org.aio.activities.skills.mining.MiningActivity;
 import org.aio.activities.skills.mining.Rock;
 import org.aio.activities.skills.mining.RuneEssMiningActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.ResourceMode;
 import org.json.simple.JSONObject;
 
@@ -19,20 +22,20 @@ public class MiningActivityPanel implements ActivityPanel {
     private JComboBox<ResourceMode> resourceModeSelector;
 
     public MiningActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Rock: "));
+        mainPanel.add(new StyledJLabel("Rock: "));
 
-        rockSelector = new JComboBox<>(Rock.values());
+        rockSelector = new StyledJComboBox<>(Rock.values());
         mainPanel.add(rockSelector);
 
-        JLabel mineLabel = new JLabel("Mine:");
+        JLabel mineLabel = new StyledJLabel("Mine:");
         mainPanel.add(mineLabel);
-        mineSelector = new JComboBox<>(Mine.getMinesWithRock(Rock.values()[0]));
+        mineSelector = new StyledJComboBox<>(Mine.getMinesWithRock(Rock.values()[0]));
         mainPanel.add(mineSelector);
 
-        mainPanel.add(new JLabel("Collection Mode:"));
-        resourceModeSelector = new JComboBox<>(ResourceMode.values());
+        mainPanel.add(new StyledJLabel("Collection Mode:"));
+        resourceModeSelector = new StyledJComboBox<>(ResourceMode.values());
         mainPanel.add(resourceModeSelector);
 
         rockSelector.addActionListener(e -> {

@@ -3,6 +3,9 @@ package org.aio.gui.activity_panels;
 import org.aio.activities.activity.Activity;
 import org.aio.activities.money_making.MoneyMakingType;
 import org.aio.activities.money_making.flax_picking.FlaxPickingActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -14,10 +17,10 @@ public class MoneyMakingActivityPanel implements ActivityPanel {
     private JComboBox<MoneyMakingType> typeSelector;
 
     public MoneyMakingActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Type:"));
-        typeSelector = new JComboBox<>(MoneyMakingType.values());
+        mainPanel.add(new StyledJLabel("Type:"));
+        typeSelector = new StyledJComboBox<>(MoneyMakingType.values());
         mainPanel.add(typeSelector);
     }
 

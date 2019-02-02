@@ -4,6 +4,9 @@ import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.crafting.CraftingActivity;
 import org.aio.activities.skills.crafting.CraftingItem;
 import org.aio.activities.skills.crafting.CraftingType;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.Location;
 import org.json.simple.JSONObject;
 
@@ -18,18 +21,18 @@ public class CraftingActivityPanel implements ActivityPanel {
     private JComboBox<CraftingItem> itemSelector;
 
     public CraftingActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Type:"));
-        typeSelector = new JComboBox<>(CraftingType.values());
+        mainPanel.add(new StyledJLabel("Type:"));
+        typeSelector = new StyledJComboBox<>(CraftingType.values());
         mainPanel.add(typeSelector);
 
-        mainPanel.add(new JLabel("Location:"));
-        locationSelector = new JComboBox<>(CraftingType.values()[0].locations);
+        mainPanel.add(new StyledJLabel("Location:"));
+        locationSelector = new StyledJComboBox<>(CraftingType.values()[0].locations);
         mainPanel.add(locationSelector);
 
-        mainPanel.add(new JLabel("Item:"));
-        itemSelector = new JComboBox<>(CraftingItem.getItemsWithType(CraftingType.values()[0]));
+        mainPanel.add(new StyledJLabel("Item:"));
+        itemSelector = new StyledJComboBox<>(CraftingItem.getItemsWithType(CraftingType.values()[0]));
         mainPanel.add(itemSelector);
 
         typeSelector.addActionListener(e -> {

@@ -2,6 +2,9 @@ package org.aio.gui.utils;
 
 import org.aio.gui.interfaces.JSONSerializable;
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -9,7 +12,7 @@ import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DurationPanel extends JPanel implements JSONSerializable {
+public class DurationPanel extends StyledJPanel implements JSONSerializable {
 
     private static final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -20,11 +23,11 @@ public class DurationPanel extends JPanel implements JSONSerializable {
     public DurationPanel() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        timeTypeSelector = new JComboBox<>(TimeType.values());
+        timeTypeSelector = new StyledJComboBox<>(TimeType.values());
         add(timeTypeSelector);
 
-        JPanel durationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        durationPanel.add(new JLabel("Duration (minutes):"));
+        JPanel durationPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        durationPanel.add(new StyledJLabel("Duration (minutes):"));
         durationField = new NumberField();
         durationField.setColumns(6);
         durationPanel.add(durationField);

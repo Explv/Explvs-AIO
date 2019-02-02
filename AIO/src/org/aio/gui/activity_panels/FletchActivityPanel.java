@@ -4,6 +4,9 @@ import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.fletching.FletchItem;
 import org.aio.activities.skills.fletching.FletchItemType;
 import org.aio.activities.skills.fletching.FletchingActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -16,14 +19,14 @@ public class FletchActivityPanel implements ActivityPanel {
     private JComboBox<FletchItem> itemSelector;
 
     public FletchActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Type:"));
-        typeSelector = new JComboBox<>(FletchItemType.values());
+        mainPanel.add(new StyledJLabel("Type:"));
+        typeSelector = new StyledJComboBox<>(FletchItemType.values());
         mainPanel.add(typeSelector);
 
-        mainPanel.add(new JLabel("Item:"));
-        itemSelector = new JComboBox<>(FletchItem.getAllWithType(FletchItemType.values()[0]));
+        mainPanel.add(new StyledJLabel("Item:"));
+        itemSelector = new StyledJComboBox<>(FletchItem.getAllWithType(FletchItemType.values()[0]));
         mainPanel.add(itemSelector);
 
         typeSelector.addActionListener(e ->

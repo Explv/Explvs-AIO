@@ -9,6 +9,9 @@ import org.aio.activities.skills.smithing.item_making.SmithItemMakingActivity;
 import org.aio.activities.skills.smithing.item_making.SmithLocation;
 import org.aio.activities.skills.smithing.smelting.SmeltLocation;
 import org.aio.activities.skills.smithing.smelting.SmeltingActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -27,43 +30,43 @@ public class SmithActivityPanel implements ActivityPanel {
     private JComboBox<SmeltLocation> cannonballLocationSelector;
 
     public SmithActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Smithing Type:"));
+        mainPanel.add(new StyledJLabel("Smithing Type:"));
 
-        smithingTypeSelector = new JComboBox<>(SmithingType.values());
+        smithingTypeSelector = new StyledJComboBox<>(SmithingType.values());
         mainPanel.add(smithingTypeSelector);
 
-        JPanel cannonballPanel = new JPanel();
-        cannonballPanel.add(new JLabel("Location:"));
-        cannonballLocationSelector = new JComboBox<>(SmeltLocation.values());
+        JPanel cannonballPanel = new StyledJPanel();
+        cannonballPanel.add(new StyledJLabel("Location:"));
+        cannonballLocationSelector = new StyledJComboBox<>(SmeltLocation.values());
         cannonballPanel.add(cannonballLocationSelector);
         mainPanel.add(cannonballPanel);
 
-        JPanel smithItemPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel smithItemPanel = new StyledJPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         mainPanel.add(smithItemPanel);
 
-        smithItemPanel.add(new JLabel("Bar:"));
-        smithBarSelector = new JComboBox<>(Arrays.stream(Bar.values()).filter(bar -> bar.smithable).toArray(Bar[]::new));
+        smithItemPanel.add(new StyledJLabel("Bar:"));
+        smithBarSelector = new StyledJComboBox<>(Arrays.stream(Bar.values()).filter(bar -> bar.smithable).toArray(Bar[]::new));
         smithItemPanel.add(smithBarSelector);
 
-        smithItemPanel.add(new JLabel("Item:"));
-        smithItemSelector = new JComboBox<>(SmithItem.values());
+        smithItemPanel.add(new StyledJLabel("Item:"));
+        smithItemSelector = new StyledJComboBox<>(SmithItem.values());
         smithItemPanel.add(smithItemSelector);
 
-        smithItemPanel.add(new JLabel("Location:"));
-        smithLocationSelector = new JComboBox<>(SmithLocation.values());
+        smithItemPanel.add(new StyledJLabel("Location:"));
+        smithLocationSelector = new StyledJComboBox<>(SmithLocation.values());
         smithItemPanel.add(smithLocationSelector);
 
-        JPanel smeltBarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel smeltBarPanel = new StyledJPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         mainPanel.add(smeltBarPanel);
 
-        smeltBarPanel.add(new JLabel("Bar:"));
-        smeltBarSelector = new JComboBox<>(Bar.values());
+        smeltBarPanel.add(new StyledJLabel("Bar:"));
+        smeltBarSelector = new StyledJComboBox<>(Bar.values());
         smeltBarPanel.add(smeltBarSelector);
 
-        smeltBarPanel.add(new JLabel("Location:"));
-        smeltLocationSelector = new JComboBox<>(SmeltLocation.values());
+        smeltBarPanel.add(new StyledJLabel("Location:"));
+        smeltLocationSelector = new StyledJComboBox<>(SmeltLocation.values());
         smeltBarPanel.add(smeltLocationSelector);
 
         smeltBarPanel.setVisible(true);

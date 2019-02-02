@@ -6,6 +6,9 @@ import org.aio.activities.skills.herblore.herb_cleaning.Herb;
 import org.aio.activities.skills.herblore.herb_cleaning.HerbCleaningActivity;
 import org.aio.activities.skills.herblore.potion_making.Potion;
 import org.aio.activities.skills.herblore.potion_making.PotionMakingActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -19,25 +22,25 @@ public class HerbloreActivityPanel implements ActivityPanel {
     private JComboBox<Potion> potionSelector;
 
     public HerbloreActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Type:"));
-        typeSelector = new JComboBox<>(HerbloreType.values());
+        mainPanel.add(new StyledJLabel("Type:"));
+        typeSelector = new StyledJComboBox<>(HerbloreType.values());
         mainPanel.add(typeSelector);
 
-        JPanel herbPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel herbPanel = new StyledJPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         mainPanel.add(herbPanel);
 
-        herbPanel.add(new JLabel("Herb:"));
-        herbSelector = new JComboBox<>(Herb.values());
+        herbPanel.add(new StyledJLabel("Herb:"));
+        herbSelector = new StyledJComboBox<>(Herb.values());
         herbPanel.add(herbSelector);
 
-        JPanel potionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel potionPanel = new StyledJPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         potionPanel.setVisible(false);
         mainPanel.add(potionPanel);
 
-        potionPanel.add(new JLabel("Potion:"));
-        potionSelector = new JComboBox<>(Potion.values());
+        potionPanel.add(new StyledJLabel("Potion:"));
+        potionSelector = new StyledJComboBox<>(Potion.values());
         potionPanel.add(potionSelector);
 
         typeSelector.addActionListener(e -> {

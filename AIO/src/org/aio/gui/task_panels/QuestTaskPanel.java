@@ -1,6 +1,9 @@
 package org.aio.gui.task_panels;
 
 import org.aio.activities.quests.*;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.tasks.QuestTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -18,15 +21,15 @@ public class QuestTaskPanel extends TaskPanel {
     QuestTaskPanel(){
         super(TaskType.QUEST);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
 
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        final JLabel label1 = new JLabel();
+        final JLabel label1 = new StyledJLabel();
         label1.setText("Quest:");
         controls.add(label1);
 
-        questSelector = new JComboBox<>();
+        questSelector = new StyledJComboBox<>();
         controls.add(questSelector);
 
         contentPanel.add(controls, BorderLayout.CENTER);

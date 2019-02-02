@@ -2,6 +2,7 @@ package org.aio.gui.utils;
 
 import org.aio.activities.grand_exchange.item_guide.ItemGuide;
 import org.aio.gui.fields.ItemField;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.ResourceManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,7 +35,7 @@ public class LoadoutPanel extends JPanel {
 
     public LoadoutPanel() {
         setLayout(new GridBagLayout());
-        setBackground(ColourScheme.GREY);
+        setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints gbc;
@@ -46,16 +47,16 @@ public class LoadoutPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(helmetButton, gbc);
 
-        final JPanel spacer1 = new JPanel();
-        spacer1.setBackground(ColourScheme.GREY);
+        final JPanel spacer1 = new StyledJPanel();
+        spacer1.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(spacer1, gbc);
 
-        final JPanel spacer2 = new JPanel();
-        spacer2.setBackground(ColourScheme.GREY);
+        final JPanel spacer2 = new StyledJPanel();
+        spacer2.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
@@ -132,32 +133,32 @@ public class LoadoutPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(glovesButton, gbc);
 
-        final JPanel spacer3 = new JPanel();
+        final JPanel spacer3 = new StyledJPanel();
         gbc = new GridBagConstraints();
-        spacer3.setBackground(ColourScheme.GREY);
+        spacer3.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(spacer3, gbc);
 
-        final JPanel spacer4 = new JPanel();
-        spacer4.setBackground(ColourScheme.GREY);
+        final JPanel spacer4 = new StyledJPanel();
+        spacer4.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.VERTICAL;
         add(spacer4, gbc);
 
-        final JPanel spacer5 = new JPanel();
-        spacer5.setBackground(ColourScheme.GREY);
+        final JPanel spacer5 = new StyledJPanel();
+        spacer5.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.VERTICAL;
         add(spacer5, gbc);
 
-        final JPanel spacer6 = new JPanel();
-        spacer6.setBackground(ColourScheme.GREY);
+        final JPanel spacer6 = new StyledJPanel();
+        spacer6.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 7;

@@ -3,6 +3,8 @@ package org.aio.gui.task_panels;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
 import org.aio.gui.fields.RSUnitField;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.tasks.ResourceTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -22,24 +24,24 @@ public class ResourceTaskPanel extends TaskPanel {
     ResourceTaskPanel(){
         super(TaskType.RESOURCE);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
 
-        JPanel bottomControls = new JPanel();
+        JPanel bottomControls = new StyledJPanel();
         bottomControls.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        bottomControls.add(new JLabel("Name of item:"));
+        bottomControls.add(new StyledJLabel("Name of item:"));
 
         resourceField = new ItemField();
         bottomControls.add(resourceField);
 
-        final JPanel panel1 = new JPanel(new BorderLayout());
+        final JPanel panel1 = new StyledJPanel(new BorderLayout());
         panel1.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         bottomControls.add(panel1);
 
-        bottomControls.add(new JLabel("Quantity of item:"));
+        bottomControls.add(new StyledJLabel("Quantity of item:"));
 
         quantityField = new RSUnitField();
-        quantityField.setColumns(5);
+        quantityField.setColumns(10);
         bottomControls.add(quantityField);
 
         contentPanel.add(bottomControls, BorderLayout.SOUTH);

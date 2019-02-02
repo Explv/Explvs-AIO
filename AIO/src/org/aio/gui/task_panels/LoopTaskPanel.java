@@ -1,6 +1,9 @@
 package org.aio.gui.task_panels;
 
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.gui.utils.DurationPanel;
 import org.aio.tasks.LoopTask;
 import org.aio.tasks.Task;
@@ -23,23 +26,23 @@ public class LoopTaskPanel extends TaskPanel {
     LoopTaskPanel(){
         super(TaskType.LOOP);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
 
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
         // Add counter of previous tasks
-        controls.add(new JLabel("Num Previous Tasks:"));
+        controls.add(new StyledJLabel("Num Previous Tasks:"));
         taskCountField = new NumberField();
         taskCountField.setColumns(4);
         controls.add(taskCountField);
 
-        controls.add(new JLabel("Duration:"));
+        controls.add(new StyledJLabel("Duration:"));
 
-        loopDurationTypeSelector = new JComboBox<>(LoopDurationType.values());
+        loopDurationTypeSelector = new StyledJComboBox<>(LoopDurationType.values());
         controls.add(loopDurationTypeSelector);
 
-        JPanel iterationsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        iterationsPanel.add(new JLabel("Num Iterations:"));
+        JPanel iterationsPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        iterationsPanel.add(new StyledJLabel("Num Iterations:"));
         iterationCountField = new NumberField();
         iterationCountField.setColumns(4);
         iterationsPanel.add(iterationCountField);

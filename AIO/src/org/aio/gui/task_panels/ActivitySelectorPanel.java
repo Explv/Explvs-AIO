@@ -4,6 +4,9 @@ import org.aio.activities.activity.ActivityType;
 import org.aio.gui.interfaces.JSONSerializable;
 import org.aio.gui.activity_panels.ActivityPanel;
 import org.aio.gui.activity_panels.ActivityPanelFactory;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -22,13 +25,13 @@ public class ActivitySelectorPanel implements JSONSerializable {
     }
 
     public ActivitySelectorPanel(TaskPanel panel) {
-        mainPanel = new JPanel(new BorderLayout());
+        mainPanel = new StyledJPanel(new BorderLayout());
 
-        activitySelector = new JComboBox<>(new DefaultComboBoxModel<>(getValidActivitiesForPanel(panel)));
+        activitySelector = new StyledJComboBox<>(new DefaultComboBoxModel<>(getValidActivitiesForPanel(panel)));
 
-        JPanel selectorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel selectorPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JLabel activityLabel = new JLabel("Activity:");
+        JLabel activityLabel = new StyledJLabel("Activity:");
         selectorPanel.add(activityLabel);
 
         selectorPanel.add(activitySelector);

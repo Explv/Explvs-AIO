@@ -2,6 +2,9 @@ package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.tasks.LevelTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -22,20 +25,20 @@ public class LevelTaskPanel extends TaskPanel {
     LevelTaskPanel(){
         super(TaskType.LEVEL);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
 
         activitySelectorPanel = new ActivitySelectorPanel(this);
 
         contentPanel.add(activitySelectorPanel.getPanel(), BorderLayout.CENTER);
 
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        controls.add(new JLabel("Skill:"));
+        controls.add(new StyledJLabel("Skill:"));
 
-        skillSelector = new JComboBox<>();
+        skillSelector = new StyledJComboBox<>();
         controls.add(skillSelector);
 
-        controls.add(new JLabel("Level:"));
+        controls.add(new StyledJLabel("Level:"));
 
         levelField = new NumberField();
         levelField.setColumns(2);

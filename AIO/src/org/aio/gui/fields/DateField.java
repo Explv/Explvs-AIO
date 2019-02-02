@@ -1,5 +1,8 @@
 package org.aio.gui.fields;
 
+import org.aio.gui.styled_components.StyledJTextField;
+import org.aio.gui.utils.ColourScheme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -9,7 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
-public class DateField extends JTextField {
+public class DateField extends StyledJTextField {
 
     private static final DateTimeFormatter dtFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
             .parseStrict()
@@ -41,7 +44,7 @@ public class DateField extends JTextField {
 
     private boolean validateField() {
         if (getText().trim().isEmpty()) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
+            setForeground(Color.RED);
             return false;
         }
 
@@ -51,11 +54,11 @@ public class DateField extends JTextField {
                     dtFormatter
             );
         } catch (DateTimeException e) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
+            setForeground(Color.RED);
             return false;
         }
 
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setForeground(ColourScheme.WHITE);
         return true;
     }
 }

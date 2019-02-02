@@ -6,6 +6,9 @@ import org.aio.activities.skills.thieving.ThievingActivity;
 import org.aio.activities.skills.thieving.ThievingObject;
 import org.aio.activities.skills.thieving.ThievingType;
 import org.aio.gui.fields.NumberField;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.Location;
 import org.aio.util.ResourceMode;
 import org.json.simple.JSONObject;
@@ -24,52 +27,52 @@ public class ThievingActivityPanel implements ActivityPanel {
     private JComboBox<Location> locationSelector;
 
     public ThievingActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        final JPanel panel1 = new JPanel();
+        final JPanel panel1 = new StyledJPanel();
         panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         mainPanel.add(panel1, BorderLayout.NORTH);
 
-        final JLabel label1 = new JLabel();
+        final JLabel label1 = new StyledJLabel();
         label1.setText("Type:");
         panel1.add(label1);
 
-        typeSelector = new JComboBox<>();
+        typeSelector = new StyledJComboBox<>();
         panel1.add(typeSelector);
 
-        final JLabel label2 = new JLabel();
+        final JLabel label2 = new StyledJLabel();
         label2.setText("Object:");
         panel1.add(label2);
 
-        objectSelector = new JComboBox<>();
+        objectSelector = new StyledJComboBox<>();
         panel1.add(objectSelector);
 
-        final JLabel label3 = new JLabel();
+        final JLabel label3 = new StyledJLabel();
         label3.setText("Location:");
         panel1.add(label3);
 
-        locationSelector = new JComboBox<>();
+        locationSelector = new StyledJComboBox<>();
         panel1.add(locationSelector);
 
-        final JLabel collectionLabel = new JLabel("Collection Mode:");
+        final JLabel collectionLabel = new StyledJLabel("Collection Mode:");
         mainPanel.add(collectionLabel);
 
-        resourceModeSelector = new JComboBox<>();
+        resourceModeSelector = new StyledJComboBox<>();
         mainPanel.add(resourceModeSelector);
         resourceModeSelector.setModel(new DefaultComboBoxModel<>(ResourceMode.values()));
 
-        final JPanel panel4 = new JPanel();
+        final JPanel panel4 = new StyledJPanel();
         panel4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         mainPanel.add(panel4, BorderLayout.SOUTH);
 
-        final JLabel label4 = new JLabel();
+        final JLabel label4 = new StyledJLabel();
         label4.setText("Food:");
         panel4.add(label4);
 
-        foodSelector = new JComboBox<>();
+        foodSelector = new StyledJComboBox<>();
         panel4.add(foodSelector);
 
-        JLabel hpPercentLabel = new JLabel();
+        JLabel hpPercentLabel = new StyledJLabel();
         hpPercentLabel.setText("HP % To Eat:");
         panel4.add(hpPercentLabel);
 

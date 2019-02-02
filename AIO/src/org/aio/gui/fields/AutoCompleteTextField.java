@@ -1,5 +1,7 @@
 package org.aio.gui.fields;
 
+import org.aio.gui.styled_components.StyledJTextField;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -26,7 +28,7 @@ import java.util.Collections;
  * @author Brandon Buck
  * @version 1.0
  */
-public class AutoCompleteTextField extends JTextField implements KeyListener,
+public class AutoCompleteTextField extends StyledJTextField implements KeyListener,
         DocumentListener {
     private ArrayList<String> possibilities;
     private int currentGuess;
@@ -180,7 +182,7 @@ public class AutoCompleteTextField extends JTextField implements KeyListener,
             int centeredY = ((getHeight() / 2) + (int)(subGuessBounds.getHeight() / 2));
 
             g.setColor(this.incompleteColor);
-            g.drawString(subGuess, (int)(enteredBounds.getWidth()) + 2, centeredY - 2);
+            g.drawString(subGuess, (int)(enteredBounds.getWidth()) + 4, centeredY - 2);
         }
     }
 

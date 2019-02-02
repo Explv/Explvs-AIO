@@ -1,39 +1,17 @@
 package org.aio.gui.fields;
 
+import org.aio.gui.styled_components.StyledJTextField;
+
 import javax.swing.*;
 import javax.swing.text.Document;
 import java.awt.*;
 
 @SuppressWarnings("serial")
-public class PlaceholderTextField extends JTextField {
+public class PlaceholderTextField extends StyledJTextField {
 
     private String placeholder;
 
-    public PlaceholderTextField() {
-    }
-
-    public PlaceholderTextField(
-            final Document pDoc,
-            final String pText,
-            final int pColumns) {
-        super(pDoc, pText, pColumns);
-    }
-
-    public PlaceholderTextField(final int pColumns) {
-        super(pColumns);
-    }
-
-    public PlaceholderTextField(final String pText) {
-        super(pText);
-    }
-
-    public PlaceholderTextField(final String pText, final int pColumns) {
-        super(pText, pColumns);
-    }
-
-    public String getPlaceholder() {
-        return placeholder;
-    }
+    public PlaceholderTextField() { }
 
     @Override
     protected void paintComponent(final Graphics pG) {
@@ -47,7 +25,7 @@ public class PlaceholderTextField extends JTextField {
         g.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(getDisabledTextColor());
+        g.setColor(getDisabledTextColor().darker());
         g.drawString(placeholder, getInsets().left, pG.getFontMetrics()
                 .getMaxAscent() + getInsets().top);
     }

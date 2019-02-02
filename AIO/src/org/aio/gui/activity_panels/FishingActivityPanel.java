@@ -4,6 +4,9 @@ import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.fishing.Fish;
 import org.aio.activities.skills.fishing.FishingActivity;
 import org.aio.activities.skills.fishing.FishingLocation;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.ResourceMode;
 import org.json.simple.JSONObject;
 
@@ -18,19 +21,19 @@ public class FishingActivityPanel implements ActivityPanel {
     private JComboBox<ResourceMode> resourceModeSelector;
 
     public FishingActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Fish:"));
+        mainPanel.add(new StyledJLabel("Fish:"));
 
-        fishSelector = new JComboBox<>(Fish.values());
+        fishSelector = new StyledJComboBox<>(Fish.values());
         mainPanel. add(fishSelector);
 
-        mainPanel.add(new JLabel("Location:"));
-        locationSelector = new JComboBox<>(Fish.values()[0].locations);
+        mainPanel.add(new StyledJLabel("Location:"));
+        locationSelector = new StyledJComboBox<>(Fish.values()[0].locations);
         mainPanel.add(locationSelector);
 
-        mainPanel.add(new JLabel("Collection Mode:"));
-        resourceModeSelector = new JComboBox<>(ResourceMode.values());
+        mainPanel.add(new StyledJLabel("Collection Mode:"));
+        resourceModeSelector = new StyledJComboBox<>(ResourceMode.values());
         mainPanel.add(resourceModeSelector);
 
         fishSelector.addActionListener(e -> {

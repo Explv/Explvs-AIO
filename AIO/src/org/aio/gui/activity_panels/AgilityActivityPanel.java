@@ -3,6 +3,9 @@ package org.aio.gui.activity_panels;
 import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.agility.AgilityActivity;
 import org.aio.activities.skills.agility.AgilityCourse;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -14,12 +17,12 @@ public class AgilityActivityPanel implements ActivityPanel {
     private JComboBox<AgilityCourse> courseSelector;
 
     public AgilityActivityPanel() {
-        mainPanel = new JPanel();
+        mainPanel = new StyledJPanel();
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Course:"));
+        mainPanel.add(new StyledJLabel("Course:"));
 
-        courseSelector = new JComboBox<>(AgilityCourse.values());
+        courseSelector = new StyledJComboBox<>(AgilityCourse.values());
         mainPanel.add(courseSelector);
     }
 

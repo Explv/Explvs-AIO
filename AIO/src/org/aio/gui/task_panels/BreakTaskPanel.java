@@ -1,5 +1,8 @@
 package org.aio.gui.task_panels;
 
+import org.aio.gui.styled_components.StyledJCheckBox;
+import org.aio.gui.styled_components.StyledJPanel;
+import org.aio.gui.utils.ColourScheme;
 import org.aio.gui.utils.DurationPanel;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -18,12 +21,14 @@ public class BreakTaskPanel extends TaskPanel {
     BreakTaskPanel() {
         super(TaskType.BREAK);
 
-        JPanel contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel contentPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        contentPanel.setBackground(ColourScheme.PANEL_BACKGROUND_GREY);
 
         durationPanel = new DurationPanel();
         contentPanel.add(durationPanel);
 
-        logoutCheckBox = new JCheckBox("Logout");
+        logoutCheckBox = new StyledJCheckBox("Logout");
+        logoutCheckBox.setBackground(ColourScheme.PANEL_BACKGROUND_GREY);
         contentPanel.add(logoutCheckBox);
 
         setContentPanel(contentPanel);

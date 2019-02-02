@@ -3,6 +3,9 @@ package org.aio.gui.activity_panels;
 import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.ranged.Bow;
 import org.aio.activities.skills.ranged.RangeGuildActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -14,11 +17,11 @@ public class RangedActivityPanel implements ActivityPanel {
     private JComboBox<Bow> bowSelector;
 
     public RangedActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Bow:"));
+        mainPanel.add(new StyledJLabel("Bow:"));
 
-        bowSelector = new JComboBox<>(Bow.values());
+        bowSelector = new StyledJComboBox<>(Bow.values());
         mainPanel.add(bowSelector);
     }
 

@@ -1,5 +1,6 @@
 package org.aio.gui.task_panels;
 
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.gui.utils.DurationPanel;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -18,7 +19,7 @@ public class TimedTaskPanel extends TaskPanel {
     TimedTaskPanel(){
         super(TaskType.TIMED);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
         activitySelectorPanel = new ActivitySelectorPanel(this);
         contentPanel.add(activitySelectorPanel.getPanel(), BorderLayout.NORTH);
 

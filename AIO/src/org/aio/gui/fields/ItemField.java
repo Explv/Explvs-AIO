@@ -1,6 +1,7 @@
 package org.aio.gui.fields;
 
 import org.aio.activities.grand_exchange.item_guide.ItemGuide;
+import org.aio.gui.utils.ColourScheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,18 +31,12 @@ public class ItemField extends AutoCompleteTextField {
     public boolean validateItemNameField() {
         String itemName = getText().trim();
 
-        if (itemName.isEmpty()) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
-        } else {
-            setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        }
-
-        if (!ItemGuide.getAllGEItems().containsKey(itemName)) {
+        if (itemName.isEmpty() || !ItemGuide.getAllGEItems().containsKey(itemName)) {
             setForeground(Color.RED);
             return false;
         }
 
-        setForeground(Color.BLACK);
+        setForeground(ColourScheme.WHITE);
         return true;
     }
 }

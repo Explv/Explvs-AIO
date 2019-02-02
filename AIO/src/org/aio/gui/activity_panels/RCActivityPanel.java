@@ -2,6 +2,10 @@ package org.aio.gui.activity_panels;
 
 import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.runecrafting.*;
+import org.aio.gui.styled_components.StyledJCheckBox;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -16,23 +20,23 @@ public class RCActivityPanel implements ActivityPanel {
     private JCheckBox useDuelRingBox;
 
     public RCActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Altar:"));
-        altarSelector = new JComboBox<>(Altar.values());
+        mainPanel.add(new StyledJLabel("Altar:"));
+        altarSelector = new StyledJComboBox<>(Altar.values());
         mainPanel.add(altarSelector);
 
-        mainPanel.add(new JLabel("Type:"));
-        rcTypeSelector = new JComboBox<>(RunecraftingType.values());
+        mainPanel.add(new StyledJLabel("Type:"));
+        rcTypeSelector = new StyledJComboBox<>(RunecraftingType.values());
         mainPanel.add(rcTypeSelector);
 
-        JPanel essencePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        essencePanel.add(new JLabel("Essence type: "));
-        essenceTypeSelector = new JComboBox<>(EssenceType.values());
+        JPanel essencePanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        essencePanel.add(new StyledJLabel("Essence type: "));
+        essenceTypeSelector = new StyledJComboBox<>(EssenceType.values());
         essencePanel.add(essenceTypeSelector);
         mainPanel.add(essencePanel);
 
-        useDuelRingBox = new JCheckBox("Use ring of dueling");
+        useDuelRingBox = new StyledJCheckBox("Use ring of dueling");
         mainPanel.add(useDuelRingBox);
         useDuelRingBox.setVisible(false);
 

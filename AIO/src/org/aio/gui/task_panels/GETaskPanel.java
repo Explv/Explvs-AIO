@@ -10,6 +10,10 @@ import org.aio.activities.grand_exchange.price_guide.RSBuddyPriceGuide;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.fields.NumberField;
 import org.aio.gui.fields.RSUnitField;
+import org.aio.gui.styled_components.StyledJCheckBox;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.tasks.GrandExchangeTask;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -34,13 +38,13 @@ public class GETaskPanel extends TaskPanel {
     GETaskPanel() {
         super(TaskType.GRAND_EXCHANGE);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel(new BorderLayout());
 
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        controls.add(new JLabel("Type:"));
+        controls.add(new StyledJLabel("Type:"));
 
-        typeSelector = new JComboBox<>();
+        typeSelector = new StyledJComboBox<>();
         typeSelector.addActionListener(e -> {
             if (itemNameField.validateItemNameField()) {
                 updatePriceField();
@@ -48,7 +52,7 @@ public class GETaskPanel extends TaskPanel {
         });
         controls.add(typeSelector);
 
-        controls.add(new JLabel("Item Name:"));
+        controls.add(new StyledJLabel("Item Name:"));
 
         itemNameField = new ItemField();
         itemNameField.addKeyListener(new KeyAdapter() {
@@ -61,19 +65,19 @@ public class GETaskPanel extends TaskPanel {
         });
         controls.add(itemNameField);
 
-        controls.add(new JLabel("Quantity:"));
+        controls.add(new StyledJLabel("Quantity:"));
 
         itemQuantityField = new RSUnitField();
         itemQuantityField.setColumns(10);
         controls.add(itemQuantityField);
 
-        controls.add(new JLabel("Price:"));
+        controls.add(new StyledJLabel("Price:"));
 
         itemPriceField = new RSUnitField();
         itemPriceField.setColumns(10);
         controls.add(itemPriceField);
 
-        waitForCompletion = new JCheckBox("Wait for completion");
+        waitForCompletion = new StyledJCheckBox("Wait for completion");
         waitForCompletion.setSelected(true);
         controls.add(waitForCompletion);
 

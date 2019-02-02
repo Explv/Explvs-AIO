@@ -1,6 +1,8 @@
 package org.aio.gui.task_list;
 
 import org.aio.gui.interfaces.JSONSerializable;
+import org.aio.gui.styled_components.StyledJPanel;
+import org.aio.gui.styled_components.StyledJScrollPane;
 import org.aio.gui.task_panels.TaskPanel;
 import org.aio.gui.task_panels.TaskPanelFactory;
 import org.aio.gui.utils.ColourScheme;
@@ -19,17 +21,18 @@ import java.util.Collections;
 public class TaskList implements JSONSerializable {
 
     private JScrollPane scrollPane;
-    private JPanel taskList = new JPanel();
+    private JPanel taskList = new StyledJPanel();
 
     private ArrayList<TaskPanelContent> taskPanels = new ArrayList<>();
 
     public TaskList() {
         taskList.setLayout(new BoxLayout(taskList, BoxLayout.Y_AXIS));
-        taskList.setBackground(ColourScheme.GREY);
+        taskList.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
+        taskList.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-        scrollPane = new JScrollPane();
+        scrollPane = new StyledJScrollPane();
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.setBackground(ColourScheme.GREY);
+        scrollPane.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         scrollPane.setViewportView(taskList);
         scrollPane.setPreferredSize(new Dimension(700, 500));
@@ -104,6 +107,7 @@ public class TaskList implements JSONSerializable {
 
             taskList.revalidate();
             taskList.repaint();
+
             ((JDialog)SwingUtilities.getAncestorOfClass(JDialog.class, scrollPane)).pack();
         });
     }

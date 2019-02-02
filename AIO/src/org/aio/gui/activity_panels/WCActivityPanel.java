@@ -3,6 +3,9 @@ package org.aio.gui.activity_panels;
 import org.aio.activities.activity.Activity;
 import org.aio.activities.skills.woodcutting.Tree;
 import org.aio.activities.skills.woodcutting.WoodcuttingActivity;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.util.Location;
 import org.aio.util.ResourceMode;
 import org.json.simple.JSONObject;
@@ -18,24 +21,24 @@ public class WCActivityPanel implements ActivityPanel {
     private JComboBox<ResourceMode> resourceModeSelector;
 
     public WCActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        final JLabel label1 = new JLabel("Tree:");
+        final JLabel label1 = new StyledJLabel("Tree:");
         mainPanel.add(label1);
 
-        treeSelector = new JComboBox<>();
+        treeSelector = new StyledJComboBox<>();
         mainPanel.add(treeSelector);
 
-        final JLabel label2 = new JLabel("Location:");
+        final JLabel label2 = new StyledJLabel("Location:");
         mainPanel.add(label2);
 
-        locationSelector = new JComboBox<>();
+        locationSelector = new StyledJComboBox<>();
         mainPanel.add(locationSelector);
 
-        final JLabel label3 = new JLabel("Collection Mode:");
+        final JLabel label3 = new StyledJLabel("Collection Mode:");
         mainPanel.add(label3);
 
-        resourceModeSelector = new JComboBox<>();
+        resourceModeSelector = new StyledJComboBox<>();
         mainPanel.add(resourceModeSelector);
 
         treeSelector.setModel(new DefaultComboBoxModel<>(Tree.values()));

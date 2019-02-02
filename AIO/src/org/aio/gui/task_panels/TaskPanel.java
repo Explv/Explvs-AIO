@@ -2,6 +2,8 @@ package org.aio.gui.task_panels;
 
 import org.aio.gui.IconButton;
 import org.aio.gui.interfaces.JSONSerializable;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.gui.utils.ColourScheme;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
@@ -30,10 +32,11 @@ public abstract class TaskPanel implements JSONSerializable {
     private JMenuItem menuItemMoveTaskDown;
 
     public TaskPanel(final TaskType taskType) {
-        mainPanel = new JPanel();
+        mainPanel = new StyledJPanel();
         mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBackground(ColourScheme.PANEL_BACKGROUND_GREY);
 
-        JPanel northControlsPanel = new JPanel();
+        JPanel northControlsPanel = new StyledJPanel();
         mainPanel.add(northControlsPanel, BorderLayout.NORTH);
         northControlsPanel.setBackground(Color.decode("#404040"));
         northControlsPanel.setLayout(new BoxLayout(northControlsPanel, BoxLayout.X_AXIS));
@@ -41,8 +44,8 @@ public abstract class TaskPanel implements JSONSerializable {
 
         Box box = Box.createHorizontalBox();
         northControlsPanel.add(box);
-        JLabel titleLabel = new JLabel(taskType.toString());
-        titleLabel.setForeground(Color.WHITE);
+        JLabel titleLabel = new StyledJLabel(taskType.toString());
+        titleLabel.setForeground(ColourScheme.BLUE);
         box.add(titleLabel);
 
         box.add(Box.createHorizontalGlue());

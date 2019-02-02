@@ -1,7 +1,10 @@
 package org.aio.gui;
 
 import org.aio.gui.conf_man.ConfigManager;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.aio.gui.task_list.TaskList;
+import org.aio.gui.utils.ColourScheme;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
@@ -29,27 +32,27 @@ public class Gui {
         gui.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
         gui.setBackground(DARK_GREY);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(0, 0));
+        JPanel mainPanel = new StyledJPanel(new BorderLayout(0, 0));
         mainPanel.setBackground(DARK_GREY);
         mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20), null));
 
-        final JLabel titleLabel = new JLabel();
+        final JLabel titleLabel = new StyledJLabel();
         titleLabel.setFont(new Font("Trebuchet MS", Font.BOLD, 26));
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(ColourScheme.WHITE);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setText("<html><span color='#33b5e5'>Explv</span>'s AIO</html>");
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        final JPanel controlsPanel = new JPanel();
+        final JPanel controlsPanel = new StyledJPanel();
         controlsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         controlsPanel.setBackground(DARK_GREY);
         mainPanel.add(controlsPanel, BorderLayout.SOUTH);
 
-        final JPanel saveLoadPanel = new JPanel();
+        final JPanel saveLoadPanel = new StyledJPanel();
         saveLoadPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         saveLoadPanel.setBackground(DARK_GREY);
         controlsPanel.add(saveLoadPanel);
-        saveLoadPanel.setBorder(BorderFactory.createTitledBorder(null, "Save / Load", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.WHITE));
+        saveLoadPanel.setBorder(BorderFactory.createTitledBorder(null, "Save / Load", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
 
         saveLoadPanel.add(createButtonPanel(
                 "Save",
@@ -77,11 +80,11 @@ public class Gui {
 
         taskList = new TaskList();
 
-        final JPanel addTaskPanel = new JPanel();
+        final JPanel addTaskPanel = new StyledJPanel();
         addTaskPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         addTaskPanel.setBackground(DARK_GREY);
         controlsPanel.add(addTaskPanel);
-        addTaskPanel.setBorder(BorderFactory.createTitledBorder(null, "Add a Task", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.WHITE));
+        addTaskPanel.setBorder(BorderFactory.createTitledBorder(null, "Add a Task", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
 
         addTaskPanel.add(createButtonPanel(
                 "Level",
@@ -140,11 +143,11 @@ public class Gui {
         ));
         controlsPanel.add(createSpacerPanel());
 
-        final JPanel startPanel = new JPanel();
+        final JPanel startPanel = new StyledJPanel();
         startPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         startPanel.setBackground(DARK_GREY);
         controlsPanel.add(startPanel);
-        startPanel.setBorder(BorderFactory.createTitledBorder(null, "Start", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.WHITE));
+        startPanel.setBorder(BorderFactory.createTitledBorder(null, "Start", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
 
         startPanel.add(createButtonPanel(
                 "Start",
@@ -201,19 +204,19 @@ public class Gui {
     }
 
     private JPanel createSpacerPanel() {
-        final JPanel panel = new JPanel(new BorderLayout(0, 0));
+        final JPanel panel = new StyledJPanel(new BorderLayout(0, 0));
         panel.setBackground(DARK_GREY);
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20), null));
         return panel;
     }
 
     private JPanel createButtonPanel(final String label, final String toolTip, final String icon, final String rolloverIcon, ActionListener callback) {
-        JPanel buttonPanel = new JPanel(new BorderLayout(0, 3));
+        JPanel buttonPanel = new StyledJPanel(new BorderLayout(0, 3));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         buttonPanel.setBackground(DARK_GREY);
 
-        final JLabel panelLabel = new JLabel();
-        panelLabel.setForeground(Color.WHITE);
+        final JLabel panelLabel = new StyledJLabel();
+        panelLabel.setForeground(ColourScheme.WHITE);
         panelLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panelLabel.setText(label);
         buttonPanel.add(panelLabel, BorderLayout.SOUTH);

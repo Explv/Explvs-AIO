@@ -5,6 +5,9 @@ import org.aio.activities.skills.cooking.CookingActivity;
 import org.aio.activities.skills.cooking.CookingItem;
 import org.aio.activities.skills.cooking.CookingLocation;
 import org.aio.activities.skills.cooking.CookingType;
+import org.aio.gui.styled_components.StyledJComboBox;
+import org.aio.gui.styled_components.StyledJLabel;
+import org.aio.gui.styled_components.StyledJPanel;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -18,18 +21,18 @@ public class CookingActivityPanel implements ActivityPanel {
     private JComboBox<CookingItem> itemSelector;
 
     public CookingActivityPanel() {
-        mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        mainPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        mainPanel.add(new JLabel("Location:"));
-        locationSelector = new JComboBox<>(CookingLocation.values());
+        mainPanel.add(new StyledJLabel("Location:"));
+        locationSelector = new StyledJComboBox<>(CookingLocation.values());
         mainPanel.add(locationSelector);
 
-        mainPanel.add(new JLabel("Type:"));
-        typeSelector = new JComboBox<>(CookingLocation.values()[0].cookingObject.allowedCookingTypes);
+        mainPanel.add(new StyledJLabel("Type:"));
+        typeSelector = new StyledJComboBox<>(CookingLocation.values()[0].cookingObject.allowedCookingTypes);
         mainPanel.add(typeSelector);
 
-        mainPanel.add(new JLabel("Item:"));
-        itemSelector = new JComboBox<>(CookingItem.getAllWithType(CookingLocation.values()[0].cookingObject.allowedCookingTypes[0]));
+        mainPanel.add(new StyledJLabel("Item:"));
+        itemSelector = new StyledJComboBox<>(CookingItem.getAllWithType(CookingLocation.values()[0].cookingObject.allowedCookingTypes[0]));
         mainPanel.add(itemSelector);
 
         locationSelector.addActionListener(e -> {
