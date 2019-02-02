@@ -7,7 +7,7 @@ public enum FishingLocation {
 
     DRAYNOR_VILLAGE(new Location("Draynor Village", new Area(3085, 3226, 3088, 3230))),
     LUMBRIDGE_SWAMP(new Location("Lumbridge Swamp", new Area(3238, 3144, 3247, 3160))),
-    MUSA_POINT(new Location("Musa Point", new Area(2924, 3176, 2925, 3183))),
+    MUSA_POINT(new Location("Musa Point", new Area(2923, 3176, 2926, 3183))),
     PORT_SARIM(new Location("Port Sarim", new Area(2985, 3174, 2988, 3178))),
     AL_KHARID(new Location("Al Kharid", new Area(
             new int[][]{
