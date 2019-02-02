@@ -1,12 +1,9 @@
 package org.aio.gui.styled_components;
 
-import org.aio.gui.IconButton;
 import org.aio.gui.utils.ColourScheme;
-import org.aio.util.ResourceManager;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
 public class StyledJComboBox<E> extends JComboBox<E> {

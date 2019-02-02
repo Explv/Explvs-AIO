@@ -1,6 +1,7 @@
 package org.aio.gui.fields;
 
 
+import org.aio.gui.utils.ColourScheme;
 import org.aio.util.RSUnits;
 
 import javax.swing.*;
@@ -33,18 +34,18 @@ public class RSUnitField  extends PlaceholderTextField {
 
     private boolean validateField() {
         if (getText().trim().isEmpty()) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
+            setForeground(Color.RED);
             return false;
         }
 
         String text = getText().trim();
 
         if (!RSUnits.UNIT_PATTERN.matcher(text).matches()) {
-            setBorder(BorderFactory.createLineBorder(Color.RED));
+            setForeground(Color.RED);
             return false;
         }
 
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setForeground(ColourScheme.WHITE);
         return true;
     }
 }

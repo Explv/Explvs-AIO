@@ -139,7 +139,7 @@ public class ItemReqBanking extends Banking {
                     } else {
                         ItemReq itemReq = equipableItemReqQueue.peek();
                         if (!itemReq.hasRequirement(getInventory(), getEquipment())) {
-                            if (!getItemReq(itemReq)) {
+                            if (!withdrawItemReq(itemReq)) {
                                 setFailed();
                             }
                         } else {
@@ -195,10 +195,17 @@ public class ItemReqBanking extends Banking {
                 } else {
                     ItemReq itemReq = nonEquipableItemReqs.peek();
 
-                    if (!itemReq.hasRequirement(getInventory(), getEquipment())) {
-                        if (!getItemReq(itemReq)) {
+                    int targetAmount = reqTargetAmountMap.get(itemReq);
+                    long amountOnPlayer = itemReq.getAmount(getInventory(), getEquipment());
+
+                    if (amountOnPlayer > targetAmount && targetAmount != ItemReq.QUANTITY_ALL) {
+                        depositExcess(itemReq);
+                    } else if (!itemReq.hasRequirement(getInventory(), getEquipment())) {
+                        if (!withdrawItemReq(itemReq)) {
                             setFailed();
                         }
+                    } else if (amountOnPlayer < targetAmount && getBank().contains(itemReq.getName())) {
+                        withdrawItemReq(itemReq);
                     } else {
                         nonEquipableItemReqs.poll();
                     }
@@ -206,25 +213,33 @@ public class ItemReqBanking extends Banking {
                 return 600;
             }
         });
+
         if (withdrawNonEquipableEvent.hasFailed()) {
             setFailed();
         }
     }
 
-    private boolean getItemReq(final ItemReq itemReq) {
+    private boolean depositExcess(final ItemReq itemReq) {
         int amountOnPlayer = (int) getAmountOnPlayer(itemReq);
-        int targetAmount = reqTargetAmountMap.get(itemReq);
 
+        int excessAmount = amountOnPlayer - reqTargetAmountMap.get(itemReq);
+        if (getBank().deposit(itemReq.getName(), excessAmount)) {
+            Sleep.sleepUntil(() -> getAmountOnPlayer(itemReq) < amountOnPlayer, 1200, 600);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean withdrawItemReq(final ItemReq itemReq) {
         if (itemReq.isNoted() && getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_NOTE) {
             getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_NOTE);
         } else if (!itemReq.isNoted() && getBank().getWithdrawMode() != org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM) {
             getBank().enableMode(org.osbot.rs07.api.Bank.BankMode.WITHDRAW_ITEM);
-        } else if (targetAmount != ItemReq.QUANTITY_ALL && amountOnPlayer > targetAmount) {
-            int excessAmount = amountOnPlayer - reqTargetAmountMap.get(itemReq);
-            if (getBank().deposit(itemReq.getName(), excessAmount)) {
-                Sleep.sleepUntil(() -> getAmountOnPlayer(itemReq) < amountOnPlayer, 1200, 600);
-            }
-        } else if (targetAmount == ItemReq.QUANTITY_ALL || amountOnPlayer < reqTargetAmountMap.get(itemReq)) {
+        } else {
+            int amountOnPlayer = (int) getAmountOnPlayer(itemReq);
+            int targetAmount = reqTargetAmountMap.get(itemReq);
+
             if (amountOnPlayer < itemReq.getMinQuantity()) {
                 int requiredAmountForMinQuantity = Math.max(0, itemReq.getMinQuantity() - amountOnPlayer);
                 int bankAmount = (int) itemReq.getAmount(getBank());

@@ -38,21 +38,26 @@ public class GETaskPanel extends TaskPanel {
     GETaskPanel() {
         super(TaskType.GRAND_EXCHANGE);
 
-        JPanel contentPanel = new StyledJPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel typePanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-        controls.add(new StyledJLabel("Type:"));
+        typePanel.add(new StyledJLabel("Type:"));
 
-        typeSelector = new StyledJComboBox<>();
+        typeSelector = new StyledJComboBox<>(GEMode.values());
         typeSelector.addActionListener(e -> {
             if (itemNameField.validateItemNameField()) {
                 updatePriceField();
             }
         });
-        controls.add(typeSelector);
+        typePanel.add(typeSelector);
 
-        controls.add(new StyledJLabel("Item Name:"));
+        contentPanel.add(typePanel);
+
+        JPanel itemPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT));
+
+        itemPanel.add(new StyledJLabel("Item Name:"));
 
         itemNameField = new ItemField();
         itemNameField.addKeyListener(new KeyAdapter() {
@@ -63,27 +68,33 @@ public class GETaskPanel extends TaskPanel {
                 }
             }
         });
-        controls.add(itemNameField);
+        itemPanel.add(itemNameField);
 
-        controls.add(new StyledJLabel("Quantity:"));
+        contentPanel.add(itemPanel);
+
+        JPanel priceQuantityPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT));
+
+        priceQuantityPanel.add(new StyledJLabel("Quantity:"));
 
         itemQuantityField = new RSUnitField();
         itemQuantityField.setColumns(10);
-        controls.add(itemQuantityField);
+        priceQuantityPanel.add(itemQuantityField);
 
-        controls.add(new StyledJLabel("Price:"));
+        priceQuantityPanel.add(new StyledJLabel("Price:"));
 
         itemPriceField = new RSUnitField();
         itemPriceField.setColumns(10);
-        controls.add(itemPriceField);
+        priceQuantityPanel.add(itemPriceField);
+
+        contentPanel.add(priceQuantityPanel);
+
+        JPanel waitCompletionPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT));
 
         waitForCompletion = new StyledJCheckBox("Wait for completion");
         waitForCompletion.setSelected(true);
-        controls.add(waitForCompletion);
+        waitCompletionPanel.add(waitForCompletion);
 
-        contentPanel.add(controls, BorderLayout.CENTER);
-
-        typeSelector.setModel(new DefaultComboBoxModel<>(GEMode.values()));
+        contentPanel.add(waitCompletionPanel);
 
         setContentPanel(contentPanel);
     }
