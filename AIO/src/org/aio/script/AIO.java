@@ -9,6 +9,7 @@ import org.aio.paint.Paint;
 import org.aio.tasks.Task;
 import org.aio.tasks.TutorialIslandTask;
 import org.aio.tasks.task_executor.TaskExecutor;
+import org.aio.util.file_managers.FontManager;
 import org.aio.util.SkillTracker;
 import org.aio.util.event.EnableFixedModeEvent;
 import org.aio.util.event.ToggleRoofsHiddenEvent;
@@ -30,7 +31,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v2.3.2";
+    static final String VERSION = "v2.4.0";
 
     private Gui gui;
     private Paint paint;

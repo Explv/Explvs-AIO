@@ -7,9 +7,12 @@ import org.aio.gui.task_list.TaskList;
 import org.aio.gui.utils.ColourScheme;
 import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
+import org.aio.util.file_managers.FontManager;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -37,7 +40,7 @@ public class Gui {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));
 
         final JLabel titleLabel = new StyledJLabel();
-        titleLabel.setFont(new Font("Trebuchet MS", Font.BOLD, 26));
+        titleLabel.setFont(FontManager.ROBOTO_REGULAR.deriveFont(Font.BOLD, 26));
         titleLabel.setForeground(ColourScheme.WHITE);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setText("<html><span color='#33b5e5'>Explv</span>'s AIO</html>");
@@ -52,7 +55,16 @@ public class Gui {
         saveLoadPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         saveLoadPanel.setBackground(DARK_GREY);
         controlsPanel.add(saveLoadPanel);
-        saveLoadPanel.setBorder(BorderFactory.createTitledBorder(null, "Save / Load", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
+        saveLoadPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createEtchedBorder(),
+                        "Save / Load",
+                        TitledBorder.CENTER,
+                        TitledBorder.TOP,
+                        new Font("Roboto-Regular", Font.PLAIN, 12),
+                        ColourScheme.WHITE
+                )
+        );
 
         saveLoadPanel.add(createButtonPanel(
                 "Save",
@@ -84,7 +96,16 @@ public class Gui {
         addTaskPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         addTaskPanel.setBackground(DARK_GREY);
         controlsPanel.add(addTaskPanel);
-        addTaskPanel.setBorder(BorderFactory.createTitledBorder(null, "Add a Task", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
+        addTaskPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createEtchedBorder(),
+                        "Add a Task",
+                        TitledBorder.CENTER,
+                        TitledBorder.TOP,
+                        FontManager.ROBOTO_REGULAR,
+                        ColourScheme.WHITE
+                )
+        );
 
         addTaskPanel.add(createButtonPanel(
                 "Level",
@@ -147,7 +168,16 @@ public class Gui {
         startPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         startPanel.setBackground(DARK_GREY);
         controlsPanel.add(startPanel);
-        startPanel.setBorder(BorderFactory.createTitledBorder(null, "Start", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, ColourScheme.WHITE));
+        startPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createEtchedBorder(),
+                        "Start",
+                        TitledBorder.CENTER,
+                        TitledBorder.TOP,
+                        FontManager.ROBOTO_REGULAR,
+                        ColourScheme.WHITE
+                )
+        );
 
         startPanel.add(createButtonPanel(
                 "Start",

@@ -1,6 +1,7 @@
 package org.aio.gui;
 
-import org.aio.util.ResourceManager;
+import org.aio.util.file_managers.ImageManager;
+import org.aio.util.file_managers.ResourceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,12 +14,12 @@ public class IconButton {
         button.setBackground(Color.BLACK);
         button.setToolTipText(toolTip);
 
-        BufferedImage iconImage = ResourceManager.getImage(icon);
+        BufferedImage iconImage = ImageManager.loadImage(icon);
         if (iconImage != null) {
             button.setIcon(new ImageIcon(iconImage));
         }
 
-        BufferedImage rolloverIconImage = ResourceManager.getImage(rolloverIcon);
+        BufferedImage rolloverIconImage = ImageManager.loadImage(rolloverIcon);
         if (rolloverIconImage != null) {
             button.setRolloverIcon(new ImageIcon(rolloverIconImage));
         }

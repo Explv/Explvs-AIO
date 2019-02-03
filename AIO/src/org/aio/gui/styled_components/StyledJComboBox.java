@@ -1,10 +1,12 @@
 package org.aio.gui.styled_components;
 
 import org.aio.gui.utils.ColourScheme;
+import org.aio.util.file_managers.FontManager;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
+import java.awt.*;
 
 public class StyledJComboBox<E> extends JComboBox<E> {
 
@@ -23,6 +25,7 @@ public class StyledJComboBox<E> extends JComboBox<E> {
     }
 
     private void setStyle() {
+        setFont(FontManager.ROBOTO_REGULAR);
         setUI(new CustomComboBoxUI());
         setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
         setBackground(ColourScheme.PANEL_BACKGROUND_GREY.darker());
