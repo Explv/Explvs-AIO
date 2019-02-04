@@ -3,7 +3,7 @@ package org.aio.gui.utils;
 import org.aio.activities.grand_exchange.item_guide.ItemGuide;
 import org.aio.gui.fields.ItemField;
 import org.aio.gui.styled_components.StyledJPanel;
-import org.aio.util.ResourceManager;
+import org.aio.util.file_managers.ImageManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.osbot.rs07.api.ui.EquipmentSlot;
@@ -28,8 +28,8 @@ import java.util.Optional;
 
 public class LoadoutPanel extends JPanel {
 
-    private static final String IMAGE_DIR = "loadout/";
-    private static final BufferedImage SLOT_BACKGROUND_IMAGE = ResourceManager.getImage(IMAGE_DIR + "slot_background.png");
+    private static final String IMAGE_DIR = "/loadout/";
+    private static final BufferedImage SLOT_BACKGROUND_IMAGE = ImageManager.loadImage(IMAGE_DIR + "slot_background.png");
 
     private Map<EquipmentSlot, String> equipmentMap = new HashMap<>();
 
@@ -178,7 +178,7 @@ public class LoadoutPanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
 
-        button.setIcon(new ImageIcon(ResourceManager.getImage(IMAGE_DIR + imageName)));
+        button.setIcon(new ImageIcon(ImageManager.loadImage(IMAGE_DIR + imageName)));
         button.addActionListener(new EquipmentButtonActionListener(equipmentSlot));
 
         return button;
