@@ -91,8 +91,7 @@ public class WoodcuttingActivity extends Activity {
     private void chopTree() {
         targetTree = getObjects().closest(
                 new AreaFilter<>(treeLocation.getArea()),
-                new NameFilter<>(tree.toString()),
-                i -> i.getDefinition().getModifiedModelColors() != null
+                new NameFilter<>(tree.toString())
         );
         if (targetTree != null && targetTree.interact("Chop down")) {
             Sleep.sleepUntil(() -> myPlayer().isAnimating() || !targetTree.exists(), 5000);

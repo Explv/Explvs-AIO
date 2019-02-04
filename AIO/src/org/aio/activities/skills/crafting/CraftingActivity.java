@@ -114,9 +114,7 @@ public class CraftingActivity extends Activity {
             } else if (jewelleryWidget.interact(getWidgets(), "Make-All")) {
                 FINISHED_CRAFTING_SLEEP.sleep();
             }
-        } else if (!craftingItem.itemReqs[1].toString().equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem(craftingItem.itemReqs[1].toString()).interact("Use");
-        } else if (getObjects().closest("Furnace").interact("Use")) {
+        } else if (getObjects().closest("Furnace").interact("Smelt")) {
             Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("What would you like to make?") != null, 5000);
         }
     }
