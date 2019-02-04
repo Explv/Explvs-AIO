@@ -40,9 +40,7 @@ public class BreakTaskPanel extends TaskPanel {
             return new BreakTask(durationPanel.getSelectedDateTime(), logoutCheckBox.isSelected());
         }
 
-        int durationMinutes = durationPanel.getDuration();
-        long durationMS = TimeUnit.MINUTES.toMillis(durationMinutes);
-        return new BreakTask(durationMS, logoutCheckBox.isSelected());
+        return new BreakTask(durationPanel.getDurationMS(), logoutCheckBox.isSelected());
     }
 
     @Override

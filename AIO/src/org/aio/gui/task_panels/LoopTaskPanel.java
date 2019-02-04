@@ -1,6 +1,6 @@
 package org.aio.gui.task_panels;
 
-import org.aio.gui.fields.NumberField;
+import org.aio.gui.fields.IntegerField;
 import org.aio.gui.styled_components.StyledJComboBox;
 import org.aio.gui.styled_components.StyledJLabel;
 import org.aio.gui.styled_components.StyledJPanel;
@@ -11,10 +11,7 @@ import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
 public class LoopTaskPanel extends TaskPanel {
 
@@ -26,33 +23,37 @@ public class LoopTaskPanel extends TaskPanel {
     LoopTaskPanel(){
         super(TaskType.LOOP);
 
-        JPanel contentPanel = new StyledJPanel(new BorderLayout());
+        JPanel contentPanel = new StyledJPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
 
-        JPanel controls = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        JPanel tasksPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
         // Add counter of previous tasks
-        controls.add(new StyledJLabel("Num Previous Tasks:"));
-        taskCountField = new NumberField();
+        tasksPanel.add(new StyledJLabel("Num Previous Tasks:"));
+        taskCountField = new IntegerField();
         taskCountField.setColumns(4);
-        controls.add(taskCountField);
+        tasksPanel.add(taskCountField);
 
-        controls.add(new StyledJLabel("Duration:"));
+        contentPanel.add(tasksPanel);
+
+        JPanel loopTaskDurationPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        contentPanel.add(loopTaskDurationPanel);
+
+        loopTaskDurationPanel.add(new StyledJLabel("Duration:"));
 
         loopDurationTypeSelector = new StyledJComboBox<>(LoopDurationType.values());
-        controls.add(loopDurationTypeSelector);
+        loopTaskDurationPanel.add(loopDurationTypeSelector);
 
         JPanel iterationsPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         iterationsPanel.add(new StyledJLabel("Num Iterations:"));
-        iterationCountField = new NumberField();
+        iterationCountField = new IntegerField();
         iterationCountField.setColumns(4);
         iterationsPanel.add(iterationCountField);
-        controls.add(iterationsPanel);
+        loopTaskDurationPanel.add(iterationsPanel);
 
         durationPanel = new DurationPanel();
         durationPanel.setVisible(false);
-        controls.add(durationPanel);
-
-        contentPanel.add(controls, BorderLayout.SOUTH);
+        loopTaskDurationPanel.add(durationPanel);
 
         loopDurationTypeSelector.addActionListener(e -> {
             LoopDurationType loopDurationType = (LoopDurationType) loopDurationTypeSelector.getSelectedItem();
@@ -82,7 +83,7 @@ public class LoopTaskPanel extends TaskPanel {
         } else if (loopDurationType == LoopDurationType.INFINITE) {
             return LoopTask.forIterations(taskCount, LoopTask.INFINITE_ITERATIONS);
         } else if (durationPanel.getSelectedTimeType() == DurationPanel.TimeType.MINUTES) {
-            return LoopTask.forDuration(taskCount, TimeUnit.MINUTES.toMillis(durationPanel.getDuration()));
+            return LoopTask.forDuration(taskCount, durationPanel.getDurationMS());
         } else {
             return LoopTask.untilDateTime(taskCount, durationPanel.getSelectedDateTime());
         }

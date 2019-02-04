@@ -1,7 +1,7 @@
 package org.aio.gui.utils;
 
 import org.aio.gui.fields.DateField;
-import org.aio.gui.fields.NumberField;
+import org.aio.gui.fields.IntegerField;
 import org.aio.gui.styled_components.StyledJLabel;
 import org.aio.gui.styled_components.StyledJPanel;
 
@@ -15,8 +15,8 @@ import java.time.format.DateTimeFormatter;
 public class DateTimePanel extends StyledJPanel {
 
     private DateField dateField;
-    private NumberField hourField;
-    private NumberField minuteField;
+    private IntegerField hourField;
+    private IntegerField minuteField;
 
     public DateTimePanel() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -28,13 +28,13 @@ public class DateTimePanel extends StyledJPanel {
 
         add(new StyledJLabel("Time (24h): "));
 
-        hourField = new NumberField();
+        hourField = new IntegerField();
         hourField.setMaxValue(23);
         hourField.setColumns(2);
         hourField.setHorizontalAlignment(JTextField.CENTER);
         add(hourField);
 
-        minuteField = new NumberField();
+        minuteField = new IntegerField();
         minuteField.setMaxValue(59);
         minuteField.setColumns(2);
         minuteField.setHorizontalAlignment(JTextField.CENTER);

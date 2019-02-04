@@ -59,8 +59,11 @@ public class BreakTask extends Task {
             return String.format("Break task: Ends on %s at %s", endDateStr, endTimeStr);
         }
 
-        long durationMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        return String.format("Break task (%d minutes) %s", durationMinutes, formatTime(System.currentTimeMillis() - customBreakManager.getBreakStartTime()));
+        return String.format(
+                "Break task (%s) %s",
+                formatTime(duration),
+                formatTime(System.currentTimeMillis() - customBreakManager.getBreakStartTime())
+        );
     }
 
     private String formatTime(final long ms){
@@ -68,8 +71,8 @@ public class BreakTask extends Task {
         s %= 60; m %= 60; h %= 24;
 
         return d > 0 ? String.format("%02d:%02d:%02d:%02d", d, h, m, s) :
-                h > 0 ? String.format("%02d:%02d:%02d", h, m, s) :
-                        String.format("%02d:%02d", m, s);
+               h > 0 ? String.format("%02d:%02d:%02d", h, m, s) :
+                       String.format("%02d:%02d", m, s);
     }
 
     @Override

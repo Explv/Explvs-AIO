@@ -1,7 +1,7 @@
 package org.aio.gui.utils;
 
+import org.aio.gui.fields.DoubleField;
 import org.aio.gui.interfaces.JSONSerializable;
-import org.aio.gui.fields.NumberField;
 import org.aio.gui.styled_components.StyledJComboBox;
 import org.aio.gui.styled_components.StyledJLabel;
 import org.aio.gui.styled_components.StyledJPanel;
@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 public class DurationPanel extends StyledJPanel implements JSONSerializable {
 
@@ -27,8 +28,8 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
         add(timeTypeSelector);
 
         JPanel durationPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        durationPanel.add(new StyledJLabel("Duration (minutes):"));
-        durationField = new NumberField();
+        durationPanel.add(new StyledJLabel("Duration:"));
+        durationField = new DoubleField();
         durationField.setColumns(6);
         durationPanel.add(durationField);
         add(durationPanel);
@@ -39,12 +40,12 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
 
         timeTypeSelector.addActionListener(e -> {
             TimeType selectedTimeType = (TimeType) timeTypeSelector.getSelectedItem();
-            if (selectedTimeType == TimeType.MINUTES) {
-                dateTimePanel.setVisible(false);
-                durationPanel.setVisible(true);
-            } else {
+            if (selectedTimeType == TimeType.DATE_TIME) {
                 durationPanel.setVisible(false);
                 dateTimePanel.setVisible(true);
+            } else {
+                dateTimePanel.setVisible(false);
+                durationPanel.setVisible(true);
             }
         });
     }
@@ -53,8 +54,11 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
         return (TimeType) timeTypeSelector.getSelectedItem();
     }
 
-    public int getDuration() {
-        return Integer.parseInt(durationField.getText());
+    public long getDurationMS() {
+        return (long) getSelectedTimeType().toTimeUnit(
+                Double.parseDouble(durationField.getText()),
+                TimeUnit.MILLISECONDS
+        );
     }
 
     public LocalDateTime getSelectedDateTime() {
@@ -96,18 +100,35 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
     }
 
     public enum TimeType {
-        MINUTES("Minutes"),
-        DATE_TIME("Date / Time");
+        SECONDS("Seconds", TimeUnit.SECONDS),
+        MINUTES("Minutes", TimeUnit.MINUTES),
+        HOURS("Hours", TimeUnit.HOURS),
+        DAYS("Days", TimeUnit.DAYS),
+        DATE_TIME("Date / Time", null);
 
         private String name;
+        private TimeUnit timeUnit;
 
-        TimeType(final String name) {
+        TimeType(final String name, final TimeUnit timeUnit) {
             this.name = name;
+            this.timeUnit = timeUnit;
+        }
+
+        public TimeUnit getTimeUnit() {
+            return timeUnit;
         }
 
         @Override
         public String toString() {
             return name;
+        }
+
+        public double toTimeUnit(double amount, TimeUnit to) {
+            if (getTimeUnit().ordinal() < to.ordinal()) {
+                return amount / getTimeUnit().convert(1, to);
+            } else {
+                return amount * to.convert(1, getTimeUnit());
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.aio.gui.task_panels;
 
 import org.aio.activities.activity.ActivityType;
-import org.aio.gui.fields.NumberField;
+import org.aio.gui.fields.IntegerField;
 import org.aio.gui.styled_components.StyledJComboBox;
 import org.aio.gui.styled_components.StyledJLabel;
 import org.aio.gui.styled_components.StyledJPanel;
@@ -12,8 +12,6 @@ import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Skill;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class LevelTaskPanel extends TaskPanel {
@@ -40,7 +38,7 @@ public class LevelTaskPanel extends TaskPanel {
 
         controls.add(new StyledJLabel("Level:"));
 
-        levelField = new NumberField();
+        levelField = new IntegerField();
         levelField.setColumns(2);
         controls.add(levelField);
 

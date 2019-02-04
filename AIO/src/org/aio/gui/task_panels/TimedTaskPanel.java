@@ -8,8 +8,6 @@ import org.aio.tasks.TimedTask;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class TimedTaskPanel extends TaskPanel {
@@ -34,7 +32,7 @@ public class TimedTaskPanel extends TaskPanel {
         if (durationPanel.getSelectedTimeType() == DurationPanel.TimeType.MINUTES) {
             return new TimedTask(
                     activitySelectorPanel.getActivityPanel().toActivity(),
-                    durationPanel.getDuration() * 60_000L
+                    durationPanel.getDurationMS()
             );
         }
         return new TimedTask(

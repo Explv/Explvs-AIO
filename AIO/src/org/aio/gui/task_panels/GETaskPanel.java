@@ -8,7 +8,6 @@ import org.aio.activities.grand_exchange.item_guide.ItemGuide;
 import org.aio.activities.grand_exchange.price_guide.OSRSPriceGuide;
 import org.aio.activities.grand_exchange.price_guide.RSBuddyPriceGuide;
 import org.aio.gui.fields.ItemField;
-import org.aio.gui.fields.NumberField;
 import org.aio.gui.fields.RSUnitField;
 import org.aio.gui.styled_components.StyledJCheckBox;
 import org.aio.gui.styled_components.StyledJComboBox;

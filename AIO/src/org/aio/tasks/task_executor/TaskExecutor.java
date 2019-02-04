@@ -5,6 +5,7 @@ import org.aio.tasks.Task;
 import org.aio.tasks.TaskType;
 import org.aio.tasks.break_task.CustomBreakManager;
 import org.aio.util.Executable;
+import org.osbot.rs07.script.RandomEvent;
 
 import java.util.*;
 
@@ -45,9 +46,12 @@ public final class TaskExecutor extends Executable {
     @Override
     public void onStart() throws InterruptedException {
         if (taskQueue.stream().anyMatch(task -> task.getTaskType() == TaskType.BREAK)) {
-            CustomBreakManager customBreakManager = new CustomBreakManager();
-            customBreakManager.exchangeContext(getBot());
-            getBot().getRandomExecutor().overrideOSBotRandom(customBreakManager);
+            // If we haven't already overridden the break manager
+            if (!(getBot().getRandomExecutor().forEvent(RandomEvent.BREAK_MANAGER) instanceof CustomBreakManager)) {
+                CustomBreakManager customBreakManager = new CustomBreakManager();
+                customBreakManager.exchangeContext(getBot());
+                getBot().getRandomExecutor().overrideOSBotRandom(customBreakManager);
+            }
         }
     }
 

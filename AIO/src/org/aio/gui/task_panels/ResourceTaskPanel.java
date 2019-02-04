@@ -1,7 +1,6 @@
 package org.aio.gui.task_panels;
 
 import org.aio.gui.fields.ItemField;
-import org.aio.gui.fields.NumberField;
 import org.aio.gui.fields.RSUnitField;
 import org.aio.gui.styled_components.StyledJLabel;
 import org.aio.gui.styled_components.StyledJPanel;
@@ -11,8 +10,6 @@ import org.aio.tasks.TaskType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ResourceTaskPanel extends TaskPanel {
