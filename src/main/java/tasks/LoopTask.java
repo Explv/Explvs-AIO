@@ -1,18 +1,21 @@
 package tasks;
 
+import tasks.break_task.BreakTask;
 import tasks.task_executor.TaskChangeListener;
 import tasks.task_executor.TaskExecutor;
 import util.Copyable;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class LoopTask extends Task {
 
     public static final int INFINITE_ITERATIONS = -1;
 
-    private int taskCount;
+    private final int taskCount;
+    private final boolean randomize;
 
     private int numIterations;
     private long startTimeMS = -1, durationMS = -1;
@@ -26,27 +29,26 @@ public class LoopTask extends Task {
 
     private List<Task> loopTasks;
 
-    private LoopTask() {
+    private LoopTask(final int taskCount, final boolean randomize) {
         super(TaskType.LOOP);
+        this.taskCount = taskCount;
+        this.randomize = randomize;
     }
 
-    public static LoopTask forIterations(final int taskCount, final int numIterations) {
-        LoopTask loopTask = new LoopTask();
-        loopTask.taskCount = taskCount;
+    public static LoopTask forIterations(final int taskCount, final boolean randomize, final int numIterations) {
+        LoopTask loopTask = new LoopTask(taskCount, randomize);
         loopTask.numIterations = numIterations;
         return loopTask;
     }
 
-    public static LoopTask forDuration(final int taskCount, final long durationMS) {
-        LoopTask loopTask = new LoopTask();
-        loopTask.taskCount = taskCount;
+    public static LoopTask forDuration(final int taskCount, final boolean randomize, final long durationMS) {
+        LoopTask loopTask = new LoopTask(taskCount, randomize);
         loopTask.durationMS = durationMS;
         return loopTask;
     }
 
-    public static LoopTask untilDateTime(final int taskCount, final LocalDateTime endDateTime) {
-        LoopTask loopTask = new LoopTask();
-        loopTask.taskCount = taskCount;
+    public static LoopTask untilDateTime(final int taskCount, final boolean randomize, final LocalDateTime endDateTime) {
+        LoopTask loopTask = new LoopTask(taskCount, randomize);
         loopTask.endDateTime = endDateTime;
         return loopTask;
     }
@@ -57,6 +59,12 @@ public class LoopTask extends Task {
         this.startTaskIndex = this.endTaskIndex - taskCount;
 
         loopTasks = getLoopTasks(allTasks);
+
+        if (randomize) {
+            randomizeTasks(loopTasks);
+            log("Randomized tasks");
+        }
+
         taskExecutor = new TaskExecutor(loopTasks);
         taskExecutor.addTaskChangeListeners(taskChangeListeners);
     }
@@ -108,6 +116,36 @@ public class LoopTask extends Task {
                 .collect(Collectors.toList());
     }
 
+    private void randomizeTasks(final List<Task> tasks) {
+        // Randomly shuffle any tasks that are not break tasks
+        randomizeTasks(tasks, task -> !(task instanceof BreakTask));
+
+        // Then randomly shuffle all break tasks
+        randomizeTasks(tasks, task -> task instanceof BreakTask);
+    }
+
+    /**
+     * Randomizes the order of tasks in a list of tasks
+     * Only tasks that match the taskPredicate will be re-ordered
+     * @param tasks List if tasks to be randomized
+     * @param taskPredicate A task predicate to determine candidates for re-ordering
+     */
+    private void randomizeTasks(final List<Task> tasks, final Predicate<Task> taskPredicate) {
+        List<Task> breakTasks = tasks.stream()
+                .filter(taskPredicate)
+                .collect(Collectors.toList());
+
+        Collections.shuffle(breakTasks);
+
+        Queue<Task> randomBreakTaskQueue = new LinkedList<>(breakTasks);
+
+        for (int i = 0; i < tasks.size(); i ++) {
+            if (taskPredicate.test(tasks.get(i))) {
+                tasks.set(i, randomBreakTaskQueue.poll());
+            }
+        }
+    }
+
     @Override
     public boolean canExit() {
         return true;
@@ -116,11 +154,11 @@ public class LoopTask extends Task {
     @Override
     public Task copy() {
         if (endDateTime != null) {
-            return LoopTask.untilDateTime(taskCount, endDateTime);
+            return LoopTask.untilDateTime(taskCount, randomize, endDateTime);
         } else if (durationMS != -1) {
-            return LoopTask.forDuration(taskCount, durationMS);
+            return LoopTask.forDuration(taskCount, randomize, durationMS);
         }
-        return LoopTask.forIterations(taskCount, numIterations);
+        return LoopTask.forIterations(taskCount, randomize, numIterations);
     }
 
     @Override

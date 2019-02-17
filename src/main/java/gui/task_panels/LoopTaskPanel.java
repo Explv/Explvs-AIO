@@ -1,6 +1,7 @@
 package gui.task_panels;
 
 import gui.fields.IntegerField;
+import gui.styled_components.StyledJCheckBox;
 import gui.styled_components.StyledJComboBox;
 import gui.styled_components.StyledJLabel;
 import gui.styled_components.StyledJPanel;
@@ -16,6 +17,7 @@ import java.awt.*;
 public class LoopTaskPanel extends TaskPanel {
 
     private JTextField taskCountField;
+    private JCheckBox randomizeTasksCheckBox;
     private JComboBox<LoopDurationType> loopDurationTypeSelector;
     private JTextField iterationCountField;
     private DurationPanel durationPanel;
@@ -35,6 +37,11 @@ public class LoopTaskPanel extends TaskPanel {
         tasksPanel.add(taskCountField);
 
         contentPanel.add(tasksPanel);
+
+        JPanel randomizeTasksPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        randomizeTasksCheckBox = new StyledJCheckBox("Randomize task order");
+        randomizeTasksPanel.add(randomizeTasksCheckBox);
+        contentPanel.add(randomizeTasksPanel);
 
         JPanel loopTaskDurationPanel = new StyledJPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         contentPanel.add(loopTaskDurationPanel);
@@ -77,15 +84,16 @@ public class LoopTaskPanel extends TaskPanel {
         LoopDurationType loopDurationType = (LoopDurationType) loopDurationTypeSelector.getSelectedItem();
 
         int taskCount = Integer.parseInt(taskCountField.getText());
+        boolean randomize = randomizeTasksCheckBox.isSelected();
 
         if (loopDurationType == LoopDurationType.ITERATIONS) {
-            return LoopTask.forIterations(taskCount, Integer.parseInt(iterationCountField.getText()));
+            return LoopTask.forIterations(taskCount, randomize, Integer.parseInt(iterationCountField.getText()));
         } else if (loopDurationType == LoopDurationType.INFINITE) {
-            return LoopTask.forIterations(taskCount, LoopTask.INFINITE_ITERATIONS);
+            return LoopTask.forIterations(taskCount, randomize, LoopTask.INFINITE_ITERATIONS);
         } else if (durationPanel.getSelectedTimeType() == DurationPanel.TimeType.MINUTES) {
-            return LoopTask.forDuration(taskCount, durationPanel.getDurationMS());
+            return LoopTask.forDuration(taskCount, randomize, durationPanel.getDurationMS());
         } else {
-            return LoopTask.untilDateTime(taskCount, durationPanel.getSelectedDateTime());
+            return LoopTask.untilDateTime(taskCount, randomize, durationPanel.getSelectedDateTime());
         }
     }
 
@@ -94,6 +102,7 @@ public class LoopTaskPanel extends TaskPanel {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", TaskType.LOOP.name());
         jsonObject.put("taskCount", taskCountField.getText());
+        jsonObject.put("randomize", randomizeTasksCheckBox.isSelected());
 
         LoopDurationType loopDurationType = (LoopDurationType) loopDurationTypeSelector.getSelectedItem();
 
@@ -113,6 +122,10 @@ public class LoopTaskPanel extends TaskPanel {
     @Override
     public void fromJSON(JSONObject jsonObject) {
         taskCountField.setText((String) jsonObject.get("taskCount"));
+
+        if (jsonObject.containsKey("randomize")) {
+            randomizeTasksCheckBox.setSelected((boolean) jsonObject.get("randomize"));
+        }
 
         if (jsonObject.containsKey("iterationCount")) {
             iterationCountField.setText((String) jsonObject.get("iterationCount"));
