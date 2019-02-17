@@ -69,13 +69,15 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
 
-        if (timeTypeSelector.getSelectedItem() == TimeType.MINUTES) {
-            jsonObject.put("duration", durationField.getText());
-        } else {
+        jsonObject.put("time_type", ((TimeType) timeTypeSelector.getSelectedItem()).name());
+
+        if (timeTypeSelector.getSelectedItem() == TimeType.DATE_TIME) {
             jsonObject.put(
                     "datetime",
                     dateTimePanel.getDateTime().format(dtFormatter)
             );
+        } else {
+            jsonObject.put("duration", durationField.getText());
         }
 
         return jsonObject;
@@ -83,9 +85,12 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
 
     @Override
     public void fromJSON(final JSONObject jsonObject) {
+        if (jsonObject.containsKey("time_type")) {
+            timeTypeSelector.setSelectedItem(TimeType.valueOf((String) jsonObject.get("time_type")));
+        }
+
         if (jsonObject.containsKey("duration")) {
             durationField.setText((String) jsonObject.get("duration"));
-            timeTypeSelector.setSelectedItem(TimeType.MINUTES);
         }
 
         if (jsonObject.containsKey("datetime")) {
@@ -95,7 +100,6 @@ public class DurationPanel extends StyledJPanel implements JSONSerializable {
                     dtFormatter
             );
             dateTimePanel.setDateTime(datetime);
-            timeTypeSelector.setSelectedItem(TimeType.DATE_TIME);
         }
     }
 

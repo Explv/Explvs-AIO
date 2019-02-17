@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class CopyToClipboardButton {
     public static JButton create(final Supplier<String> textSupplier) {
-        return IconButton.createButton("Copy to clipboard", "clipboardIcon.png", "clipboardIconHover.png", e -> {
+        return IconButton.createButton("Copy to clipboard", "images/clipboardIcon.png", "images/clipboardIconHover.png", e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(textSupplier.get()), null);
         });

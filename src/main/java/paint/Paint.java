@@ -7,18 +7,17 @@ import org.osbot.rs07.input.mouse.BotMouseListener;
 import tasks.Task;
 import util.RSUnits;
 import util.SkillTracker;
+import util.file_managers.FontManager;
+import util.file_managers.ImageManager;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 public class Paint implements Painter {
 
     private final Bot bot;
     private final SkillTracker skillTracker;
     private final Color holoBlueLight = Color.decode("#33b5e5");
-    private final Font trebuchet = new Font("Trebuchet MS", Font.PLAIN, 14);
     private final Rectangle toggleButton = new Rectangle(435, 7, 76, 24);
     private int offsetY;
     private int offsetX;
@@ -27,19 +26,14 @@ public class Paint implements Painter {
     private Task currentTask;
     private boolean paintHidden;
     private boolean toggleButtonHovered;
-    private Image mouseImage;
+
+    private static final Image mouseImage = ImageManager.loadImage("images/cursor.png");
 
     private boolean paused;
 
     public Paint(final Bot bot, final SkillTracker skillTracker) {
         this.bot = bot;
         this.skillTracker = skillTracker;
-
-        try {
-            mouseImage = ImageIO.read(getClass().getResourceAsStream("/resources/cursor.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         bot.addMouseListener(new BotMouseListener() {
             @Override
@@ -98,13 +92,13 @@ public class Paint implements Painter {
         if (!paintHidden) {
             drawScriptInfoBackground(g);
             drawTitle(g);
-            g.setFont(trebuchet);
+            g.setFont(FontManager.ROBOTO_REGULAR);
             drawRunTime(g);
             drawTaskInfo(g);
             drawActivityInfo(g);
             drawSkillsInfo(g);
         }
-        g.setFont(trebuchet);
+        g.setFont(FontManager.ROBOTO_REGULAR);
         drawTogglePaintButton(g);
     }
 

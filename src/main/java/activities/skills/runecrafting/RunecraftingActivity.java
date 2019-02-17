@@ -26,7 +26,7 @@ public class RunecraftingActivity extends RunecraftingBase {
         talismanBanking.exchangeContext(getBot());
 
         if (getInventory().contains(altar.tiara) || getEquipment().isWearingItem(EquipmentSlot.HAT, altar.tiara)) {
-            talismanReq = new ItemReq(altar.tiara);
+            talismanReq = new ItemReq(altar.tiara).setEquipable();
         } else if (getInventory().contains(altar.talisman)) {
             talismanReq = new ItemReq(altar.talisman);
         }

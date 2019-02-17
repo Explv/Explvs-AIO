@@ -28,7 +28,7 @@ import java.util.Optional;
 
 public class LoadoutPanel extends JPanel {
 
-    private static final String IMAGE_DIR = "/loadout/";
+    private static final String IMAGE_DIR = "images/loadout/";
     private static final BufferedImage SLOT_BACKGROUND_IMAGE = ImageManager.loadImage(IMAGE_DIR + "slot_background.png");
 
     private Map<EquipmentSlot, String> equipmentMap = new HashMap<>();

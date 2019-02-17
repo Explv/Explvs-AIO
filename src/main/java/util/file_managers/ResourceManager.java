@@ -36,8 +36,7 @@ public class ResourceManager {
     }
 
     private static InputStream loadFileFromJar(final String relativeFilePath) {
-        String jarFilePath = "/resources/" + relativeFilePath;
-        System.out.println(String.format("Loading '%s' from jar", jarFilePath));
+        String jarFilePath = "/" + relativeFilePath;
         return ResourceManager.class.getResourceAsStream(jarFilePath);
     }
 
@@ -48,8 +47,6 @@ public class ResourceManager {
 
     private static InputStream loadFileFromDataDir(final String relativeFilePath) {
         File file = Paths.get(DIRECTORY, relativeFilePath).toFile();
-
-        System.out.println(String.format("Loading '%s'", file.toString()));
 
         if (!file.exists()) {
             System.out.println(

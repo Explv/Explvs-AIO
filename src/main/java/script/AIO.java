@@ -30,7 +30,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v3.0.0";
+    static final String VERSION = "v3.0.1";
 
     private Gui gui;
     private Paint paint;
@@ -162,7 +162,8 @@ public class AIO extends Script {
                 !getDialogues().isPendingContinuation() &&
                 !myPlayer().isAnimating() &&
                 taskExecutor.getCurrentTask() != null &&
-                !(taskExecutor.getCurrentTask() instanceof TutorialIslandTask);
+                !(taskExecutor.getCurrentTask() instanceof TutorialIslandTask) &&
+                getNpcs().closest("Lumbridge Guide") == null;
     }
 
     private boolean configureOSRSClient() {

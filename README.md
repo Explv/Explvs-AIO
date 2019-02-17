@@ -32,4 +32,4 @@ Blue: `#33b5e5`
 
 ## Icon templates
 
-https://github.com/Explv/Explvs-AIO/tree/master/AIO/resources/templates
+https://github.com/Explv/Explvs-AIO/tree/master/AIO/resources/images/templates

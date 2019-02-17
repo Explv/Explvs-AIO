@@ -50,17 +50,17 @@ public abstract class TaskPanel implements JSONSerializable {
 
         box.add(Box.createHorizontalGlue());
 
-        moveTaskUpButton = IconButton.createButton("Move task up", "moveUpIcon.png", "moveUpIconHover.png", null);
+        moveTaskUpButton = IconButton.createButton("Move task up", "images/moveUpIcon.png", "images/moveUpIconHover.png", null);
         box.add(moveTaskUpButton);
 
         box.add(Box.createHorizontalStrut(5));
 
-        moveTaskDownButton = IconButton.createButton("Move task down", "moveDownIcon.png", "moveDownIconHover.png", null);
+        moveTaskDownButton = IconButton.createButton("Move task down", "images/moveDownIcon.png", "images/moveDownIconHover.png", null);
         box.add(moveTaskDownButton);
 
         box.add(Box.createHorizontalStrut(5));
 
-        removeTaskButton = IconButton.createButton("Remove task", "closeIcon.png", "closeIconHover.png", null);
+        removeTaskButton = IconButton.createButton("Remove task", "images/closeIcon.png", "images/closeIconHover.png", null);
         box.add(removeTaskButton);
 
         JPopupMenu contextMenu = new JPopupMenu();

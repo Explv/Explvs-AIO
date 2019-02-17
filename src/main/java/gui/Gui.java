@@ -67,8 +67,8 @@ public class Gui {
         saveLoadPanel.add(createButtonPanel(
                 "Save",
                 "Save",
-                "saveIcon.png",
-                "saveIconHover.png",
+                "images/saveIcon.png",
+                "images/saveIconHover.png",
                 e -> {
                     if (!validate(gui)) {
                         JOptionPane.showMessageDialog(gui, "Fields highlighted in red are invalid", "Error", JOptionPane.ERROR_MESSAGE);
@@ -81,8 +81,8 @@ public class Gui {
         saveLoadPanel.add(createButtonPanel(
                 "Load",
                 "Load",
-                "loadIcon.png",
-                "loadIconHover.png",
+                "images/loadIcon.png",
+                "images/loadIconHover.png",
                 e -> loadConfig()
         ));
 
@@ -108,56 +108,56 @@ public class Gui {
         addTaskPanel.add(createButtonPanel(
                 "Level",
                 "Level Task",
-                "levelIcon.png",
-                "levelIconHover.png",
+                "images/levelIcon.png",
+                "images/levelIconHover.png",
                 e -> taskList.addTask(TaskType.LEVEL)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Resource",
                 "Resource Task",
-                "resourceIcon.png",
-                "resourceIconHover.png",
+                "images/resourceIcon.png",
+                "images/resourceIconHover.png",
                 e -> taskList.addTask(TaskType.RESOURCE)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Timed",
                 "Timed Task",
-                "timedIcon.png",
-                "timedIconHover.png",
+                "images/timedIcon.png",
+                "images/timedIconHover.png",
                 e -> taskList.addTask(TaskType.TIMED)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Loop",
                 "Loop Previous Tasks",
-                "loopIcon.png",
-                "loopIconHover.png",
+                "images/loopIcon.png",
+                "images/loopIconHover.png",
                 e -> taskList.addTask(TaskType.LOOP)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Quest",
                 "Quest Task",
-                "questIcon.png",
-                "questIconHover.png",
+                "images/questIcon.png",
+                "images/questIconHover.png",
                 e -> taskList.addTask(TaskType.QUEST)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Grand Exchange",
                 "GE Task",
-                "geIcon.png",
-                "geIconHover.png",
+                "images/geIcon.png",
+                "images/geIconHover.png",
                 e -> taskList.addTask(TaskType.GRAND_EXCHANGE)
         ));
 
         addTaskPanel.add(createButtonPanel(
                 "Break",
                 "Break Task",
-                "breakIcon.png",
-                "breakIconHover.png",
+                "images/breakIcon.png",
+                "images/breakIconHover.png",
                 e -> taskList.addTask(TaskType.BREAK)
         ));
         controlsPanel.add(createSpacerPanel());
@@ -180,8 +180,8 @@ public class Gui {
         startPanel.add(createButtonPanel(
                 "Start",
                 "Start",
-                "startIcon.png",
-                "startIconHover.png",
+                "images/startIcon.png",
+                "images/startIconHover.png",
                 e -> {
                     if (!validate(gui)) {
                         JOptionPane.showMessageDialog(gui, "Fields highlighted in red are invalid", "Error", JOptionPane.ERROR_MESSAGE);
