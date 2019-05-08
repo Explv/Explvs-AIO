@@ -9,7 +9,7 @@ public enum Axe implements Tool {
     BRONZE("Bronze axe", 1, 1),
     IRON("Iron axe", 1, 1),
     STEEL("Steel axe", 6, 5),
-    BLACK("Black axe", 6, 10),
+    BLACK("Black axe", 11, 10),
     MITHRIL("Mithril axe", 21, 20),
     ADAMANT("Adamant axe", 31, 30),
     RUNE("Rune axe", 41, 40),
