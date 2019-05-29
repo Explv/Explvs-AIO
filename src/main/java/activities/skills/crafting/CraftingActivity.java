@@ -113,7 +113,7 @@ public class CraftingActivity extends Activity {
         if (getWidgets().getWidgetContainingText("What would you like to make?") != null) {
             if (jewelleryWidget == null) {
                 jewelleryWidget = getJewelleryWidget();
-            } else if (jewelleryWidget.interact(getWidgets(), "Make-All")) {
+            } else if (jewelleryWidget.interact(getWidgets())) {
                 FINISHED_CRAFTING_SLEEP.sleep();
             }
         } else if (getObjects().closest("Furnace").interact("Smelt")) {
