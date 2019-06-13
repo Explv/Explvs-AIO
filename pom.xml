@@ -23,7 +23,6 @@
             <groupId>org.osbot</groupId>
             <artifactId>osbot</artifactId>
             <version>0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -42,7 +41,7 @@
                         <configuration>
                             <url>https://osbot.org/mvc/get</url>
                             <unpack>false</unpack>
-                            <outputDirectory>${build.directory}/osbot/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/osbot/</outputDirectory>
                             <outputFileName>osbot.jar</outputFileName>
                             <overwrite>true</overwrite>
                             <skipCache>true</skipCache>
@@ -61,7 +60,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${build.directory}/osbot/osbot.jar</file>
+                            <file>${project.build.directory}/osbot/osbot.jar</file>
                             <groupId>org.osbot</groupId>
                             <artifactId>osbot</artifactId>
                             <version>0</version>
