@@ -35,7 +35,7 @@ public class DepositAllDepositBox extends DepositAll {
 
 	void openDepositBox() throws InterruptedException {
 		if (getDepositBox().open()) {
-			Sleep.sleepUntil(() -> getDepositBox().isOpen(), 5000);
+			Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
 		}
 	}
 
