@@ -1,22 +1,42 @@
 package activities.banking;
 
-public class DepositAllBanking extends Banking {
+import util.Sleep;
 
-    private String[] exceptItems;
+public class DepositAllBanking extends DepositAll {
 
-    public DepositAllBanking(final String... exceptItems) {
-        this.exceptItems = exceptItems;
-    }
+	public DepositAllBanking(final String... exceptItems) {
+		super(exceptItems);
+	}
 
-    public void setExceptItems(final String... exceptItems) {
-        this.exceptItems = exceptItems;
-    }
+	@Override
+	protected boolean bank() {
+		if (exceptItems == null) {
+			return getBank().depositAll();
+		}
+		return getBank().depositAllExcept(exceptItems);
+	}
 
-    @Override
-    protected boolean bank() {
-        if (exceptItems == null) {
-            return getBank().depositAll();
-        }
-        return getBank().depositAllExcept(exceptItems);
-    }
+	protected void openDeposit() throws InterruptedException {
+		if (getBank().open()) {
+			Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+		}
+	}
+
+	@Override
+	public void run() throws InterruptedException {
+		if (!Bank.inAnyBank(myPosition())) {
+			getWalking().webWalk(bankAreas);
+		} else if (!getBank().isOpen()) {
+			openBank();
+		} else {
+			succeeded = bank();
+		}
+	}
+
+	void openBank() throws InterruptedException {
+		if (getBank().open()) {
+			Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+		}
+	}
+
 }
