@@ -30,7 +30,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v3.1.3";
+    static final String VERSION = "v3.1.4";
 
     private Gui gui;
     private Paint paint;
@@ -145,7 +145,7 @@ public class AIO extends Script {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (!getClient().isLoggedIn() || getWidgets().isVisible(WelcomeScreen.INTERFACE)) {
+        if (!getClient().isLoggedIn()) {
             return random(1200, 1800);
         } else if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
             osrsClientIsConfigured = configureOSRSClient();

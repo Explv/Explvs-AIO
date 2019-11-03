@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 public class IconButton {
     public static JButton createButton(final String toolTip, final String icon, final String rolloverIcon, ActionListener callback) {
         JButton button = new JButton();
-        button.setBackground(Color.BLACK);
         button.setToolTipText(toolTip);
 
         BufferedImage iconImage = ImageManager.loadImage(icon);
