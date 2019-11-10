@@ -6,7 +6,6 @@ import gui.dialogs.NewVersionDialog;
 import gui.utils.EventDispatchThreadRunner;
 import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Tab;
-import org.osbot.rs07.randoms.WelcomeScreen;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 import paint.MouseTrail;
@@ -23,14 +22,13 @@ import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v3.1.6";
+    static final String VERSION = "v3.1.7";
 
     private Gui gui;
     private Paint paint;

@@ -6,7 +6,7 @@
 
     <groupId>org.explv.explv_osbot_manager</groupId>
     <artifactId>explvs_aio</artifactId>
-    <version>v3.1.6</version>
+    <version>v3.1.7</version>
     <repositories>
         <repository>
             <id>local-repo</id>
@@ -23,6 +23,7 @@
             <groupId>org.osbot</groupId>
             <artifactId>osbot</artifactId>
             <version>0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
