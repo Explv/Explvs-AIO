@@ -55,6 +55,7 @@ public class RomeoAndJuliet extends QuestActivity {
 
     private final DialogueCompleter julietDialogueCompleter = new DialogueCompleter(
             "Juliet",
+            "Something else.",
             JULIET_AREA
     );
 
