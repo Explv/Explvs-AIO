@@ -1,9 +1,12 @@
 package util.file_managers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,20 +22,29 @@ public class ResourceManager {
             "resources"
     ).toString();
 
+    private static final String GITHUB_URL = "https://github.com/Explv/Explvs-AIO";
+
     public static InputStream loadFile(final String relativeFilePath) {
         if (fileExistsInDataDir(relativeFilePath)) {
             return loadFileFromDataDir(relativeFilePath);
         }
 
-        InputStream jarInputStream = loadFileFromJar(relativeFilePath);
+        // TODO: Loading files from local .jars currently seems to be broken
+        // As a stop-gap, we download the files from GitHub if they don't exist locally
+        // or are empty.
+        saveFileFromGitHubToDataDirectory(relativeFilePath);
+        return loadFileFromDataDir(relativeFilePath);
 
-        if (jarInputStream != null) {
-            saveFileToDataDirectory(jarInputStream, relativeFilePath);
-            return loadFileFromDataDir(relativeFilePath);
-        }
-
-        System.out.println("Failed to load file");
-        return null;
+//
+//        InputStream jarInputStream = loadFileFromJar(relativeFilePath);
+//
+//        if (jarInputStream != null) {
+//            saveFileToDataDirectory(jarInputStream, relativeFilePath);
+//            return loadFileFromDataDir(relativeFilePath);
+//        }
+//
+//        System.out.println("Failed to load file");
+//        return null;
     }
 
     private static InputStream loadFileFromJar(final String relativeFilePath) {
@@ -42,7 +54,7 @@ public class ResourceManager {
 
     private static boolean fileExistsInDataDir(final String relativeFilePath) {
         File file = Paths.get(DIRECTORY, relativeFilePath).toFile();
-        return file.exists();
+        return file.exists() && file.length() > 0;
     }
 
     private static InputStream loadFileFromDataDir(final String relativeFilePath) {
@@ -64,6 +76,20 @@ public class ResourceManager {
         }
 
         return null;
+    }
+
+    private static void saveFileFromGitHubToDataDirectory(final String relativeFilePath) {
+        try {
+            URL url = new URL(GITHUB_URL + "/blob/master/src/main/resources/" + relativeFilePath + "?raw=true");
+            System.out.println("Saving file from url: " + url.toString());
+
+            ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+
+            FileOutputStream fileOutputStream = new FileOutputStream(Paths.get(DIRECTORY, relativeFilePath).toFile());
+            fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static synchronized boolean saveFileToDataDirectory(final InputStream inputStream, final String relativeFilePath) {
