@@ -249,7 +249,7 @@ public class ItemReqBanking extends Banking {
                     return false;
                 }
             }
-            if (targetAmount == ItemReq.QUANTITY_ALL) {
+            if (targetAmount == getInventory().getEmptySlots()) {
                 getBank().withdrawAll(itemReq.getName());
             } else {
                 int requiredTargetAmount = reqTargetAmountMap.get(itemReq) - amountOnPlayer;
