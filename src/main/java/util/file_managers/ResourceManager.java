@@ -1,11 +1,8 @@
 package util.file_managers;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +32,7 @@ public class ResourceManager {
         saveFileFromGitHubToDataDirectory(relativeFilePath);
         return loadFileFromDataDir(relativeFilePath);
 
-//
+
 //        InputStream jarInputStream = loadFileFromJar(relativeFilePath);
 //
 //        if (jarInputStream != null) {
@@ -48,7 +45,8 @@ public class ResourceManager {
     }
 
     private static InputStream loadFileFromJar(final String relativeFilePath) {
-        String jarFilePath = "/" + relativeFilePath;
+        String jarFilePath = "/resources/" + relativeFilePath;
+        System.out.println(jarFilePath);
         return ResourceManager.class.getResourceAsStream(jarFilePath);
     }
 
@@ -85,7 +83,12 @@ public class ResourceManager {
 
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
 
-            FileOutputStream fileOutputStream = new FileOutputStream(Paths.get(DIRECTORY, relativeFilePath).toFile());
+            File outputFile = Paths.get(DIRECTORY, relativeFilePath).toFile();
+
+            outputFile.getParentFile().mkdirs();
+            outputFile.createNewFile();
+
+            FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
         } catch (IOException e) {
             e.printStackTrace();

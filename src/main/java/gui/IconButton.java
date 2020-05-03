@@ -25,12 +25,12 @@ public class IconButton {
         };
         button.setToolTipText(toolTip);
 
-        BufferedImage iconImage = ImageManager.loadImage(icon);
+        BufferedImage iconImage = ImageManager.getInstance().loadImage(icon);
         if (iconImage != null) {
             button.setIcon(new ImageIcon(iconImage));
         }
 
-        BufferedImage rolloverIconImage = ImageManager.loadImage(rolloverIcon);
+        BufferedImage rolloverIconImage = ImageManager.getInstance().loadImage(rolloverIcon);
         if (rolloverIconImage != null) {
             button.setRolloverIcon(new ImageIcon(rolloverIconImage));
         }
