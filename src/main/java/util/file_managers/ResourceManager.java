@@ -1,5 +1,7 @@
 package util.file_managers;
 
+import net.lingala.zip4j.ZipFile;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -26,22 +28,18 @@ public class ResourceManager {
             return loadFileFromDataDir(relativeFilePath);
         }
 
+        InputStream jarInputStream = loadFileFromJar(relativeFilePath);
+
+        if (jarInputStream != null) {
+            saveFileToDataDirectory(jarInputStream, relativeFilePath);
+            return loadFileFromDataDir(relativeFilePath);
+        }
+
         // TODO: Loading files from local .jars currently seems to be broken
         // As a stop-gap, we download the files from GitHub if they don't exist locally
         // or are empty.
-        saveFileFromGitHubToDataDirectory(relativeFilePath);
+        downloadResourcesFromGitHubToDataDirectory();
         return loadFileFromDataDir(relativeFilePath);
-
-
-//        InputStream jarInputStream = loadFileFromJar(relativeFilePath);
-//
-//        if (jarInputStream != null) {
-//            saveFileToDataDirectory(jarInputStream, relativeFilePath);
-//            return loadFileFromDataDir(relativeFilePath);
-//        }
-//
-//        System.out.println("Failed to load file");
-//        return null;
     }
 
     private static InputStream loadFileFromJar(final String relativeFilePath) {
@@ -76,23 +74,31 @@ public class ResourceManager {
         return null;
     }
 
-    private static void saveFileFromGitHubToDataDirectory(final String relativeFilePath) {
+    private static void downloadResourcesFromGitHubToDataDirectory() {
         try {
-            URL url = new URL(GITHUB_URL + "/blob/master/src/main/resources/" + relativeFilePath + "?raw=true");
-            System.out.println("Saving file from url: " + url.toString());
+            URL url = new URL(GITHUB_URL + "/blob/master/resources-archive.zip?raw=true");
+            System.out.println("Downloading file from url: " + url.toString() + ", to: " + DIRECTORY);
 
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
 
-            File outputFile = Paths.get(DIRECTORY, relativeFilePath).toFile();
+            File outputFile = Paths.get(DIRECTORY, "resources-archive.zip").toFile();
 
             outputFile.getParentFile().mkdirs();
             outputFile.createNewFile();
 
             FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+
+            System.out.println(String.format("Extracting file: %s, to: %s", outputFile.getAbsolutePath(), DIRECTORY));
+
+            ZipFile zipFile = new ZipFile(outputFile);
+            zipFile.extractAll(DIRECTORY);
+
+            outputFile.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private static synchronized boolean saveFileToDataDirectory(final InputStream inputStream, final String relativeFilePath) {
