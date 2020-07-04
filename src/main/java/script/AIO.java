@@ -28,7 +28,7 @@ import java.util.List;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v3.1.12";
+    public static final String VERSION = "v3.1.12";
 
     private Gui gui;
     private Paint paint;
@@ -40,16 +40,17 @@ public class AIO extends Script {
 
     @Override
     public void onStart() throws InterruptedException {
-        VersionChecker versionChecker = new VersionChecker(VERSION);
+        log("Current version: " + AIO.VERSION);
+        log("Latest version: " + VersionChecker.getLatestVersion().orElse("not found!"));
 
-        if (!versionChecker.updateIsIgnored() && !versionChecker.isUpToDate()) {
+        if (!VersionChecker.updateIsIgnored() && !VersionChecker.isUpToDate(AIO.VERSION)) {
             try {
                 EventDispatchThreadRunner.runOnDispatchThread(
                         () -> {
                             int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
 
                             if (selectedOption == 0) {
-                                versionChecker.ignoreUpdate();
+                                VersionChecker.ignoreUpdate();
                             }
                         },
                         true

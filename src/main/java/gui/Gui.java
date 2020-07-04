@@ -6,6 +6,7 @@ import gui.styled_components.StyledJPanel;
 import gui.task_list.TaskList;
 import gui.utils.ColourScheme;
 import org.json.simple.JSONObject;
+import script.AIO;
 import tasks.Task;
 import tasks.TaskType;
 import util.file_managers.FontManager;
@@ -26,7 +27,7 @@ public class Gui {
 
     public Gui() {
         gui = new JDialog();
-        gui.setTitle("Explv's AIO");
+        gui.setTitle("Explv's AIO " + AIO.VERSION);
         gui.setModal(true);
         gui.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
         gui.setBackground(ColourScheme.DIALOG_BACKGROUND_GREY);
@@ -39,7 +40,11 @@ public class Gui {
         titleLabel.setFont(FontManager.ROBOTO_REGULAR.deriveFont(Font.BOLD, 26));
         titleLabel.setForeground(ColourScheme.WHITE);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setText("<html><span color='#33b5e5'>Explv</span>'s AIO</html>");
+        titleLabel.setText(
+                String.format("<html><span color='#33b5e5'>Explv</span>'s AIO <span style='font-size:16'>%s</span></html>",
+                        AIO.VERSION
+                )
+        );
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
         final JPanel controlsPanel = new StyledJPanel();

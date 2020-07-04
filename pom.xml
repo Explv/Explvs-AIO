@@ -6,7 +6,13 @@
 
     <groupId>org.explv.explv_osbot_manager</groupId>
     <artifactId>explvs_aio</artifactId>
-    <version>v3.1.12</version>
+
+    <!--
+        The version is declared in the main script class. We do not define a version here to avoid
+        having to update it in two places.
+    -->
+    <version>no-version</version>
+
     <repositories>
         <repository>
             <id>local-repo</id>
@@ -100,6 +106,7 @@
                             </descriptorRefs>
                             <appendAssemblyId>false</appendAssemblyId>
                             <outputDirectory>${user.home}/OSBot/Scripts/</outputDirectory>
+                            <finalName>explvs-aio</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>
