@@ -52,7 +52,7 @@ public class CraftingActivity extends Activity {
         } else if (getBank() != null && getBank().isOpen()) {
             getBank().close();
         } else if (location.getArea() == null && !Bank.inAnyBank(myPosition())) {
-            getWalking().webWalk(Bank.getAreas());
+            getWalking().webWalk(Bank.AREAS);
         } else if (location.getArea() != null && !location.getArea().contains(myPosition())) {
             getWalking().webWalk(location.getArea());
         } else if (makeAllInterface.isMakeAllScreenOpen()) {

@@ -1,6 +1,7 @@
 package util.item_requirement;
 
 import org.osbot.rs07.api.Bank;
+import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.util.ItemContainer;
 
@@ -59,6 +60,14 @@ public class ItemReq {
             }
         }
         return true;
+    }
+
+    public static boolean hasNonItemRequirement(final ItemReq[] itemReqs, final ItemContainer itemContainer, final Filter<Item> allowedItems) {
+        return itemContainer.contains(item -> !ItemReq.isRequirementItem(itemReqs, item) && !allowedItems.match(item));
+    }
+
+    public static boolean hasNonItemRequirement(final ItemReq[] itemReqs, final ItemContainer itemContainer) {
+        return itemContainer.contains(item -> !ItemReq.isRequirementItem(itemReqs, item));
     }
 
     public final String getName() {

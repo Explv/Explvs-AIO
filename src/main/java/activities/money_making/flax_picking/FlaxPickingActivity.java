@@ -79,7 +79,7 @@ public class FlaxPickingActivity extends Activity {
     private class FlaxBank extends Banking {
 
         @Override
-        public boolean bank() {
+        public boolean bank(final BankType currentBankType) {
             if (!getInventory().isEmpty()) {
                 getBank().depositAll();
             } else if (!getEquipment().isEmpty()) {

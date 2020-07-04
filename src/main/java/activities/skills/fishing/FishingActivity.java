@@ -3,8 +3,11 @@ package activities.skills.fishing;
 import activities.activity.Activity;
 import activities.activity.ActivityType;
 import activities.banking.Bank;
+import activities.banking.DepositAllBanking;
 import activities.banking.ItemReqBanking;
+import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.map.Area;
+import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.utility.Condition;
@@ -26,10 +29,9 @@ public class FishingActivity extends Activity {
     private final ResourceMode resourceMode;
     private final ItemReq[] itemReqs;
 
-    private final CachedWidget musaPointCharterWidget = new CachedWidget(72, new WidgetActionFilter("Musa Point"));
-
     private NPC currentFishingSpot;
-    private Executable bankNode;
+    private Executable itemReqBankNode;
+    private Executable depositAllBankNode;
 
     public FishingActivity(final Fish fish, final FishingLocation location, final ResourceMode resourceMode) {
         super(ActivityType.FISHING);
@@ -49,36 +51,38 @@ public class FishingActivity extends Activity {
 
     @Override
     public void onStart() {
-        if (location == FishingLocation.MUSA_POINT) {
-            bankNode = new MusaPointBanking(itemReqs);
-        } else {
-            bankNode = new ItemReqBanking(itemReqs);
-        }
-        bankNode.exchangeContext(getBot());
+        itemReqBankNode = new ItemReqBanking(itemReqs);
+        itemReqBankNode.exchangeContext(getBot());
+
+        depositAllBankNode = new DepositAllBanking(itemReqs);
+        depositAllBankNode.exchangeContext(getBot());
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (!ItemReq.hasItemRequirements(fish.fishingMethod.itemReqs, getInventory())
-                || inventoryContainsNonFishingItem()
-                || (getInventory().isFull() && resourceMode == ResourceMode.BANK)) {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
+        if (!ItemReq.hasItemRequirements(itemReqs, getInventory())
+                || ItemReq.hasNonItemRequirement(itemReqs, getInventory(), Fish.RAW_FISH_FILTER)) {
+            log("Running item req bank node");
+            itemReqBankNode.run();
+            if (itemReqBankNode.hasFailed()) {
                 setFailed();
+            }
+        } else if (getInventory().isFull()) {
+            if (resourceMode == ResourceMode.BANK) {
+                depositAllBankNode.run();
+                if (depositAllBankNode.hasFailed()) {
+                    setFailed();
+                }
+            } else if (resourceMode == ResourceMode.DROP) {
+                getInventory().dropAll(Fish.RAW_FISH_FILTER);
             }
         } else if (getBank() != null && getBank().isOpen()) {
             getBank().close();
-        } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
-            getInventory().dropAll(item -> item.getName().startsWith("Raw "));
         } else if (!location.location.getArea().contains(myPosition())) {
             getWalking().webWalk(location.location.getArea());
         } else if (!myPlayer().isInteracting(currentFishingSpot) || getDialogues().isPendingContinuation()) {
             fish();
         }
-    }
-
-    private boolean inventoryContainsNonFishingItem() {
-        return getInventory().contains(item -> !ItemReq.isRequirementItem(itemReqs, item) && !item.getName().startsWith("Raw "));
     }
 
     private void fish() {
@@ -105,70 +109,5 @@ public class FishingActivity extends Activity {
     @Override
     public FishingActivity copy() {
         return new FishingActivity(fish, location, resourceMode);
-    }
-
-    private class MusaPointBanking extends ItemReqBanking {
-
-        private final Area musaPoint = new Area(
-                new int[][]{
-                        {2868, 3193},
-                        {2910, 3198},
-                        {2952, 3168},
-                        {2962, 3160},
-                        {2964, 3142},
-                        {2918, 3130},
-                        {2865, 3141}
-                }
-        );
-        private final Area portSarimDepositBox = new Area(3044, 3237, 3052, 3234);
-        private final Area musaPointPier = new Area(2947, 3160, 2961, 3143);
-
-        public MusaPointBanking(final ItemReq[] itemReqs) {
-            super(itemReqs);
-        }
-
-        @Override
-        public void run() throws InterruptedException {
-            if (musaPoint.contains(myPosition()) && !musaPointPier.contains(myPosition())) {
-                getWalking().webWalk(musaPointPier);
-            } else if (ItemReq.hasItemRequirements(itemReqs, getInventory())) {
-                if (!portSarimDepositBox.contains(myPosition())) {
-                    charterShipToPortSarim(new Area[]{portSarimDepositBox});
-                } else if (!getDepositBox().isOpen()) {
-                    getDepositBox().open();
-                } else {
-                    getDepositBox().depositAllExcept(item -> ItemReq.isRequirementItem(itemReqs, item));
-                }
-            } else {
-                if (!Bank.inAnyBank(myPosition())) {
-                    charterShipToPortSarim(Bank.getAreas());
-                } else {
-                    super.run();
-                }
-            }
-        }
-
-        private void charterShipToPortSarim(Area[] targetAreas) throws InterruptedException {
-            if (musaPointPier.contains(myPosition())) {
-                if (getDialogues().inDialogue()) {
-                    getDialogues().completeDialogue("Can I journey on this ship?", "Search away, I have nothing to hide.", "Ok.");
-                } else {
-                    NPC customsOfficer = getNpcs().closest("Customs officer");
-
-                    if (customsOfficer != null && customsOfficer.interact("Pay-Fare")) {
-                        Sleep.sleepUntil(() -> getDialogues().inDialogue(), 5000);
-                    }
-                }
-            } else {
-                WebWalkEvent webWalkEvent = new WebWalkEvent(targetAreas);
-                webWalkEvent.setBreakCondition(new Condition() {
-                    @Override
-                    public boolean evaluate() {
-                        return musaPointPier.contains(myPosition());
-                    }
-                });
-                execute(webWalkEvent);
-            }
-        }
     }
 }

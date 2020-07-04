@@ -1,5 +1,12 @@
 package activities.skills.fishing;
 
+import org.osbot.rs07.api.filter.Filter;
+import org.osbot.rs07.api.model.Item;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public enum Fish {
 
     SHRIMP("Shrimps", FishingMethod.NET, 1, FishingLocation.smallNetBaitLocations),
@@ -37,11 +44,21 @@ public enum Fish {
     String name;
     int lvlRequirement;
 
+    public static final Set<String> COOKED_FISH_NAMES = Stream.of(Fish.values()).map(fish -> fish.name).collect(Collectors.toSet());
+    public static final Set<String> RAW_FISH_NAMES = Stream.of(Fish.values()).map(Fish::getRawFishName).collect(Collectors.toSet());
+
+    public static final Filter<Item> COOKED_FISH_FILTER = item -> COOKED_FISH_NAMES.contains(item.getName());
+    public static final Filter<Item> RAW_FISH_FILTER = item -> RAW_FISH_NAMES.contains(item.getName());
+
     Fish(final String name, final FishingMethod fishingMethod, final int lvlRequirement, final FishingLocation... locations) {
         this.name = name;
         this.fishingMethod = fishingMethod;
         this.lvlRequirement = lvlRequirement;
         this.locations = locations;
+    }
+
+    public String getRawFishName() {
+        return "Raw " + name.toLowerCase();
     }
 
     @Override

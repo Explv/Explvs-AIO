@@ -47,7 +47,7 @@ public class RuneMysteries extends QuestActivity {
                     }
                 } else getBank().depositAllExcept("Air talisman", "Research package");
             } else {
-                getWalking().webWalk(Bank.getAreas());
+                getWalking().webWalk(Bank.AREAS);
             }
         } else {
 

@@ -25,9 +25,11 @@ public class ItemReqBanking extends Banking {
     @Override
     public void run() throws InterruptedException {
         if (!Bank.inAnyBank(myPosition())) {
-            getWalking().webWalk(bankAreas);
+            getWalking().webWalk(Bank.AREAS);
         } else {
-            bank();
+            // We can never withdraw item requirements from a deposit box
+            // so we hardcode to BankType.BANK
+            bank(BankType.BANK);
         }
     }
 
@@ -82,7 +84,7 @@ public class ItemReqBanking extends Banking {
     }
 
     @Override
-    protected boolean bank() {
+    protected boolean bank(final BankType currentBankType) {
         reqTargetAmountMap.forEach((itemRequirement, integer) -> {
             if (itemRequirement != null && integer != null) {
                 log(itemRequirement.getName() + ": " + integer);
