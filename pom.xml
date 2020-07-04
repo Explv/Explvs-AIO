@@ -84,23 +84,40 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>main.script.AIO</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>${user.home}/OSBot/Scripts/</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <!-- Build the script .jar -->
+                        <id>build-script-jar</id>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>main.script.AIO</mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <outputDirectory>${user.home}/OSBot/Scripts/</outputDirectory>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <!-- Build the resources .zip archive -->
+                        <id>build-resources-archive</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>resources-archive</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/src/assembly/resources-archive.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>${project.basedir}</outputDirectory>
+                        </configuration>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
