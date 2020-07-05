@@ -2,6 +2,7 @@ package activities.quests;
 
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
+import org.osbot.rs07.event.WalkingEvent;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.utility.Condition;
 import util.Executable;
@@ -28,7 +29,7 @@ public class DialogueCompleter extends Executable {
     public void run() throws InterruptedException {
         NPC npc = getNpcs().closest(npcName);
 
-        if (npc == null || !npc.isOnScreen() || !getMap().canReach(npc)) {
+        if (npc == null || !npc.isOnScreen()) {
             if (area != null && !area.contains(myPosition())) {
                 WebWalkEvent webWalkEvent = new WebWalkEvent(area);
                 webWalkEvent.setBreakCondition(new Condition() {
@@ -47,7 +48,9 @@ public class DialogueCompleter extends Executable {
             }
         }
 
-        if (!getDialogues().inDialogue() || !myPlayer().isInteracting(npc)) {
+        if (!getMap().canReach(npc)) {
+           getDoorHandler().handleNextObstacle(npc);
+        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(npc)) {
             if (npc.interact("Talk-to")) {
                 Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(npc), 5000);
             }

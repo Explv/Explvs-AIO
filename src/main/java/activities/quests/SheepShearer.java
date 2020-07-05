@@ -28,7 +28,7 @@ public class SheepShearer extends QuestActivity {
             "Fred the Farmer",
             FARMER_AREA,
             "I'm looking for a quest.",
-            "Yes okay. I can do that.",
+            "Yes, okay. I can do that.",
             "Of course!",
             "I'm something of an expert actually!"
     );
