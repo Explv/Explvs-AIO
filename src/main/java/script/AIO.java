@@ -28,7 +28,7 @@ import java.util.List;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    public static final String VERSION = "v3.2.2";
+    public static final String VERSION = "v3.2.3";
 
     private Gui gui;
     private Paint paint;
