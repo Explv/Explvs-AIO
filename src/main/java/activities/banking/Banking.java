@@ -3,12 +3,16 @@ package activities.banking;
 import org.osbot.rs07.api.map.Area;
 import util.Executable;
 import util.Sleep;
+import util.widget.CachedWidget;
+import util.widget.filters.WidgetActionFilter;
 
 import java.util.stream.Stream;
 
 public abstract class Banking extends Executable {
 
     private static final Area[] ALL_BANK_AND_DEPOSIT_BOX_AREAS = Stream.concat(Stream.of(Bank.AREAS), Stream.of(DepositBox.AREAS)).toArray(Area[]::new);
+
+    private static final CachedWidget CONTINUE_BANK_INSTRUCTIONS_WIDGET = new CachedWidget(new WidgetActionFilter("Continue"));
 
     private final boolean useDepositBoxes;
 
@@ -34,6 +38,8 @@ public abstract class Banking extends Executable {
             walkToBank();
         } else if (!isBankOpen()) {
             currentBankType = openBank();
+        } else if (CONTINUE_BANK_INSTRUCTIONS_WIDGET.isVisible(getWidgets())) {
+            CONTINUE_BANK_INSTRUCTIONS_WIDGET.interact(getWidgets(), "Continue");
         } else {
             succeeded = bank(currentBankType);
         }
@@ -54,13 +60,25 @@ public abstract class Banking extends Executable {
     }
 
     boolean isBankOpen() {
-        if (useDepositBoxes) {
+        if (getBank() != null) {
+            return getBank().isOpen();
+        }
+
+        if (useDepositBoxes && getDepositBox() != null) {
             return getDepositBox().isOpen();
         }
-        return getBank().isOpen();
+
+        return false;
     }
 
-    BankType openBank() throws InterruptedException {
+    private BankType openBank() throws InterruptedException {
+        if (getBank() != null) {
+            if (getBank().open()) {
+                Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+            }
+            return BankType.BANK;
+        }
+
         if (useDepositBoxes && getDepositBox() != null) {
             if (getDepositBox().open()) {
                 Sleep.sleepUntil(() -> getDepositBox().isOpen(), 5000);
@@ -68,10 +86,7 @@ public abstract class Banking extends Executable {
             return BankType.DEPOSIT_BOX;
         }
 
-        if (getBank().open()) {
-            Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
-        }
-        return BankType.BANK;
+        throw new IllegalStateException("Cannot open bank, no bank or deposit box found.");
     }
 
     /**
