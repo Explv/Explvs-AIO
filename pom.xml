@@ -26,11 +26,6 @@
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>2.6.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.osbot</groupId>
             <artifactId>osbot</artifactId>
             <version>0</version>

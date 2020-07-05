@@ -1,15 +1,13 @@
 package util.file_managers;
 
-import net.lingala.zip4j.ZipFile;
-
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class ResourceManager {
 
@@ -91,8 +89,7 @@ public class ResourceManager {
 
             System.out.println(String.format("Extracting file: %s, to: %s", outputFile.getAbsolutePath(), DIRECTORY));
 
-            ZipFile zipFile = new ZipFile(outputFile);
-            zipFile.extractAll(DIRECTORY);
+            unzipArchive(outputFile, new File(DIRECTORY));
 
             outputFile.delete();
         } catch (IOException e) {
@@ -126,5 +123,46 @@ public class ResourceManager {
             e.printStackTrace();
         }
         return true;
+    }
+
+    private static synchronized void unzipArchive(final File archive, final File destinationDir) {
+        try(ZipFile zipFile = new ZipFile(archive))
+        {
+            FileSystem fileSystem = FileSystems.getDefault();
+
+            destinationDir.mkdirs();
+
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+            while (entries.hasMoreElements())
+            {
+                ZipEntry entry = entries.nextElement();
+
+                Path filePath = fileSystem.getPath(destinationDir.getAbsolutePath(), entry.getName());
+
+                System.out.println("Unzipping file to: " + filePath.toString());
+
+                if (entry.isDirectory())
+                {
+                    Files.createDirectories(filePath);
+                }
+                else
+                {
+                    InputStream is = zipFile.getInputStream(entry);
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    Files.createFile(filePath);
+                    FileOutputStream fileOutput = new FileOutputStream(filePath.toFile());
+                    while (bis.available() > 0)
+                    {
+                        fileOutput.write(bis.read());
+                    }
+                    fileOutput.close();
+                }
+            }
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
