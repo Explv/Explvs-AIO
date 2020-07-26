@@ -37,11 +37,19 @@ public abstract class Banking extends Executable {
         if (!playerInBank()) {
             walkToBank();
         } else if (!isBankOpen()) {
-            currentBankType = openBank();
-        } else if (CONTINUE_BANK_INSTRUCTIONS_WIDGET.isVisible(getWidgets())) {
-            CONTINUE_BANK_INSTRUCTIONS_WIDGET.interact(getWidgets(), "Continue");
+            openBank();
         } else {
-            succeeded = bank(currentBankType);
+            if (getBank() != null && getBank().isOpen()) {
+                currentBankType = BankType.BANK;
+            } else {
+                currentBankType = BankType.DEPOSIT_BOX;
+            }
+
+            if (CONTINUE_BANK_INSTRUCTIONS_WIDGET.isVisible(getWidgets())) {
+                CONTINUE_BANK_INSTRUCTIONS_WIDGET.interact(getWidgets(), "Continue");
+            } else {
+                succeeded = bank(currentBankType);
+            }
         }
     }
 
@@ -60,6 +68,10 @@ public abstract class Banking extends Executable {
     }
 
     boolean isBankOpen() {
+        if (useDepositBoxes && getBank() != null && getDepositBox() != null) {
+            return getBank().isOpen() || getDepositBox().isOpen();
+        }
+
         if (getBank() != null) {
             return getBank().isOpen();
         }
@@ -71,19 +83,16 @@ public abstract class Banking extends Executable {
         return false;
     }
 
-    private BankType openBank() throws InterruptedException {
-        if (getBank() != null) {
-            if (getBank().open()) {
-                Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
-            }
-            return BankType.BANK;
+    private void openBank() throws InterruptedException {
+        if (getBank() != null && getBank().open()) {
+            Sleep.sleepUntil(() -> getBank().isOpen(), 5000);
+            return;
         }
 
         if (useDepositBoxes && getDepositBox() != null) {
             if (getDepositBox().open()) {
                 Sleep.sleepUntil(() -> getDepositBox().isOpen(), 5000);
             }
-            return BankType.DEPOSIT_BOX;
         }
 
         throw new IllegalStateException("Cannot open bank, no bank or deposit box found.");
