@@ -108,6 +108,12 @@ public class ThievingActivity extends Activity {
     }
 
     private void pickpocket() {
+        Item coinPouch = getInventory().getItem("Coin pouch");
+        
+        if(coinPouch != null && coinPouch.getAmount() >= 28) {
+            getInventory().getItem("Coin pouch").interact();
+        }
+
         if (!getSettings().isRunning() && getSettings().getRunEnergy() >= 30) {
             getSettings().setRunning(true);
         } else {
