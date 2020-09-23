@@ -19,7 +19,7 @@ public class Eating extends Executable {
     @Override
     public void run() throws InterruptedException {
         long foodCount = getInventory().getAmount(food.toString());
-        getInventory().getItem(food.toString()).interact("Eat");
+        getInventory().getItem(food.toString()).interact("Eat", "Drink");
         Sleep.sleepUntil(() -> getInventory().getAmount(food.toString()) < foodCount, 5000);
     }
 
