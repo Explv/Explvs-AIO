@@ -6,10 +6,8 @@ import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.Event;
 import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
+import util.event.ConfigureClientEvent;
 import util.event.DisableAudioEvent;
-import util.event.EnableFixedModeEvent;
-import util.event.ToggleRoofsHiddenEvent;
-import util.event.ToggleShiftDropEvent;
 import util.widget.CachedWidget;
 
 import java.util.Arrays;
@@ -52,7 +50,7 @@ public final class RuneScapeGuideSection extends TutorialSection {
     private final CachedWidget creationScreenWidget = new CachedWidget("Head");
     private final CachedWidget experienceWidget = new CachedWidget("What's your experience with Old School Runescape?");
 
-    private boolean isAudioDisabled;
+    private boolean isConfigured;
 
     public RuneScapeGuideSection() {
         super("Gielinor Guide");
@@ -85,14 +83,8 @@ public final class RuneScapeGuideSection extends TutorialSection {
                 getTabs().open(Tab.SETTINGS);
                 break;
             case 10:
-                if (!EnableFixedModeEvent.isFixedModeEnabled(this)) {
-                    execute(new EnableFixedModeEvent());
-                } else if (!isAudioDisabled) {
-                    isAudioDisabled = disableAudio();
-                } else if (!getSettings().areRoofsEnabled()) {
-                    toggleRoofsHidden();
-                } else if (!getSettings().isShiftDropActive()) {
-                    toggleShiftDrop();
+                if (!isConfigured) {
+                    execute(new ConfigureClientEvent());
                 } else if (getObjects().closest("Door").interact("Open")) {
                     Sleep.sleepUntil(() -> getProgress() != 10, 5000, 600);
                 }
@@ -179,23 +171,5 @@ public final class RuneScapeGuideSection extends TutorialSection {
                 MethodProvider.sleep(150);
             }
         }
-    }
-
-    private boolean disableAudio() {
-        Event disableAudioEvent = new DisableAudioEvent();
-        execute(disableAudioEvent);
-        return disableAudioEvent.hasFinished();
-    }
-
-    private boolean toggleRoofsHidden() {
-        Event toggleRoofsHiddenEvent = new ToggleRoofsHiddenEvent();
-        execute(toggleRoofsHiddenEvent);
-        return toggleRoofsHiddenEvent.hasFinished();
-    }
-
-    private boolean toggleShiftDrop() {
-        Event toggleShiftDrop = new ToggleShiftDropEvent();
-        execute(toggleShiftDrop);
-        return toggleShiftDrop.hasFinished();
     }
 }

@@ -14,9 +14,7 @@ import tasks.Task;
 import tasks.TutorialIslandTask;
 import tasks.task_executor.TaskExecutor;
 import util.SkillTracker;
-import util.event.EnableFixedModeEvent;
-import util.event.ToggleRoofsHiddenEvent;
-import util.event.ToggleShiftDropEvent;
+import util.event.ConfigureClientEvent;
 
 import java.awt.*;
 import java.io.File;
@@ -28,7 +26,7 @@ import java.util.List;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    public static final String VERSION = "v3.2.5";
+    public static final String VERSION = "v3.2.6";
 
     private Gui gui;
     private Paint paint;
@@ -166,16 +164,7 @@ public class AIO extends Script {
     }
 
     private boolean configureOSRSClient() {
-        if (!EnableFixedModeEvent.isFixedModeEnabled(getBot().getMethods())) {
-            execute(new EnableFixedModeEvent());
-        } else if (!getSettings().areRoofsEnabled()) {
-            execute(new ToggleRoofsHiddenEvent());
-        } else if (!getSettings().isShiftDropActive()) {
-            execute(new ToggleShiftDropEvent());
-        } else {
-            return true;
-        }
-        return false;
+        return execute(new ConfigureClientEvent()).hasFinished();
     }
 
     @Override
