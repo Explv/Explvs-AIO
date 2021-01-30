@@ -11,7 +11,7 @@ public class RuneMysteries extends QuestActivity {
     private final DialogueCompleter dukeHoracioDialogueCompleter = new DialogueCompleter(
             "Duke Horacio",
             new Area(new Position(3208, 3218, 1), new Position(3213, 3225, 1)),
-            "Duke Horacio", "Have you any quests for me?", "Sure, no problem."
+            "Duke Horacio", "Have you any quests for me?", "Yes"
     );
 
     private final DialogueCompleter sedridorDialogueCompleter = new DialogueCompleter(

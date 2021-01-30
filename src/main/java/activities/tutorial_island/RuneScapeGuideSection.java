@@ -9,12 +9,14 @@ import util.Sleep;
 import util.event.ConfigureClientEvent;
 import util.event.DisableAudioEvent;
 import util.widget.CachedWidget;
+import util.widget.filters.WidgetActionFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class RuneScapeGuideSection extends TutorialSection {
     private enum UsernameCheckStatus {
@@ -84,7 +86,7 @@ public final class RuneScapeGuideSection extends TutorialSection {
                 break;
             case 10:
                 if (!isConfigured) {
-                    execute(new ConfigureClientEvent());
+                    isConfigured = execute(new ConfigureClientEvent()).hasFinished();
                 } else if (getObjects().closest("Door").interact("Open")) {
                     Sleep.sleepUntil(() -> getProgress() != 10, 5000, 600);
                 }
@@ -147,18 +149,20 @@ public final class RuneScapeGuideSection extends TutorialSection {
         }
 
         final RS2Widget[] childWidgets = getWidgets().getWidgets(creationScreenWidget.get(getWidgets()).get().getRootId());
-        Collections.shuffle(Arrays.asList(childWidgets));
 
-        for (final RS2Widget childWidget : childWidgets) {
-            if (childWidget.getToolTip() == null) {
-                continue;
-            }
-            if (childWidget.getToolTip().contains("Change") || childWidget.getToolTip().contains("Recolour")) {
-                clickRandomTimes(childWidget);
-            }
+        final WidgetActionFilter selectableWidgetActionFilter = new WidgetActionFilter("Select");
+
+        final RS2Widget[] selectableWidgets = Stream.of(childWidgets).filter(selectableWidgetActionFilter::match).toArray(RS2Widget[]::new);
+
+        Collections.shuffle(Arrays.asList(selectableWidgets));
+
+        int maxSelection = new Random().nextInt(Math.min(selectableWidgets.length, 15));
+
+        for (int i = 0; i < maxSelection; i ++) {
+            clickRandomTimes(selectableWidgets[i]);
         }
 
-        if (getWidgets().getWidgetContainingText("Accept").interact()) {
+        if (getWidgets().getWidgetContainingText("Confirm").interact()) {
             Sleep.sleepUntil(() -> !creationScreenWidget.isVisible(getWidgets()), 3000, 600);
         }
     }
