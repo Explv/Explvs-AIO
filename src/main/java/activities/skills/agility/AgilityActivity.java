@@ -179,7 +179,7 @@ public class AgilityActivity extends Activity {
 
     private class AgilityBank extends Banking {
         @Override
-        public boolean bank() {
+        public boolean bank(final BankType currentBankType) {
             getBank().depositAll();
 
             return true;

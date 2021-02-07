@@ -52,7 +52,7 @@ public class CraftingActivity extends Activity {
         } else if (getBank() != null && getBank().isOpen()) {
             getBank().close();
         } else if (location.getArea() == null && !Bank.inAnyBank(myPosition())) {
-            getWalking().webWalk(Bank.getAreas());
+            getWalking().webWalk(Bank.AREAS);
         } else if (location.getArea() != null && !location.getArea().contains(myPosition())) {
             getWalking().webWalk(location.getArea());
         } else if (makeAllInterface.isMakeAllScreenOpen()) {
@@ -113,7 +113,7 @@ public class CraftingActivity extends Activity {
         if (getWidgets().getWidgetContainingText("What would you like to make?") != null) {
             if (jewelleryWidget == null) {
                 jewelleryWidget = getJewelleryWidget();
-            } else if (jewelleryWidget.interact(getWidgets(), "Make-All")) {
+            } else if (jewelleryWidget.interact(getWidgets())) {
                 FINISHED_CRAFTING_SLEEP.sleep();
             }
         } else if (getObjects().closest("Furnace").interact("Smelt")) {

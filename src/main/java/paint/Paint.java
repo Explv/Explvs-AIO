@@ -27,7 +27,7 @@ public class Paint implements Painter {
     private boolean paintHidden;
     private boolean toggleButtonHovered;
 
-    private static final Image mouseImage = ImageManager.loadImage("images/cursor.png");
+    private static final Image mouseImage = ImageManager.getInstance().loadImage("images/cursor.png");
 
     private boolean paused;
 

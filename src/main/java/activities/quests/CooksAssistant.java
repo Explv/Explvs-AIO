@@ -40,24 +40,6 @@ public class CooksAssistant extends QuestActivity {
     );
     private boolean operated = false;
     private boolean put = false;
-    private final MessageListener MILL_MESSAGE_LISTENER = message -> {
-        if (message.getType() != Message.MessageType.GAME) {
-            return;
-        }
-
-        String messageStr = message.getMessage();
-
-        if (messageStr.contains("There is already grain in the hopper.") ||
-                messageStr.contains("You put the grain in the hopper.")) {
-            put = true;
-            return;
-        }
-
-        if (messageStr.contains("You operate the hopper. The grain slides down the chute.")) {
-            operated = true;
-            return;
-        }
-    };
 
     public CooksAssistant() {
         super(Quest.COOKS_ASSISTANT);
@@ -67,12 +49,10 @@ public class CooksAssistant extends QuestActivity {
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
         cookDialogueCompleter.exchangeContext(getBot());
-        getBot().addMessageListener(MILL_MESSAGE_LISTENER);
     }
 
     @Override
     public void onEnd() {
-        getBot().removeMessageListener(MILL_MESSAGE_LISTENER);
     }
 
     @Override
@@ -157,7 +137,9 @@ public class CooksAssistant extends QuestActivity {
             }
 
             if (hopper.interact("Use")) {
-                Sleep.sleepUntil(() -> put, 15000);
+                Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000);
+                Sleep.sleepUntil(() -> !myPlayer().isAnimating(), 3000);
+                put = true;
             }
         }
     }
@@ -175,7 +157,9 @@ public class CooksAssistant extends QuestActivity {
             }
 
             if (controls.interact("Operate")) {
-                Sleep.sleepUntil(() -> operated, 10000);
+                Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000);
+                Sleep.sleepUntil(() -> !myPlayer().isAnimating(), 3000);
+                operated = true;
             }
         }
     }

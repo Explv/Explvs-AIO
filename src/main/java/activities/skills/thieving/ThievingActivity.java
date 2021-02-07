@@ -144,7 +144,7 @@ public class ThievingActivity extends Activity {
 
     private class ThievingBank extends Banking {
         @Override
-        public boolean bank() {
+        public boolean bank(final BankType currentBankType) {
             if (!getInventory().isEmpty()) {
                 getBank().depositAll();
             } else if (food != Food.NONE) {

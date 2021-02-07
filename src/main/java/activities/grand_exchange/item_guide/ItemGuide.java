@@ -26,7 +26,7 @@ public class ItemGuide {
             try {
                 if (!summaryFile.exists()) {
                     System.out.println("Downloading summary JSON from RSBuddy");
-                    URL website = new URL("https://storage.googleapis.com/osbuddy-exchange/summary.json");
+                    URL website = new URL("https://rsbuddy.com/exchange/summary.json");
                     ReadableByteChannel rbc = Channels.newChannel(website.openStream());
                     FileOutputStream fos = new FileOutputStream(summaryFile);
                     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);

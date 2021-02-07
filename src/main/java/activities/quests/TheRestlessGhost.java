@@ -16,25 +16,31 @@ public class TheRestlessGhost extends QuestActivity {
     private static final Area COFFIN = new Area(3247, 3195, 3252, 3190);
     private static final Area WIZARD = new Area(3116, 9564, 3121, 9569);
 
-    private static final String[] AERECT_OPTIONS = {
+    private final DialogueCompleter aereckDialogueCompleter = new DialogueCompleter(
+            "Father Aereck",
+            CHURCH,
             "I'm looking for a quest!",
             "Ok, let me help then."
-    };
+    );
 
-    private static final String[] URHNEY_OPTIONS = {
+    private final DialogueCompleter urhneyDialogueCompleter = new DialogueCompleter(
+            "Father Urhney",
+            URHNEY,
             "Father Aereck sent me to talk to you.",
             "He's got a ghost haunting his graveyard."
-    };
+    );
 
-    private static final String[] GHOST_OPTIONS = {
+    private final DialogueCompleter ghostDialogueCompleter = new DialogueCompleter(
+            "Restless ghost",
             "Yep, now tell me what the problem is."
-    };
+    );
 
     private static final int INVENTORY_SLOTS_REQUIRED = 4;
     private static final String[] ITEMS_NEEDED = {
             "Ghost's skull",
             "Ghostspeak amulet",
     };
+
     private static boolean shouldExit = true;
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
 
@@ -45,6 +51,9 @@ public class TheRestlessGhost extends QuestActivity {
     @Override
     public void onStart() {
         depositAllBanking.exchangeContext(getBot());
+        aereckDialogueCompleter.exchangeContext(getBot());
+        urhneyDialogueCompleter.exchangeContext(getBot());
+        ghostDialogueCompleter.exchangeContext(getBot());
     }
 
     @Override
@@ -61,10 +70,10 @@ public class TheRestlessGhost extends QuestActivity {
         } else {
             switch (getProgress()) {
                 case 0:
-                    talkToAereck();
+                    aereckDialogueCompleter.run();
                     break;
                 case 1:
-                    talkToUrhney();
+                    urhneyDialogueCompleter.run();
                     break;
                 case 2:
                     talkToGhost();
@@ -96,11 +105,11 @@ public class TheRestlessGhost extends QuestActivity {
     private void placeSkull() throws InterruptedException {
         RS2Object coffin = getObjects().closest("Coffin");
 
-        if (!COFFIN.contains(myPosition())) {
+        if (coffin == null || !getMap().canReach(coffin)) {
             getWalking().webWalk(COFFIN);
-        } else if (coffin != null && coffin.hasAction("Close") && getInventory().contains("Ghost's skull")) {
+        } else if (coffin.hasAction("Close") && getInventory().contains("Ghost's skull")) {
             useSkull();
-        } else if (coffin != null && coffin.hasAction("Open")) {
+        } else if (coffin.hasAction("Open")) {
             openCoffin();
         }
     }
@@ -119,22 +128,27 @@ public class TheRestlessGhost extends QuestActivity {
     }
 
     private void talkToGhost() throws InterruptedException {
+        RS2Object coffin = getObjects().closest("Coffin");
+
+        if (coffin == null || !getMap().canReach(coffin)) {
+            getWalking().webWalk(COFFIN);
+            return;
+        }
+
         NPC ghost = getNpcs().closest("Restless ghost");
 
-        if (!COFFIN.contains(myPosition())) {
-            getWalking().webWalk(COFFIN);
-        } else if (ghost == null) {
+        if (ghost == null) {
             openCoffin();
-        } else if (canTalkToGhost() && (!getDialogues().inDialogue() || !myPlayer().isInteracting(ghost))) {
-            if (ghost.interact("Talk-to")) {
-                Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(ghost), 5000);
+        } else if (!getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet")) {
+            if (getInventory().interact("Wear", "Ghostspeak amulet")) {
+                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet"), 2000);
             }
         } else {
-            getDialogues().completeDialogue(GHOST_OPTIONS);
+            ghostDialogueCompleter.run();
         }
     }
 
-    private void openCoffin() throws InterruptedException {
+    private void openCoffin() {
         RS2Object coffin = getObjects().closest("Coffin");
 
         if (coffin != null && (coffin.interact("Search", "Open"))) {
@@ -142,48 +156,13 @@ public class TheRestlessGhost extends QuestActivity {
         }
     }
 
-    private void searchAlter() throws InterruptedException {
+    private void searchAlter() {
         RS2Object alter = getObjects().closest("Altar");
 
         if (!WIZARD.contains(myPosition())) {
             getWalking().webWalk(WIZARD);
         } else if (alter != null && alter.interact("Search")) {
             Sleep.sleepUntil(() -> getInventory().contains("Ghost's skull"), 5000);
-        }
-    }
-
-    private boolean canTalkToGhost() {
-        if (getInventory().contains("Ghostspeak amulet") && getInventory().interact("Wear", "Ghostspeak amulet")) {
-            Sleep.sleepUntil(() -> !getInventory().contains("Ghostspeak amulet"), 5000);
-        }
-        return getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet");
-    }
-
-    private void talkToAereck() throws InterruptedException {
-        NPC aereck = getNpcs().closest("Father Aereck");
-
-        if (!CHURCH.contains(myPosition())) {
-            getWalking().webWalk(CHURCH);
-        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(aereck)) {
-            if (aereck.interact("Talk-to")) {
-                Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(aereck), 5000);
-            }
-        } else {
-            getDialogues().completeDialogue(AERECT_OPTIONS);
-        }
-    }
-
-    private void talkToUrhney() throws InterruptedException {
-        NPC urhney = getNpcs().closest("Father Urhney");
-
-        if (!URHNEY.contains(myPosition())) {
-            getWalking().webWalk(URHNEY);
-        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(urhney)) {
-            if (urhney.interact("Talk-to")) {
-                Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(urhney), 5000);
-            }
-        } else {
-            getDialogues().completeDialogue(URHNEY_OPTIONS);
         }
     }
 

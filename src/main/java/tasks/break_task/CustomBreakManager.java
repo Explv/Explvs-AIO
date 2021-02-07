@@ -55,7 +55,7 @@ public class CustomBreakManager extends RandomSolver {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (shouldLogout && getClient().getLoginState() == Client.LoginState.LOGGED_IN) {
+        if (shouldLogout && getClient().getLoginState() == Client.LoginState.LOGIN_SUCCESSFUL) {
             if (getWidgets().closeOpenInterface() && getLogoutTab().logOut()) {
                 return 1000;
             }

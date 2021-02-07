@@ -43,7 +43,7 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     }
 
     @Override
-    protected boolean bank() {
+    protected boolean bank(final BankType currentBankType) {
         if (toolsInBank.isEmpty()) {
             for (T tool : toolClass.getEnumConstants()) {
                 if (getBank().contains(tool.getName())) {

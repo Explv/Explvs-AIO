@@ -14,11 +14,13 @@ public final class DisableAudioEvent extends Event {
     private final CachedWidget soundSettingsWidget = new CachedWidget(new WidgetActionFilter("Audio"));
     private final CachedWidget musicVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Music Volume"));
     private final CachedWidget soundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Sound Effect Volume"));
-    private final CachedWidget areaSoundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Area Sound Effect Volume"));
+    private final CachedWidget areaSoundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Area Sound Volume"));
 
     @Override
     public final int execute() throws InterruptedException {
-        if (Tab.SETTINGS.isDisabled(getBot())) {
+        if (isVolumeDisabled(musicVolumeConfig) && isVolumeDisabled(soundEffectVolumeConfig) && isVolumeDisabled(areaSoundEffectVolumeConfig)) {
+            setFinished();
+        } else if (Tab.SETTINGS.isDisabled(getBot())) {
             setFailed();
         } else if (getTabs().getOpen() != Tab.SETTINGS) {
             getTabs().open(Tab.SETTINGS);
@@ -30,10 +32,8 @@ public final class DisableAudioEvent extends Event {
             soundEffectVolumeWidget.interact(getWidgets());
         } else if (!isVolumeDisabled(areaSoundEffectVolumeConfig)) {
             areaSoundEffectVolumeWidget.interact(getWidgets());
-        } else {
-            setFinished();
         }
-        return 200;
+        return 600;
     }
 
     private boolean isVolumeDisabled(final int config) {

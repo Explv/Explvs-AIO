@@ -12,21 +12,27 @@ import util.Sleep;
 
 public class SheepShearer extends QuestActivity {
 
-    private static final Area FARMER = new Area(3188, 3275, 3190, 3270);
-    private static final Area SHEEP = new Area(3195, 3272, 3209, 3260);
-    private static final Area SPINNER = new Area(3209, 3215, 3211, 3212).setPlane(1);
-    private static final String[] FARMER_OPTIONS = {
-            "I'm looking for a quest.",
-            "Yes okay. I can do that.",
-            "Of course!",
-            "I'm something of an expert actually!"
-    };
+    private static final Area FARMER_AREA = new Area(3188, 3275, 3190, 3270);
+    private static final Area SHEEP_AREA = new Area(3195, 3272, 3209, 3260);
+    private static final Area SPINNER_AREA = new Area(3209, 3215, 3211, 3212).setPlane(1);
+
     private static final int INVENTORY_SLOTS_REQUIRED = 22;
+
     private static final String[] ITEMS_NEEDED = {
             "Ball of wool",
             "Wool",
             "Shears"
     };
+
+    private final DialogueCompleter farmerDialogueCompleter = new DialogueCompleter(
+            "Fred the Farmer",
+            FARMER_AREA,
+            "I'm looking for a quest.",
+            "Yes, okay. I can do that.",
+            "Of course!",
+            "I'm something of an expert actually!"
+    );
+
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
     private MakeAllInterface makeAllInterface;
 
@@ -40,6 +46,8 @@ public class SheepShearer extends QuestActivity {
 
         makeAllInterface = new MakeAllInterface("Ball of Wool");
         makeAllInterface.exchangeContext(getBot());
+
+        farmerDialogueCompleter.exchangeContext(getBot());
     }
 
     @Override
@@ -51,11 +59,11 @@ public class SheepShearer extends QuestActivity {
         } else {
             switch (getProgress()) {
                 case 0:
-                    talkToFarmer();
+                    farmerDialogueCompleter.run();
                     break;
                 case 1:
                     if (hasRequiredItems()) {
-                        talkToFarmer();
+                        farmerDialogueCompleter.run();
                     } else {
                         getItemsNeeded();
                     }
@@ -76,32 +84,32 @@ public class SheepShearer extends QuestActivity {
         return getInventory().getAmount("Ball of wool") > 19;
     }
 
-    private void getItemsNeeded() throws InterruptedException {
+    private void getItemsNeeded() {
         if (!getInventory().contains("Shears")) {
-            getGroundItem(FARMER, "Shears");
+            pickupShears();
         } else if (!getInventory().contains("Ball of wool") && getInventory().getAmount("Wool") < 20) {
-            getItemFromNPC(SHEEP, "Shear");
+            shearSheep();
         } else if (getInventory().getAmount("Ball of wool") < 20) {
-            useObject(SPINNER, "Spin");
+            spinWool();
         }
     }
 
-    private void getItemFromNPC(Area place, String interaction) throws InterruptedException {
-        if (place.contains(myPlayer())) {
-            NPC npc = getNpcs().closest(n -> !n.hasAction("Talk-to") && n.hasAction(interaction) && place.contains(n));
-            if (npc != null && npc.interact(interaction)) {
+    private void shearSheep() {
+        if (SheepShearer.SHEEP_AREA.contains(myPlayer())) {
+            NPC npc = getNpcs().closest(n -> !n.hasAction("Talk-to") && n.hasAction("Shear") && SheepShearer.SHEEP_AREA.contains(n));
+            if (npc != null && npc.interact("Shear")) {
                 Sleep.sleepUntil(() -> myPlayer().getAnimation() == 893, 15000);
                 Sleep.sleepUntil(() -> !myPlayer().isAnimating(), 10000);
             }
         } else {
-            getWalking().webWalk(place);
+            getWalking().webWalk(SheepShearer.SHEEP_AREA);
         }
     }
 
-    private void useObject(Area place, String objectAction) throws InterruptedException {
-        if (place.contains(myPlayer())) {
-            RS2Object object = getObjects().closest(n -> n.hasAction(objectAction));
-            if (object != null && object.interact(objectAction)) {
+    private void spinWool() {
+        if (SheepShearer.SPINNER_AREA.contains(myPlayer())) {
+            RS2Object object = getObjects().closest(n -> n.hasAction("Spin"));
+            if (object != null && object.interact("Spin")) {
                 Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("What would you like to spin?") != null, 8000);
 
                 if (makeAllInterface.isMakeAllScreenOpen() && makeAllInterface.makeAll()) {
@@ -109,32 +117,18 @@ public class SheepShearer extends QuestActivity {
                 }
             }
         } else {
-            getWalking().webWalk(place);
+            getWalking().webWalk(SheepShearer.SPINNER_AREA);
         }
     }
 
-    private void talkToFarmer() throws InterruptedException {
-        NPC farmer = getNpcs().closest("Fred the Farmer");
-
-        if (!FARMER.contains(myPosition())) {
-            getWalking().webWalk(FARMER);
-        } else if (!getDialogues().inDialogue() || !myPlayer().isInteracting(farmer)) {
-            if (farmer.interact("Talk-to")) {
-                Sleep.sleepUntil(() -> getDialogues().inDialogue() && myPlayer().isInteracting(farmer), 5000);
-            }
-        } else {
-            getDialogues().completeDialogue(FARMER_OPTIONS);
-        }
-    }
-
-    private void getGroundItem(Area place, String itemName) throws InterruptedException {
-        if (place.contains(myPosition())) {
-            GroundItem itemToGet = getGroundItems().closest(itemName);
+    private void pickupShears() {
+        if (SheepShearer.FARMER_AREA.contains(myPosition())) {
+            GroundItem itemToGet = getGroundItems().closest("Shears");
             if (itemToGet != null && itemToGet.interact("Take")) {
-                Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
+                Sleep.sleepUntil(() -> getInventory().contains("Shears"), 8000);
             }
         } else {
-            getWalking().webWalk(place);
+            getWalking().webWalk(SheepShearer.FARMER_AREA);
         }
     }
 

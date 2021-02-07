@@ -77,6 +77,8 @@ public enum Bank {
 
     public Location location;
 
+    public static Area[] AREAS = Arrays.stream(Bank.values()).map(bank -> bank.location.getArea()).toArray(Area[]::new);
+
     Bank(final Location location) {
         this.location = location;
     }
@@ -86,10 +88,6 @@ public enum Bank {
             if (bank.location.getArea().contains(position)) return true;
         }
         return false;
-    }
-
-    public static Area[] getAreas() {
-        return Arrays.stream(Bank.values()).map(bank -> bank.location.getArea()).toArray(Area[]::new);
     }
 
     @Override

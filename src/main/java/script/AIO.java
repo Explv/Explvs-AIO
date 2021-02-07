@@ -6,7 +6,6 @@ import gui.dialogs.NewVersionDialog;
 import gui.utils.EventDispatchThreadRunner;
 import org.json.simple.JSONObject;
 import org.osbot.rs07.api.ui.Tab;
-import org.osbot.rs07.randoms.WelcomeScreen;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 import paint.MouseTrail;
@@ -15,22 +14,19 @@ import tasks.Task;
 import tasks.TutorialIslandTask;
 import tasks.task_executor.TaskExecutor;
 import util.SkillTracker;
-import util.event.EnableFixedModeEvent;
-import util.event.ToggleRoofsHiddenEvent;
-import util.event.ToggleShiftDropEvent;
+import util.event.ConfigureClientEvent;
 
 import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    static final String VERSION = "v3.1.0";
+    public static final String VERSION = "v3.2.7";
 
     private Gui gui;
     private Paint paint;
@@ -42,16 +38,17 @@ public class AIO extends Script {
 
     @Override
     public void onStart() throws InterruptedException {
-        VersionChecker versionChecker = new VersionChecker(VERSION);
+        log("Current version: " + AIO.VERSION);
+        log("Latest version: " + VersionChecker.getLatestVersion().orElse("not found!"));
 
-        if (!versionChecker.updateIsIgnored() && !versionChecker.isUpToDate()) {
+        if (!VersionChecker.updateIsIgnored() && !VersionChecker.isUpToDate(AIO.VERSION)) {
             try {
                 EventDispatchThreadRunner.runOnDispatchThread(
                         () -> {
                             int selectedOption = NewVersionDialog.showNewVersionDialog(getBot().getBotPanel());
 
                             if (selectedOption == 0) {
-                                versionChecker.ignoreUpdate();
+                                VersionChecker.ignoreUpdate();
                             }
                         },
                         true
@@ -145,7 +142,7 @@ public class AIO extends Script {
 
     @Override
     public int onLoop() throws InterruptedException {
-        if (!getClient().isLoggedIn() || getWidgets().isVisible(WelcomeScreen.INTERFACE)) {
+        if (!getClient().isLoggedIn()) {
             return random(1200, 1800);
         } else if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
             osrsClientIsConfigured = configureOSRSClient();
@@ -167,16 +164,7 @@ public class AIO extends Script {
     }
 
     private boolean configureOSRSClient() {
-        if (!EnableFixedModeEvent.isFixedModeEnabled(getBot().getMethods())) {
-            execute(new EnableFixedModeEvent());
-        } else if (!getSettings().areRoofsEnabled()) {
-            execute(new ToggleRoofsHiddenEvent());
-        } else if (!getSettings().isShiftDropActive()) {
-            execute(new ToggleShiftDropEvent());
-        } else {
-            return true;
-        }
-        return false;
+        return execute(new ConfigureClientEvent()).hasFinished();
     }
 
     @Override

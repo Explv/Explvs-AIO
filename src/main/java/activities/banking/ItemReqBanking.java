@@ -25,9 +25,11 @@ public class ItemReqBanking extends Banking {
     @Override
     public void run() throws InterruptedException {
         if (!Bank.inAnyBank(myPosition())) {
-            getWalking().webWalk(bankAreas);
+            getWalking().webWalk(Bank.AREAS);
         } else {
-            bank();
+            // We can never withdraw item requirements from a deposit box
+            // so we hardcode to BankType.BANK
+            bank(BankType.BANK);
         }
     }
 
@@ -82,7 +84,7 @@ public class ItemReqBanking extends Banking {
     }
 
     @Override
-    protected boolean bank() {
+    protected boolean bank(final BankType currentBankType) {
         reqTargetAmountMap.forEach((itemRequirement, integer) -> {
             if (itemRequirement != null && integer != null) {
                 log(itemRequirement.getName() + ": " + integer);
@@ -117,11 +119,60 @@ public class ItemReqBanking extends Banking {
     private void getItemRequirements(final ItemReq... itemReqs) {
         final List<ItemReq> itemReqList = Arrays.asList(itemReqs);
 
-        List<ItemReq> equipableItemReqs = itemReqList.stream().filter(ItemReq::isEquipable).collect(Collectors.toList());
-        Filter<Item> equipableItemReqFilter = item -> equipableItemReqs.stream().anyMatch(req -> req.isRequirementItem(item));
+        final List<ItemReq> equipableItemReqs = itemReqList.stream().filter(ItemReq::isEquipable).collect(Collectors.toList());
+        final Filter<Item> equipableItemReqFilter = item -> equipableItemReqs.stream().anyMatch(req -> req.isRequirementItem(item));
+        final List<ItemReq> nonEquipableItemReqsList = itemReqList.stream().filter(req -> !req.isEquipable()).collect(Collectors.toList());
+
+        // First we deposit any items that are not a requirement
+        execute(new Event() {
+            @Override
+            public int execute() throws InterruptedException {
+                if (!getInventory().contains(item -> !itemReqFilter.match(item))) {
+                    setFinished();
+                    return 0;
+                }
+
+                if (!getBank().isOpen()) {
+                    getBank().open();
+                } else {
+                    getBank().depositAllExcept(itemReqFilter);
+                }
+                return 600;
+            }
+        });
+
+        // Then we deposit any excess item reqs we have
+        execute(new Event() {
+            Queue<ItemReq> nonEquipableItemReqs = new LinkedList<>(nonEquipableItemReqsList);
+
+            @Override
+            public int execute() throws InterruptedException {
+                if (nonEquipableItemReqs.isEmpty()) {
+                    setFinished();
+                    return 0;
+                }
+
+                if (!getBank().isOpen()) {
+                    getBank().open();
+                } else {
+                    ItemReq itemReq = nonEquipableItemReqs.peek();
+
+                    int targetAmount = reqTargetAmountMap.get(itemReq);
+                    long amountOnPlayer = itemReq.getAmount(getInventory(), getEquipment());
+
+                    if (amountOnPlayer > targetAmount && targetAmount != ItemReq.QUANTITY_ALL) {
+                        depositExcess(itemReq);
+                    } else {
+                        nonEquipableItemReqs.poll();
+                    }
+                }
+                return 600;
+            }
+        });
+
 
         if (!equipableItemReqs.isEmpty()) {
-            // First we want to withdraw any equipable item reqs
+            // Now we want to withdraw any equipable item reqs
             Event withdrawEquipables = execute(new Event() {
                 Queue<ItemReq> equipableItemReqQueue = new LinkedList<>(equipableItemReqs);
 
@@ -130,7 +181,10 @@ public class ItemReqBanking extends Banking {
                 public int execute() throws InterruptedException {
                     if (equipableItemReqQueue.isEmpty()) {
                         setFinished();
-                    } else if (!getBank().isOpen()) {
+                        return 0;
+                    }
+
+                    if (!getBank().isOpen()) {
                         getBank().open();
                     } else if (getInventory().contains(item -> !equipableItemReqFilter.match(item))) {
                         getBank().depositAllExcept(equipableItemReqFilter);
@@ -178,38 +232,35 @@ public class ItemReqBanking extends Banking {
             });
         }
 
-        final List<ItemReq> nonEquipableItemReqsList = itemReqList.stream().filter(req -> !req.isEquipable()).collect(Collectors.toList());
-
         // Finally we want to withdraw any remaining item reqs
         Event withdrawNonEquipableEvent = execute(new Event() {
             Queue<ItemReq> nonEquipableItemReqs = new LinkedList<>(nonEquipableItemReqsList);
 
             @Override
             public int execute() throws InterruptedException {
+                if (nonEquipableItemReqs.isEmpty()) {
+                    setFinished();
+                    return 0;
+                }
+
                 if (!getBank().isOpen()) {
                     getBank().open();
-                } else if (getInventory().contains(item -> !itemReqFilter.match(item))) {
-                    getBank().depositAllExcept(itemReqFilter);
-                } else if (nonEquipableItemReqs.isEmpty()) {
-                    setFinished();
-                } else {
-                    ItemReq itemReq = nonEquipableItemReqs.peek();
-
-                    int targetAmount = reqTargetAmountMap.get(itemReq);
-                    long amountOnPlayer = itemReq.getAmount(getInventory(), getEquipment());
-
-                    if (amountOnPlayer > targetAmount && targetAmount != ItemReq.QUANTITY_ALL) {
-                        depositExcess(itemReq);
-                    } else if (!itemReq.hasRequirement(getInventory(), getEquipment())) {
-                        if (!withdrawItemReq(itemReq)) {
-                            setFailed();
-                        }
-                    } else if (amountOnPlayer < targetAmount && getBank().contains(itemReq.getName())) {
-                        withdrawItemReq(itemReq);
-                    } else {
-                        nonEquipableItemReqs.poll();
-                    }
+                    return 0;
                 }
+
+                ItemReq itemReq = nonEquipableItemReqs.peek();
+
+                int targetAmount = reqTargetAmountMap.get(itemReq);
+                long amountOnPlayer = itemReq.getAmount(getInventory(), getEquipment());
+
+                if (amountOnPlayer < targetAmount) {
+                    if (!withdrawItemReq(itemReq)) {
+                        setFailed();
+                    }
+                } else {
+                    nonEquipableItemReqs.poll();
+                }
+
                 return 600;
             }
         });
@@ -249,7 +300,7 @@ public class ItemReqBanking extends Banking {
                     return false;
                 }
             }
-            if (targetAmount == ItemReq.QUANTITY_ALL) {
+            if (targetAmount == getInventory().getEmptySlots()) {
                 getBank().withdrawAll(itemReq.getName());
             } else {
                 int requiredTargetAmount = reqTargetAmountMap.get(itemReq) - amountOnPlayer;

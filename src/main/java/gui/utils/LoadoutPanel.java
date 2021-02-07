@@ -29,7 +29,7 @@ import java.util.Optional;
 public class LoadoutPanel extends JPanel {
 
     private static final String IMAGE_DIR = "images/loadout/";
-    private static final BufferedImage SLOT_BACKGROUND_IMAGE = ImageManager.loadImage(IMAGE_DIR + "slot_background.png");
+    private static final BufferedImage SLOT_BACKGROUND_IMAGE = ImageManager.getInstance().loadImage(IMAGE_DIR + "slot_background.png");
 
     private Map<EquipmentSlot, String> equipmentMap = new HashMap<>();
 
@@ -186,7 +186,7 @@ public class LoadoutPanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
 
-        button.setIcon(new ImageIcon(ImageManager.loadImage(IMAGE_DIR + imageName)));
+        button.setIcon(new ImageIcon(ImageManager.getInstance().loadImage(IMAGE_DIR + imageName)));
         button.addActionListener(new EquipmentButtonActionListener(equipmentSlot));
 
         return button;
