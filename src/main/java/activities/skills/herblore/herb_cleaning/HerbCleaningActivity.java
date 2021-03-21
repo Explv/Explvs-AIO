@@ -42,7 +42,7 @@ public class HerbCleaningActivity extends Activity {
     private void cleanHerbs() {
         long herbCount = getInventory().getAmount(herb.grimyName);
         if (getInventory().getItem(herb.grimyName).interact("Clean")) {
-            Sleep.sleepUntil(() -> getInventory().getAmount(herb.grimyName) < herbCount, 2000);
+            Sleep.sleepUntil(() -> getInventory().getAmount(herb.grimyName) < herbCount, 700);
         }
     }
 
