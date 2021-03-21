@@ -12,7 +12,7 @@ public final class DisableAudioEvent extends Event {
     private static final int areaSoundEffectVolumeConfig = 872;
 
     private final CachedWidget soundSettingsWidget = new CachedWidget(new WidgetActionFilter("Audio"));
-    private final CachedWidget musicVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Music Volume"));
+    private final CachedWidget audioSettingsWidget = new CachedWidget(new WidgetMessageFilter("Audio Settings"));
     private final CachedWidget soundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Sound Effect Volume"));
     private final CachedWidget areaSoundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Area Sound Volume"));
 
@@ -24,7 +24,7 @@ public final class DisableAudioEvent extends Event {
             setFailed();
         } else if (getTabs().getOpen() != Tab.SETTINGS) {
             getTabs().open(Tab.SETTINGS);
-        } else if (!musicVolumeWidget.isVisible(getWidgets())) {
+        } else if (!audioSettingsWidget.isVisible(getWidgets())) {
             soundSettingsWidget.interact(getWidgets());
         } else if (!isVolumeDisabled(musicVolumeConfig)) {
             musicVolumeWidget.interact(getWidgets());
