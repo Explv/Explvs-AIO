@@ -7,8 +7,9 @@ import activities.banking.ToolUpgradeBanking;
 import org.osbot.rs07.api.filter.AreaFilter;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Entity;
+import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import util.Executable;
+import util.executable.Executable;
 import util.ResourceMode;
 import util.Sleep;
 
@@ -36,46 +37,37 @@ public class MiningActivity extends Activity {
     @Override
     public void onStart() throws InterruptedException {
         depositAllBanking = new DepositAllBanking();
-        depositAllBanking.exchangeContext(getBot());
 
         pickaxeBanking = new ToolUpgradeBanking<>(Pickaxe.class);
-        pickaxeBanking.exchangeContext(getBot());
-        pickaxeBanking.onStart();
 
         if (pickaxeBanking.getCurrentTool() != null) {
             depositAllBanking.setExceptItems(pickaxeBanking.getCurrentTool().getName());
         }
 
         miningNode = new MiningNode();
-        miningNode.exchangeContext(getBot());
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (shouldBank()) {
-            depositAllBanking.run();
+            execute(depositAllBanking);
         } else if (pickaxeBanking.toolUpgradeAvailable()) {
-            pickaxeBanking.run();
-            if (pickaxeBanking.hasFailed()) {
-                setFailed();
-            } else if (pickaxeBanking.getCurrentTool() != null) {
+            execute(pickaxeBanking);
+            if (pickaxeBanking.getCurrentTool() != null) {
                 depositAllBanking.setExceptItems(pickaxeBanking.getCurrentTool().getName());
             }
-        } else if (getBank() != null && getBank().isOpen()) {
-            getBank().close();
         } else if (pickaxeBanking.getCurrentTool().canEquip(getSkills()) && !getEquipment().isWearingItem(EquipmentSlot.WEAPON, pickaxeBanking.getCurrentTool().name)) {
-            if (getInventory().getItem(pickaxeBanking.getCurrentTool().name).interact("Wield")) {
-                Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.WEAPON, pickaxeBanking.getCurrentTool().name), 2000);
-            }
+            getInventory().equip(pickaxeBanking.getCurrentTool().name);
         } else if (getInventory().isFull() && resourceMode == ResourceMode.DROP) {
-            getInventory().dropAll(item -> !item.getName().equals(pickaxeBanking.getCurrentTool().name));
+            getInventory().dropAllExcept(pickaxeBanking.getCurrentTool().name);
         } else {
             mine();
         }
     }
 
     protected boolean shouldBank() {
-        return inventoryContainsNonMiningItem() || (getInventory().isFull() && resourceMode == ResourceMode.BANK);
+        return inventoryContainsNonMiningItem() ||
+               (getInventory().isFull() && resourceMode == ResourceMode.BANK);
     }
 
     protected boolean inventoryContainsNonMiningItem() {
@@ -92,7 +84,7 @@ public class MiningActivity extends Activity {
     }
 
     protected void mine() throws InterruptedException {
-        miningNode.run();
+        execute(miningNode);
     }
 
     @Override
@@ -116,16 +108,24 @@ public class MiningActivity extends Activity {
                 rockArea = getAreaWithRock(rock);
             } else if (!rockArea.contains(myPosition())) {
                 getWalking().webWalk(rockArea);
-            } else if (currentRock == null || !rock.hasOre(currentRock) || !myPlayer().isAnimating()) {
+            } else {
                 mineRock();
             }
         }
 
         private void mineRock() {
-            currentRock = rock.getClosestWithOre(getBot().getMethods(), new AreaFilter<>(rockArea));
+            currentRock = getNextRock();
             if (currentRock != null && currentRock.interact("Mine")) {
-                Sleep.sleepUntil(() -> myPlayer().isAnimating() || !rock.hasOre(currentRock), 5000);
+                Sleep.sleepUntil(() -> !currentRock.exists(), 5000);
             }
+        }
+
+        private RS2Object getNextRock() {
+            return rock.getClosestWithOre(
+                    getBot().getMethods(),
+                    new AreaFilter<>(rockArea),
+                    obj -> obj != currentRock
+            );
         }
 
         @Override

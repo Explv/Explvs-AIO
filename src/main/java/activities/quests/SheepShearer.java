@@ -7,8 +7,8 @@ import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
-import util.MakeAllInterface;
 import util.Sleep;
+import util.executable.ExecutionFailedException;
 
 public class SheepShearer extends QuestActivity {
 
@@ -30,40 +30,30 @@ public class SheepShearer extends QuestActivity {
             "I'm looking for a quest.",
             "Yes, okay. I can do that.",
             "Of course!",
-            "I'm something of an expert actually!"
+            "I'm something of an expert actually!",
+            "Yes."
     );
 
     private final DepositAllBanking depositAllBanking = new DepositAllBanking(ITEMS_NEEDED);
-    private MakeAllInterface makeAllInterface;
 
     public SheepShearer() {
         super(Quest.SHEEP_SHEARER);
     }
 
     @Override
-    public void onStart() {
-        depositAllBanking.exchangeContext(getBot());
-
-        makeAllInterface = new MakeAllInterface("Ball of Wool");
-        makeAllInterface.exchangeContext(getBot());
-
-        farmerDialogueCompleter.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (getInventory().getEmptySlotCount() < INVENTORY_SLOTS_REQUIRED - getInventory().getAmount(ITEMS_NEEDED)) {
-            depositAllBanking.run();
+            execute(depositAllBanking);
         } else if (getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
         } else {
             switch (getProgress()) {
                 case 0:
-                    farmerDialogueCompleter.run();
+                    execute(farmerDialogueCompleter);
                     break;
                 case 1:
                     if (hasRequiredItems()) {
-                        farmerDialogueCompleter.run();
+                        execute(farmerDialogueCompleter);
                     } else {
                         getItemsNeeded();
                     }
@@ -73,9 +63,7 @@ public class SheepShearer extends QuestActivity {
                     isComplete = true;
                     break;
                 default:
-                    log("Unknown progress config value: " + getProgress());
-                    setFailed();
-                    break;
+                    throw new ExecutionFailedException("Unknown progress config value: " + getProgress());
             }
         }
     }
@@ -84,7 +72,7 @@ public class SheepShearer extends QuestActivity {
         return getInventory().getAmount("Ball of wool") > 19;
     }
 
-    private void getItemsNeeded() {
+    private void getItemsNeeded() throws InterruptedException {
         if (!getInventory().contains("Shears")) {
             pickupShears();
         } else if (!getInventory().contains("Ball of wool") && getInventory().getAmount("Wool") < 20) {
@@ -106,13 +94,14 @@ public class SheepShearer extends QuestActivity {
         }
     }
 
-    private void spinWool() {
+    private void spinWool() throws InterruptedException {
         if (SheepShearer.SPINNER_AREA.contains(myPlayer())) {
             RS2Object object = getObjects().closest(n -> n.hasAction("Spin"));
             if (object != null && object.interact("Spin")) {
                 Sleep.sleepUntil(() -> getWidgets().getWidgetContainingText("What would you like to spin?") != null, 8000);
 
-                if (makeAllInterface.isMakeAllScreenOpen() && makeAllInterface.makeAll()) {
+                if (getMakeAllInterface().isOpen()) {
+                    getMakeAllInterface().makeAll("Ball of Wool");
                     Sleep.sleepUntil(() -> !getInventory().contains("Wool"), 180000, 1000);
                 }
             }

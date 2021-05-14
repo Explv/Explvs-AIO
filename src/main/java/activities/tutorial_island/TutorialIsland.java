@@ -21,17 +21,7 @@ public final class TutorialIsland extends Activity {
 
     @Override
     public void onStart() throws InterruptedException {
-        rsGuideSection.exchangeContext(getBot());
-        survivalSection.exchangeContext(getBot());
-        cookingSection.exchangeContext(getBot());
-        questSection.exchangeContext(getBot());
-        miningSection.exchangeContext(getBot());
-        fightingSection.exchangeContext(getBot());
-        bankSection.exchangeContext(getBot());
-        priestSection.exchangeContext(getBot());
-        wizardSection.exchangeContext(getBot());
-
-        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible(), 6000, 500);
+        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible() && myPlayer().isOnScreen(), 6000, 500);
     }
 
     @Override
@@ -39,41 +29,41 @@ public final class TutorialIsland extends Activity {
         switch (getTutorialSection()) {
             case 0:
             case 1:
-                rsGuideSection.onLoop();
+                execute(rsGuideSection);
                 break;
             case 2:
             case 3:
-                survivalSection.onLoop();
+                execute(survivalSection);
                 break;
             case 4:
             case 5:
-                cookingSection.onLoop();
+                execute(cookingSection);
                 break;
             case 6:
             case 7:
-                questSection.onLoop();
+                execute(questSection);
                 break;
             case 8:
             case 9:
-                miningSection.onLoop();
+                execute(miningSection);
                 break;
             case 10:
             case 11:
             case 12:
-                fightingSection.onLoop();
+                execute(fightingSection);
                 break;
             case 14:
             case 15:
-                bankSection.onLoop();
+                execute(bankSection);
                 break;
             case 16:
             case 17:
-                priestSection.onLoop();
+                execute(priestSection);
                 break;
             case 18:
             case 19:
             case 20:
-                wizardSection.onLoop();
+                execute(wizardSection);
                 break;
         }
     }

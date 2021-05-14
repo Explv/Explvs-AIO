@@ -3,7 +3,7 @@ package activities.skills.runecrafting;
 import activities.banking.Banking;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import util.Executable;
+import util.executable.Executable;
 import util.Sleep;
 import util.item_requirement.ItemReq;
 
@@ -23,8 +23,6 @@ public class RunecraftingActivity extends RunecraftingBase {
 
     @Override
     public void onStart() {
-        talismanBanking.exchangeContext(getBot());
-
         if (getInventory().contains(altar.tiara) || getEquipment().isWearingItem(EquipmentSlot.HAT, altar.tiara)) {
             talismanReq = new ItemReq(altar.tiara).setEquipable();
         } else if (getInventory().contains(altar.talisman)) {
@@ -33,31 +31,21 @@ public class RunecraftingActivity extends RunecraftingBase {
 
         if (talismanReq != null) {
             banking = new ItemReqBanking(talismanReq, essenceReq);
-            banking.exchangeContext(getBot());
         }
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (talismanReq == null) {
-            talismanBanking.run();
-            if (talismanBanking.hasFailed()) {
-                setFailed();
-            }
+            execute(talismanBanking);
         } else if (banking == null) {
             banking = new ItemReqBanking(talismanReq, essenceReq);
-            banking.exchangeContext(getBot());
         } else if (!ItemReq.hasItemRequirements(new ItemReq[]{talismanReq, essenceReq}, getInventory(), getEquipment())) {
             if (getAltar() != null) {
                 leaveAltar();
             } else {
-                banking.run();
-                if (banking.hasFailed()) {
-                    setFailed();
-                }
+                execute(banking);
             }
-        } else if (getBank() != null && getBank().isOpen()) {
-            getBank().close();
         } else if (getInventory().contains(altar.tiara) && !getEquipment().isWearingItem(EquipmentSlot.HAT, altar.tiara)) {
             equipTiara();
         } else if (getAltar() != null) {
@@ -88,14 +76,13 @@ public class RunecraftingActivity extends RunecraftingBase {
 
     private class TalismanBanking extends Banking {
         @Override
-        protected boolean bank(final BankType currentBankType) {
+        protected void bank(final BankType currentBankType) {
             if (getBank().contains(altar.tiara)) {
                 talismanReq = new ItemReq(altar.tiara).setEquipable();
             } else {
                 talismanReq = new ItemReq(altar.talisman);
             }
-
-            return true;
+            setFinished();
         }
     }
 }

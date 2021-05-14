@@ -4,18 +4,17 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
+import util.executable.Executable;
 
 import java.awt.event.KeyEvent;
 
-public abstract class TutorialSection extends MethodProvider {
+public abstract class TutorialSection extends Executable {
 
     private final String INSTRUCTOR_NAME;
 
     public TutorialSection(final String INSTRUCTOR_NAME) {
         this.INSTRUCTOR_NAME = INSTRUCTOR_NAME;
     }
-
-    public abstract void onLoop() throws InterruptedException;
 
     protected final int getProgress() {
         return getConfigs().get(281);

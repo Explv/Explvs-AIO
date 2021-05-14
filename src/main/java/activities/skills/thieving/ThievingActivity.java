@@ -10,10 +10,11 @@ import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.event.WalkingEvent;
-import util.Executable;
+import util.executable.Executable;
 import util.Location;
 import util.ResourceMode;
 import util.Sleep;
+import util.executable.ExecutionFailedException;
 
 public class ThievingActivity extends Activity {
 
@@ -23,7 +24,7 @@ public class ThievingActivity extends Activity {
     private Food food;
     private Eating eatNode;
     private int hpPercentToEatAt;
-    private Executable bankNode;
+    private Executable bankNode = new ThievingBank();
 
     public ThievingActivity(final ThievingObject thievingObject, final Location location, final ResourceMode resourceMode) {
         super(ActivityType.THIEVING);
@@ -39,16 +40,10 @@ public class ThievingActivity extends Activity {
         this.resourceMode = resourceMode;
         this.food = food;
         this.hpPercentToEatAt = hpPercentToEatAt;
-    }
 
-    @Override
-    public void onStart() {
         if (food != null) {
             eatNode = new Eating(food);
-            eatNode.exchangeContext(getBot());
         }
-        bankNode = new ThievingBank();
-        bankNode.exchangeContext(getBot());
     }
 
     @Override
@@ -61,23 +56,18 @@ public class ThievingActivity extends Activity {
                     getInventory().dropAllExcept(food.toString());
                 }
             } else {
-                bankNode.run();
+                execute(bankNode);
             }
         } else if (food != null && eatNode.getHpPercent() < hpPercentToEatAt) {
             if (getInventory().contains(food.toString())) {
                 if (getBank() != null && getBank().isOpen()) {
                     getBank().close();
                 } else {
-                    eatNode.run();
+                    execute(eatNode);
                 }
             } else {
-                bankNode.run();
-                if (bankNode.hasFailed()) {
-                    setFailed();
-                }
+                execute(bankNode);
             }
-        } else if (getBank() != null && getBank().isOpen()) {
-            getBank().close();
         } else {
             steal();
         }
@@ -92,7 +82,7 @@ public class ThievingActivity extends Activity {
                 walkingEvent.setMinDistanceThreshold(0);
                 execute(walkingEvent);
             }
-        } else if (!myPlayer().isAnimating()) {
+        } else if (!myPlayer().isAnimating() && !isStunned()) {
             switch (thievingObject.type) {
                 case NPC:
                     pickpocket();
@@ -108,20 +98,28 @@ public class ThievingActivity extends Activity {
         }
     }
 
+    private boolean isStunned() {
+        return myPlayer().getHeight() > 195;
+    }
+
     private void pickpocket() {
-        
         Item coinPouch = getInventory().getItem("Coin pouch");
         
-        if(coinPouch != null && coinPouch.getAmount() >= 28) {
+        if (coinPouch != null && coinPouch.getAmount() >= 28) {
             getInventory().getItem("Coin pouch").interact();
-        }
-
-        if (!getSettings().isRunning() && getSettings().getRunEnergy() >= 30) {
+        } else if (!getSettings().isRunning() && getSettings().getRunEnergy() >= 30) {
             getSettings().setRunning(true);
         } else {
             NPC npc = getNpcs().closest(thievingObject.name);
-            if (npc != null && npc.interact("Pickpocket")) {
-                Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000);
+            if (npc != null) {
+                if (!getMap().canReach(npc)) {
+                    if (getDoorHandler().handleNextObstacle(npc)) {
+                        Sleep.sleepUntil(() -> getMap().canReach(npc), 5000);
+                    }
+
+                } else if (npc.interact("Pickpocket")) {
+                    Sleep.sleepUntil(() -> myPlayer().isAnimating(), 5000);
+                }
             }
         }
     }
@@ -152,18 +150,18 @@ public class ThievingActivity extends Activity {
 
     private class ThievingBank extends Banking {
         @Override
-        public boolean bank(final BankType currentBankType) {
+        public void bank(final BankType currentBankType) {
             if (!getInventory().isEmpty()) {
                 getBank().depositAll();
             } else if (food != Food.NONE) {
                 if (getBank().contains(food.toString())) {
-                    getBank().withdraw(food.toString(), 10);
+                    if (getBank().withdraw(food.toString(), 10)) {
+                        setFinished();
+                    }
                 } else {
-                    setFailed();
+                    throw new ExecutionFailedException("No food found in bank");
                 }
             }
-
-            return true;
         }
     }
 }

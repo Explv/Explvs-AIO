@@ -44,7 +44,7 @@ abstract class RunecraftingBase extends Activity {
             if (getInventory().isItemSelected()) {
                 getInventory().deselectItem();
             } else {
-                getInventory().interact("Use", altar.talisman);
+                getInventory().use(altar.talisman);
             }
         } else if (getObjects().closest("Mysterious ruins").interact("Use")) {
             Sleep.sleepUntil(() -> getAltar() != null, 5000);

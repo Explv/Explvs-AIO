@@ -4,7 +4,7 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.event.WalkingEvent;
-import util.Executable;
+import util.executable.Executable;
 import util.ResourceMode;
 import util.Sleep;
 
@@ -30,13 +30,7 @@ public class RuneEssMiningActivity extends MiningActivity {
 
     public RuneEssMiningActivity(final ResourceMode resourceMode) {
         super(null, Rock.RUNE_ESSENCE, resourceMode);
-    }
-
-    @Override
-    public void onStart() throws InterruptedException {
-        super.onStart();
         miningNode = new MiningNode();
-        miningNode.exchangeContext(getBot());
     }
 
     @Override

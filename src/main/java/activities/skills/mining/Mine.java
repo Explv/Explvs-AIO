@@ -91,7 +91,10 @@ public enum Mine {
             new RockArea(Rock.TIN, new Area(3181, 3374, 3184, 3378)),
             new RockArea(Rock.CLAY, new Area(3178, 3370, 3181, 3373)),
             new RockArea(Rock.IRON, new Area(3174, 3365, 3176, 3368))
-    }, Rock.TIN, Rock.CLAY, Rock.IRON);
+    }, Rock.TIN, Rock.CLAY, Rock.IRON),
+    EAST_ARDOUGNE("East Ardougne Mine", new RockArea[]{
+        new RockArea(Rock.IRON, new Area(2707, 3333, 2715, 3328))
+    }, Rock.IRON);
 
     String name;
     RockArea[] rockAreas;

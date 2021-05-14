@@ -1,7 +1,7 @@
 package activities.skills.runecrafting;
 
 import activities.banking.ItemReqBanking;
-import util.Executable;
+import util.executable.Executable;
 import util.item_requirement.ItemReq;
 
 
@@ -17,16 +17,9 @@ public class TiaraMakingActivity extends RunecraftingBase {
     }
 
     @Override
-    public void onStart() {
-        bankNode.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (ItemReq.hasItemRequirements(itemReqs, getInventory())) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else if (getAltar() != null) {
+            if (getAltar() != null) {
                 makeTiaras();
             } else if (getObjects().closest("Mysterious ruins") != null && altar.area.contains(myPosition())) {
                 enterAltar();
@@ -36,10 +29,7 @@ public class TiaraMakingActivity extends RunecraftingBase {
         } else if (getAltar() != null) {
             leaveAltar();
         } else {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(bankNode);
         }
     }
 

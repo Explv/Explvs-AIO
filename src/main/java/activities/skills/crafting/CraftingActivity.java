@@ -5,63 +5,42 @@ import activities.activity.ActivityType;
 import activities.banking.Bank;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.ui.RS2Widget;
-import util.Executable;
+import util.executable.Executable;
 import util.Location;
-import util.MakeAllInterface;
 import util.Sleep;
 import util.item_requirement.ItemReq;
 import util.widget.CachedWidget;
 
 public class CraftingActivity extends Activity {
 
-    private CraftingItem craftingItem;
+    private final CraftingItem craftingItem;
     private final Sleep FINISHED_CRAFTING_SLEEP = new Sleep(() -> !canMake() || getDialogues().isPendingContinuation(), 60_000);
-    private Location location;
+    private final Location location;
     private CachedWidget jewelleryWidget;
-    private Executable bankNode;
-    private MakeAllInterface makeAllInterface;
-    private final Sleep MAKE_ALL_INTERFACE_OPEN_SLEEP = new Sleep(() -> makeAllInterface.isMakeAllScreenOpen(), 2000);
+    private final Executable bankNode;
+    private final Sleep MAKE_ALL_INTERFACE_OPEN_SLEEP = new Sleep(() -> getMakeAllInterface().isOpen(), 2000);
 
     public CraftingActivity(final CraftingItem craftingItem, final Location location) {
         super(ActivityType.CRAFTING);
         this.craftingItem = craftingItem;
         this.location = location;
-    }
-
-    @Override
-    public void onStart() {
         bankNode = new ItemReqBanking(craftingItem.itemReqs);
-        bankNode.exchangeContext(getBot());
-
-        makeAllInterface = new MakeAllInterface(craftingItem.widgetText);
-        makeAllInterface.exchangeContext(getBot());
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (!canMake()) {
-            try {
-                bankNode.run();
-                if (bankNode.hasFailed()) {
-                    setFailed();
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                sleep(600);
-            }
-        } else if (getBank() != null && getBank().isOpen()) {
-            getBank().close();
+            execute(bankNode);
         } else if (location.getArea() == null && !Bank.inAnyBank(myPosition())) {
             getWalking().webWalk(Bank.AREAS);
         } else if (location.getArea() != null && !location.getArea().contains(myPosition())) {
             getWalking().webWalk(location.getArea());
-        } else if (makeAllInterface.isMakeAllScreenOpen()) {
-            if (makeAllInterface.makeAll()) {
-                if (craftingItem.type == CraftingType.POTTERY && getInventory().contains("Soft clay")) {
-                    Sleep.sleepUntil(() -> !getInventory().contains("Soft clay") || getDialogues().isPendingContinuation(), 60_000, 600);
-                } else {
-                    FINISHED_CRAFTING_SLEEP.sleep();
-                }
+        } else if (getMakeAllInterface().isOpen()) {
+            getMakeAllInterface().makeAll(craftingItem.widgetText);
+            if (craftingItem.type == CraftingType.POTTERY && getInventory().contains("Soft clay")) {
+                Sleep.sleepUntil(() -> !getInventory().contains("Soft clay") || getDialogues().isPendingContinuation(), 60_000, 600);
+            } else {
+                FINISHED_CRAFTING_SLEEP.sleep();
             }
         } else {
             switch (craftingItem.type) {
@@ -132,7 +111,7 @@ public class CraftingActivity extends Activity {
 
     private void makeXItem(String useItem, String interactItem) {
         if (!useItem.equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem(useItem).interact("Use");
+            getInventory().use(useItem);
         } else if (getInventory().getItem(interactItem).interact()) {
             MAKE_ALL_INTERFACE_OPEN_SLEEP.sleep();
         }
@@ -146,7 +125,7 @@ public class CraftingActivity extends Activity {
 
     private void makeXUse(String object, String item) {
         if (!item.equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem(item).interact("Use");
+            getInventory().use(item);
         } else if (getObjects().closest(object).interact("Use")) {
             MAKE_ALL_INTERFACE_OPEN_SLEEP.sleep();
         }

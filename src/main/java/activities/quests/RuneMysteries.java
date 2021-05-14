@@ -31,13 +31,6 @@ public class RuneMysteries extends QuestActivity {
     }
 
     @Override
-    public void onStart() {
-        dukeHoracioDialogueCompleter.exchangeContext(getBot());
-        sedridorDialogueCompleter.exchangeContext(getBot());
-        auburyDialogueCompleter.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (!getInventory().contains("Air talisman", "Research package") && getInventory().isFull()) {
             if (Bank.inAnyBank(myPosition())) {
@@ -57,30 +50,30 @@ public class RuneMysteries extends QuestActivity {
 
             switch (getProgress()) {
                 case 0:
-                    dukeHoracioDialogueCompleter.run();
+                    execute(dukeHoracioDialogueCompleter);
                     break;
                 case 1:
                     if (!getInventory().contains("Air talisman")) {
-                        dukeHoracioDialogueCompleter.run();
+                        execute(dukeHoracioDialogueCompleter);
                     } else {
-                        sedridorDialogueCompleter.run();
+                        execute(sedridorDialogueCompleter);
                     }
                     break;
                 case 2:
-                    sedridorDialogueCompleter.run();
+                    execute(sedridorDialogueCompleter);
                     break;
                 case 3:
                     if (!getInventory().contains("Research package")) {
-                        sedridorDialogueCompleter.run();
+                        execute(sedridorDialogueCompleter);
                     } else {
-                       auburyDialogueCompleter.run();
+                       execute(auburyDialogueCompleter);
                     }
                     break;
                 case 4:
-                    auburyDialogueCompleter.run();
+                    execute(auburyDialogueCompleter);
                     break;
                 case 5:
-                    sedridorDialogueCompleter.run();
+                    execute(sedridorDialogueCompleter);
                     break;
 
             }

@@ -8,10 +8,11 @@ import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 import org.osbot.rs07.api.ui.Tab;
 import util.Sleep;
+import util.executable.ExecutionFailedException;
 
 public class TheRestlessGhost extends QuestActivity {
 
-    private static final Area CHURCH = new Area(3240, 3204, 3247, 3215);
+    private static final Area CHURCH = new Area(3241, 3210, 3246, 3207);;
     private static final Area URHNEY = new Area(3144, 3173, 3151, 3177);
     private static final Area COFFIN = new Area(3247, 3195, 3252, 3190);
     private static final Area WIZARD = new Area(3116, 9564, 3121, 9569);
@@ -49,14 +50,6 @@ public class TheRestlessGhost extends QuestActivity {
     }
 
     @Override
-    public void onStart() {
-        depositAllBanking.exchangeContext(getBot());
-        aereckDialogueCompleter.exchangeContext(getBot());
-        urhneyDialogueCompleter.exchangeContext(getBot());
-        ghostDialogueCompleter.exchangeContext(getBot());
-    }
-
-    @Override
     public boolean canExit() {
         return shouldExit;
     }
@@ -64,16 +57,16 @@ public class TheRestlessGhost extends QuestActivity {
     @Override
     public void runActivity() throws InterruptedException {
         if (!getInventory().contains(ITEMS_NEEDED) && getInventory().getEmptySlotCount() < INVENTORY_SLOTS_REQUIRED) {
-            depositAllBanking.run();
+            execute(depositAllBanking);
         } else if (getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
         } else {
             switch (getProgress()) {
                 case 0:
-                    aereckDialogueCompleter.run();
+                    execute(aereckDialogueCompleter);
                     break;
                 case 1:
-                    urhneyDialogueCompleter.run();
+                    execute(urhneyDialogueCompleter);
                     break;
                 case 2:
                     talkToGhost();
@@ -95,9 +88,7 @@ public class TheRestlessGhost extends QuestActivity {
                     }
                     break;
                 default:
-                    log("Unknown progress config value: " + getProgress());
-                    setFailed();
-                    break;
+                    throw new ExecutionFailedException("Unknown progress config value: " + getProgress());
             }
         }
     }
@@ -121,7 +112,7 @@ public class TheRestlessGhost extends QuestActivity {
                 Sleep.sleepUntil(() -> Tab.INVENTORY.isDisabled(bot), 15000, 1500);
             }
         } else {
-            if (getInventory().interact("Use", "Ghost's skull")) {
+            if (getInventory().use("Ghost's skull")) {
                 Sleep.sleepUntil(() -> "Ghost's skull".equals(getInventory().getSelectedItemName()), 5000);
             }
         }
@@ -144,7 +135,7 @@ public class TheRestlessGhost extends QuestActivity {
                 Sleep.sleepUntil(() -> getEquipment().isWearingItem(EquipmentSlot.AMULET, "Ghostspeak amulet"), 2000);
             }
         } else {
-            ghostDialogueCompleter.run();
+            execute(ghostDialogueCompleter);
         }
     }
 

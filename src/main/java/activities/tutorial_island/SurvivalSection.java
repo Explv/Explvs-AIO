@@ -26,7 +26,7 @@ public final class SurvivalSection extends TutorialSection {
     }
 
     @Override
-    public final void onLoop() throws InterruptedException {
+    public final void run() throws InterruptedException {
         if (pendingContinue()) {
             selectContinue();
             return;
@@ -104,7 +104,7 @@ public final class SurvivalSection extends TutorialSection {
                 execute(walkingEvent);
             });
         } else if (!"Tinderbox".equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem("Tinderbox").interact("Use");
+            getInventory().use("Tinderbox");
         } else if (getInventory().getItem("Logs").interact()) {
             Position playerPos = myPosition();
             Sleep.sleepUntil(() -> !myPosition().equals(playerPos), 10_000, 600);
@@ -133,7 +133,7 @@ public final class SurvivalSection extends TutorialSection {
 
     private void cook() {
         if (!"Raw shrimps".equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem("Raw shrimps").interact("Use");
+            getInventory().use("Raw shrimps");
         } else {
             RS2Object fire = getObjects().closest("Fire");
             if (fire != null && fire.interact("Use")) {

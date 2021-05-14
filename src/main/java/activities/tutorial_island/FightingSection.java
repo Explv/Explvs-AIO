@@ -21,7 +21,7 @@ public final class FightingSection extends TutorialSection {
     }
 
     @Override
-    public final void onLoop() throws InterruptedException {
+    public final void run() throws InterruptedException {
         if (pendingContinue()) {
             selectContinue();
             return;
@@ -126,7 +126,7 @@ public final class FightingSection extends TutorialSection {
     }
 
     private void wieldItem(String name) {
-        if (getInventory().getItem(name).interact("Wield", "Equip")) {
+        if (getInventory().equip(name)) {
             Sleep.sleepUntil(() -> getEquipment().contains(name), 1500);
         }
     }

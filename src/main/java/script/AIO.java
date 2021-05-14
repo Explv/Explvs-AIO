@@ -13,31 +13,34 @@ import paint.Paint;
 import tasks.Task;
 import tasks.TutorialIslandTask;
 import tasks.task_executor.TaskExecutor;
-import util.SkillTracker;
+import util.custom_method_provider.*;
 import util.event.ConfigureClientEvent;
 
 import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    public static final String VERSION = "v3.2.8";
+    public static final String VERSION = "v3.2.7";
 
     private Gui gui;
     private Paint paint;
     private MouseTrail mouseTrail;
-    private SkillTracker skillTracker;
     private TaskExecutor taskExecutor;
+    CustomMethodProvider customMethodProvider = new CustomMethodProvider();
 
     private boolean osrsClientIsConfigured;
 
     @Override
     public void onStart() throws InterruptedException {
+        customMethodProvider.init(bot);
+
         log("Current version: " + AIO.VERSION);
         log("Latest version: " + VersionChecker.getLatestVersion().orElse("not found!"));
 
@@ -73,20 +76,13 @@ public class AIO extends Script {
         }
 
         taskExecutor = new TaskExecutor(tasks);
-        taskExecutor.exchangeContext(getBot());
+        taskExecutor.exchangeContext(getBot(), customMethodProvider);
         taskExecutor.addTaskChangeListener((oldTask, newTask) -> {
             paint.setCurrentTask(newTask);
-            skillTracker.stopAll();
-            if (newTask.getActivity() != null &&
-                    newTask.getActivity().getActivityType() != null &&
-                    newTask.getActivity().getActivityType().gainedXPSkills != null) {
-                skillTracker.start(newTask.getActivity().getActivityType().gainedXPSkills);
-            }
         });
         taskExecutor.onStart();
 
-        skillTracker = new SkillTracker(getSkills());
-        paint = new Paint(getBot(), skillTracker);
+        paint = new Paint(getBot(), taskExecutor.getSkillTracker());
         getBot().addPainter(paint);
         mouseTrail = new MouseTrail(getMouse(), 20, Color.CYAN);
         getBot().addPainter(mouseTrail);
@@ -149,7 +145,7 @@ public class AIO extends Script {
         } else if (taskExecutor.isComplete()) {
             stop(true);
         } else {
-            taskExecutor.run();
+            customMethodProvider.execute(taskExecutor);
         }
         return random(200, 300);
     }
@@ -172,8 +168,8 @@ public class AIO extends Script {
         if (paint != null) {
             paint.pause();
         }
-        if (skillTracker != null) {
-            skillTracker.pauseAll();
+        if (customMethodProvider.getSkillTracker() != null) {
+            customMethodProvider.getSkillTracker().pauseAll();
         }
     }
 
@@ -182,8 +178,8 @@ public class AIO extends Script {
         if (paint != null) {
             paint.resume();
         }
-        if (skillTracker != null) {
-            skillTracker.resumeAll();
+        if (customMethodProvider.getSkillTracker() != null) {
+            customMethodProvider.getSkillTracker().resumeAll();
         }
     }
 

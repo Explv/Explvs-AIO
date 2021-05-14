@@ -6,10 +6,9 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.api.model.RS2Object;
-import org.osbot.rs07.api.ui.Message;
 import org.osbot.rs07.api.ui.Tab;
-import org.osbot.rs07.listener.MessageListener;
 import util.Sleep;
+import util.executable.ExecutionFailedException;
 
 import java.util.stream.Stream;
 
@@ -20,8 +19,19 @@ public class CooksAssistant extends QuestActivity {
     private static final Area COW = new Area(3253, 3270, 3255, 3275);
     private static final Area CHICKEN = new Area(3235, 3295, 3226, 3300);
     private static final Area WHEAT = new Area(3162, 3295, 3157, 3298);
-    private static final Area UPPER = new Area(new Position(3168, 3305, 2), new Position(3165, 3308, 2));
-    private static final Area BIN = new Area(3165, 3305, 3168, 3308);
+    private static final Area BIN = new Area(
+            new int[][]{
+                    { 3166, 3303 },
+                    { 3163, 3306 },
+                    { 3163, 3308 },
+                    { 3166, 3311 },
+                    { 3168, 3311 },
+                    { 3171, 3308 },
+                    { 3171, 3306 },
+                    { 3168, 3303 }
+            }
+    );
+    private static final Area UPPER = BIN.setPlane(2);
 
     private static final int INVENTORY_SLOTS_REQUIRED = 7;
 
@@ -46,29 +56,23 @@ public class CooksAssistant extends QuestActivity {
     }
 
     @Override
-    public void onStart() {
-        depositAllBanking.exchangeContext(getBot());
-        cookDialogueCompleter.exchangeContext(getBot());
-    }
-
-    @Override
     public void onEnd() {
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (!getInventory().contains(ITEMS_NEEDED) && getInventory().getEmptySlotCount() < INVENTORY_SLOTS_REQUIRED) {
-            depositAllBanking.run();
+            execute(depositAllBanking);
         } else if (getTabs().getOpen() != Tab.INVENTORY) {
             getTabs().open(Tab.INVENTORY);
         } else {
             switch (getProgress()) {
                 case 0:
-                    cookDialogueCompleter.run();
+                    execute(cookDialogueCompleter);
                     break;
                 case 1:
                     if (hasRequiredItems()) {
-                        cookDialogueCompleter.run();
+                        execute(cookDialogueCompleter);
                     } else {
                         getItemsNeeded();
                     }
@@ -78,9 +82,7 @@ public class CooksAssistant extends QuestActivity {
                     isComplete = true;
                     break;
                 default:
-                    log("Unknown progress config value: " + getProgress());
-                    setFailed();
-                    break;
+                    throw new ExecutionFailedException("Unknown progress config value: " + getProgress());
             }
         }
     }
@@ -90,7 +92,7 @@ public class CooksAssistant extends QuestActivity {
     }
 
     private void getItemsNeeded() throws InterruptedException {
-        if (!getInventory().contains("Pot", "Pot of flour", "Bucket of milk")) {
+        if (!getInventory().contains("Pot", "Pot of flour")) {
             getGroundItem(COOK_ROOM, "Pot");
         } else if (!getInventory().contains("Bucket", "Bucket of milk")) {
             getGroundItem(BASEMENT, "Bucket");
@@ -126,14 +128,12 @@ public class CooksAssistant extends QuestActivity {
         if (!UPPER.contains(myPosition())) {
             getWalking().webWalk(UPPER);
         } else if (!"Grain".equals(getInventory().getSelectedItemName())) {
-            getInventory().interact("Use", "Grain");
+            getInventory().use("Grain");
         } else {
             RS2Object hopper = getObjects().closest("Hopper");
 
             if (hopper == null) {
-                log("Could not find object 'Hopper'");
-                setFailed();
-                return;
+                throw new ExecutionFailedException("Could not find object 'Hopper'");
             }
 
             if (hopper.interact("Use")) {
@@ -151,9 +151,7 @@ public class CooksAssistant extends QuestActivity {
             RS2Object controls = getObjects().closest("Hopper controls");
 
             if (controls == null) {
-                log("Could not find object 'Hopper controls'");
-                setFailed();
-                return;
+                throw new ExecutionFailedException("Could not find object 'Hopper controls'");
             }
 
             if (controls.interact("Operate")) {
@@ -175,12 +173,9 @@ public class CooksAssistant extends QuestActivity {
         }
     }
 
-    private void getGroundItem(Area place, String itemName) throws InterruptedException {
+    private void getGroundItem(Area place, String itemName) {
         if (place.contains(myPosition())) {
-            GroundItem itemToGet = getGroundItems().closest(itemName);
-            if (itemToGet != null && itemToGet.interact("Take")) {
-                Sleep.sleepUntil(() -> getInventory().contains(itemName), 8000);
-            }
+            getGroundItems().take(itemName);
         } else {
             getWalking().webWalk(place);
         }
