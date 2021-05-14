@@ -31,7 +31,7 @@ public final class TutorialIsland extends Activity {
         priestSection.exchangeContext(getBot());
         wizardSection.exchangeContext(getBot());
 
-        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible() && myPlayer().isOnScreen(), 6000, 500);
+        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible(), 6000, 500);
     }
 
     @Override

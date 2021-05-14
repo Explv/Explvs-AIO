@@ -29,14 +29,14 @@ public class DialogueCompleter extends Executable {
     public void run() throws InterruptedException {
         NPC npc = getNpcs().closest(npcName);
 
-        if (npc == null || !npc.isOnScreen()) {
+        if (npc == null || !npc.isVisible()) {
             if (area != null && !area.contains(myPosition())) {
                 WebWalkEvent webWalkEvent = new WebWalkEvent(area);
                 webWalkEvent.setBreakCondition(new Condition() {
                     @Override
                     public boolean evaluate() {
                         NPC npc = getNpcs().closest(npcName);
-                        return npc != null && npc.isOnScreen() && getMap().canReach(npc);
+                        return npc != null && npc.isVisible() && getMap().canReach(npc);
                     }
                 });
                 execute(webWalkEvent);

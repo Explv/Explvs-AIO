@@ -88,7 +88,7 @@ public class FishingActivity extends Activity {
     private void fish() {
         currentFishingSpot = getFishingSpot();
         if (currentFishingSpot != null) {
-            if (!currentFishingSpot.isOnScreen()) {
+            if (!currentFishingSpot.isVisible()) {
                 getWalking().walk(currentFishingSpot);
             }
             if (currentFishingSpot.interact(fish.fishingMethod.action)) {
