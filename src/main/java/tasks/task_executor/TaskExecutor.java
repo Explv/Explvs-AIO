@@ -102,15 +102,15 @@ public final class TaskExecutor extends Executable {
 
     private void runTask(final Task task) throws InterruptedException {
         try {
-            if (System.currentTimeMillis() > nextIdleTime) {
-                previousIdleTime = nextIdleTime;
-                int idleTime = random(1000 * 10, 1000 * 35);
-                log("Idling for: " + (idleTime / 1000) + "s");
-                breakManager.startBreaking(idleTime);
-                nextIdleTime = previousIdleTime + idleTime + calculateNextIdleTime();
-            }
-
-            log("Idling in: " + (nextIdleTime - System.currentTimeMillis()) / 1000 + "s");
+//            if (System.currentTimeMillis() > nextIdleTime) {
+//                previousIdleTime = nextIdleTime;
+//                int idleTime = random(1000 * 10, 1000 * 35);
+//                log("Idling for: " + (idleTime / 1000) + "s");
+//                breakManager.startBreaking(idleTime);
+//                nextIdleTime = previousIdleTime + idleTime + calculateNextIdleTime();
+//                log("Done idling");
+//                log("Next idling in: " + (nextIdleTime - System.currentTimeMillis()) / 1000 + "s");
+//            }
 
             execute(task);
         } catch (NullPointerException nullPointer) {
