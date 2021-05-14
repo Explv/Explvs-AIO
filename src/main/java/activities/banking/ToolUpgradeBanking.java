@@ -3,6 +3,7 @@ package activities.banking;
 import org.osbot.rs07.api.Bank;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 import util.Tool;
+import util.executable.ExecutionFailedException;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -32,6 +33,8 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
                 .filter(tool -> tool.canUse(getSkills()))
                 .filter(tool -> getInventory().contains(tool.getName()) ||
                         getEquipment().isWearingItem(EquipmentSlot.WEAPON, tool.getName()))
+                // NOTE: Do not replace this with a method reference Tool::getLevelRequired
+                // There is a bug in the Java compiler which causes the code to crash.
                 .max(Comparator.comparingInt(tool -> tool.getLevelRequired()))
                 .orElse(null);
     }
@@ -43,10 +46,11 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     }
 
     @Override
-    protected boolean bank(final BankType currentBankType) {
+    protected void bank(final BankType currentBankType) {
         if (toolsInBank.isEmpty()) {
             for (T tool : toolClass.getEnumConstants()) {
                 if (getBank().contains(tool.getName())) {
+                    log(String.format("Found tool '%s' in the bank", tool.getName()));
                     toolsInBank.add(tool);
                 }
             }
@@ -55,8 +59,9 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
 
         if (currentTool == null || bankContainsBetterTool()) {
             if (toolsInBank.isEmpty()) {
-                setFailed();
-                return false;
+                throw new ExecutionFailedException(
+                        String.format("No tools of class '%s' found in bank", toolClass.getName())
+                );
             }
 
             if (!getInventory().isEmpty()) {
@@ -70,15 +75,16 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
                         currentTool = bestTool.get();
                     }
                 } else {
-                    setFailed();
-                    return false;
+                    throw new ExecutionFailedException(
+                            String.format("No usable tools of class '%s' found in bank", toolClass.getName())
+                    );
                 }
             }
         } else if (!getInventory().isEmptyExcept(currentTool.getName())) {
             getBank().depositAllExcept(currentTool.getName());
+        } else {
+            setFinished();
         }
-
-        return true;
     }
 
     private boolean bankContainsBetterTool() {
@@ -92,6 +98,6 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     private Optional<T> getBestUsableTool() {
         return toolsInBank.stream()
                 .filter(tool -> tool.canUse(getSkills()))
-                .max(Comparator.comparingInt(tool -> tool.getLevelRequired()));
+                .max(Comparator.comparingInt(Tool::getLevelRequired));
     }
 }

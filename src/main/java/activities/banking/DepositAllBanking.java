@@ -26,19 +26,23 @@ public class DepositAllBanking extends Banking {
     }
 
     @Override
-    protected boolean bank(final BankType currentBankType) {
+    protected void bank(final BankType currentBankType) {
+        boolean success;
+
         if (exceptItems == null) {
             if (currentBankType == BankType.DEPOSIT_BOX) {
-                return getDepositBox().depositAll();
+                success = getDepositBox().depositAll();
             } else {
-                return getBank().depositAll();
+                success = getBank().depositAll();
             }
+        } else if (currentBankType == BankType.DEPOSIT_BOX) {
+            success = getDepositBox().depositAllExcept(exceptItems);
+        } else {
+            success = getBank().depositAllExcept(exceptItems);
         }
 
-        if (currentBankType == BankType.DEPOSIT_BOX) {
-            return getDepositBox().depositAllExcept(exceptItems);
-        } else {
-            return getBank().depositAllExcept(exceptItems);
+        if (success) {
+            setFinished();
         }
     }
 }

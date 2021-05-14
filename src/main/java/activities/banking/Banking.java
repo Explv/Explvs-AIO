@@ -1,18 +1,14 @@
 package activities.banking;
 
 import org.osbot.rs07.api.map.Area;
-import util.Executable;
 import util.Sleep;
-import util.widget.CachedWidget;
-import util.widget.filters.WidgetActionFilter;
+import util.executable.BlockingExecutable;
 
 import java.util.stream.Stream;
 
-public abstract class Banking extends Executable {
+public abstract class Banking extends BlockingExecutable {
 
     private static final Area[] ALL_BANK_AND_DEPOSIT_BOX_AREAS = Stream.concat(Stream.of(Bank.AREAS), Stream.of(DepositBox.AREAS)).toArray(Area[]::new);
-
-    private static final CachedWidget CONTINUE_BANK_INSTRUCTIONS_WIDGET = new CachedWidget(new WidgetActionFilter("Continue"));
 
     private final boolean useDepositBoxes;
 
@@ -22,7 +18,7 @@ public abstract class Banking extends Executable {
     }
 
     private BankType currentBankType;
-    public boolean succeeded;
+    private boolean finishedBanking;
 
     public Banking() {
         this.useDepositBoxes = false;
@@ -32,10 +28,29 @@ public abstract class Banking extends Executable {
         this.useDepositBoxes = useDepositBoxes;
     }
 
+    /**
+     * Override BlockingExecutable::setFinished
+     * to prevent finishing immediately upon a super class
+     * setFinished() call. We need to ensure that the bank is closed
+     * before we end the executable.
+     */
     @Override
-    public void run() throws InterruptedException {
-        if (!playerInBank()) {
+    public void setFinished() {
+        finishedBanking = true;
+    }
+
+    @Override
+    public void blockingRun() throws InterruptedException {
+        if (finishedBanking) {
+            if (isBankOpen()) {
+                closeBank();
+            } else {
+                super.setFinished();
+            }
+        } else if (!playerInBank()) {
             walkToBank();
+        } else if (getInventory().contains("Coin pouch")) {
+            getInventory().getItem("Coin pouch").interact();
         } else if (!isBankOpen()) {
             openBank();
         } else {
@@ -45,11 +60,7 @@ public abstract class Banking extends Executable {
                 currentBankType = BankType.DEPOSIT_BOX;
             }
 
-            if (CONTINUE_BANK_INSTRUCTIONS_WIDGET.isVisible(getWidgets())) {
-                CONTINUE_BANK_INSTRUCTIONS_WIDGET.interact(getWidgets(), "Continue");
-            } else {
-                succeeded = bank(currentBankType);
-            }
+            bank(currentBankType);
         }
     }
 
@@ -100,10 +111,8 @@ public abstract class Banking extends Executable {
 
     /**
      * Execute banking operation
-     *
-     * @return whether the operation was a success or not
      */
-    protected abstract boolean bank(final BankType currentBankType);
+    protected abstract void bank(final BankType currentBankType) throws InterruptedException;
 
     @Override
     public void onEnd() {

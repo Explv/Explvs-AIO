@@ -71,7 +71,7 @@ public class LoopTask extends Task {
 
     @Override
     public void onStart() {
-        taskExecutor.exchangeContext(getBot());
+        taskExecutor.exchangeContext(getBot(), this);
 
         log(String.format("Will loop for %d iterations starting from task %d and ending at task %d",
                 numIterations, startTaskIndex, endTaskIndex));
@@ -97,7 +97,7 @@ public class LoopTask extends Task {
             log(String.format("Loop iteration: (%d/%d)", currentIteration, numIterations));
             taskExecutor.setTaskQueue(copyTasks(loopTasks));
         } else {
-            taskExecutor.run();
+            execute(taskExecutor);
         }
     }
 

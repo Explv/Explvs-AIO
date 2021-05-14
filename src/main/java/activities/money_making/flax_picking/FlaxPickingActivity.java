@@ -6,7 +6,7 @@ import activities.banking.Banking;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.utility.ConditionalSleep;
-import util.Executable;
+import util.executable.Executable;
 
 public class FlaxPickingActivity extends Activity {
 
@@ -34,24 +34,16 @@ public class FlaxPickingActivity extends Activity {
     );
 
     private Entity flax;
-    private Executable flaxBankNode;
+    private Executable flaxBankNode = new FlaxBank();
 
     public FlaxPickingActivity() {
         super(ActivityType.MONEY_MAKING);
     }
 
     @Override
-    public void onStart() {
-        flaxBankNode = new FlaxBank();
-        flaxBankNode.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (!getInventory().isFull() && getEquipment().isEmpty()) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else if (!flaxArea.contains(myPosition())) {
+            if (!flaxArea.contains(myPosition())) {
                 getWalking().webWalk(flaxArea);
             } else {
                 if (flax == null || !flax.exists()) flax = getObjects().closest(true, "Flax");
@@ -67,7 +59,7 @@ public class FlaxPickingActivity extends Activity {
                 }
             }
         } else {
-            flaxBankNode.run();
+            execute(flaxBankNode);
         }
     }
 
@@ -79,14 +71,14 @@ public class FlaxPickingActivity extends Activity {
     private class FlaxBank extends Banking {
 
         @Override
-        public boolean bank(final BankType currentBankType) {
+        public void bank(final BankType currentBankType) {
             if (!getInventory().isEmpty()) {
                 getBank().depositAll();
             } else if (!getEquipment().isEmpty()) {
                 getBank().depositWornItems();
+            } else {
+                setFinished();
             }
-
-            return true;
         }
     }
 }

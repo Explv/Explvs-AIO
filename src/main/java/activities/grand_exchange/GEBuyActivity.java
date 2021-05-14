@@ -2,6 +2,7 @@ package activities.grand_exchange;
 
 import activities.banking.ItemReqBanking;
 import activities.grand_exchange.event.GrandExchangeBuyEvent;
+import util.executable.ExecutionFailedException;
 import util.item_requirement.ItemReq;
 
 public class GEBuyActivity extends GEActivity {
@@ -26,11 +27,6 @@ public class GEBuyActivity extends GEActivity {
     }
 
     @Override
-    public void onStart() {
-        itemReqBanking.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (box != null) {
             return;
@@ -39,10 +35,7 @@ public class GEBuyActivity extends GEActivity {
         if (!GRAND_EXCHANGE.contains(myPosition())) {
             getWalking().webWalk(GRAND_EXCHANGE);
         } else if (!coinReq.hasRequirement(getInventory())) {
-            itemReqBanking.run();
-            if (itemReqBanking.hasFailed()) {
-                setFailed();
-            }
+            execute(itemReqBanking);
         } else {
             GrandExchangeBuyEvent buyEvent = new GrandExchangeBuyEvent(
                     geItem.getName(),
@@ -51,7 +44,7 @@ public class GEBuyActivity extends GEActivity {
             );
             execute(buyEvent);
             if (buyEvent.hasFailed()) {
-                setFailed();
+                throw new ExecutionFailedException("Failed to buy items");
             } else {
                 box = buyEvent.getBoxUsed();
             }

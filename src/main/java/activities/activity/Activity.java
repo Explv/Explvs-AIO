@@ -1,10 +1,13 @@
 package activities.activity;
 
 
+import org.osbot.rs07.canvas.paint.Painter;
 import util.Copyable;
-import util.Executable;
+import util.executable.Executable;
 
-public abstract class Activity extends Executable implements Copyable<Activity> {
+import java.awt.*;
+
+public abstract class Activity extends Executable implements Copyable<Activity>, Painter {
 
     private final ActivityType activityType;
     public boolean isComplete = false;
@@ -40,4 +43,7 @@ public abstract class Activity extends Executable implements Copyable<Activity> 
     public String toString() {
         return activityType != null ? String.format("%s : %s", activityType.toString(), status) : "";
     }
+
+    @Override
+    public void onPaint(Graphics2D graphics) {}
 }

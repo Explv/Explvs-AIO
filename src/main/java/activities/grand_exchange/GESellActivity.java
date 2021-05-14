@@ -8,8 +8,8 @@ import util.item_requirement.ItemReq;
 public class GESellActivity extends GEActivity {
 
     private final GEItem geItem;
-    private DepositAllBanking depositAllBanking;
-    private ItemReqBanking itemReqBanking;
+    private final DepositAllBanking depositAllBanking;
+    private final ItemReqBanking itemReqBanking;
     private boolean checkedBank;
 
     public GESellActivity(final GEItem geItem) {
@@ -18,12 +18,6 @@ public class GESellActivity extends GEActivity {
         itemReqBanking = new ItemReqBanking(
                 new ItemReq(geItem.getName(), 1, geItem.getQuantity()).setStackable().setNoted()
         );
-    }
-
-    @Override
-    public void onStart() {
-        itemReqBanking.exchangeContext(getBot());
-        depositAllBanking.exchangeContext(getBot());
     }
 
     @Override
@@ -36,14 +30,10 @@ public class GESellActivity extends GEActivity {
             getWalking().webWalk(GRAND_EXCHANGE);
         } else if (!checkedBank && getInventory().getAmount(geItem.getName()) < geItem.getQuantity()) {
             if (!getInventory().isEmpty()) {
-                depositAllBanking.run();
+                execute(depositAllBanking);
             } else {
-                itemReqBanking.run();
-                if (itemReqBanking.hasFailed()) {
-                    setFailed();
-                } else if (getBank() != null && getBank().isOpen()) {
-                    checkedBank = true;
-                }
+                execute(itemReqBanking);
+                checkedBank = true;
             }
         } else {
             GrandExchangeSellEvent sellEvent = new GrandExchangeSellEvent(
