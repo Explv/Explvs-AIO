@@ -1,20 +1,17 @@
-package util;
+package util.custom_method_provider;
 
 import org.osbot.rs07.api.Skills;
 import org.osbot.rs07.api.ui.Skill;
+import org.osbot.rs07.script.MethodProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class SkillTracker {
 
-    private final Skills skills;
+public class SkillTracker extends MethodProvider  {
+
     private final Map<Skill, TrackedSkill> trackedSkills = new HashMap<>();
-
-    public SkillTracker(final Skills skills) {
-        this.skills = skills;
-    }
 
     public Set<Skill> getTrackedSkills() {
         return trackedSkills.keySet();
@@ -85,6 +82,14 @@ public class SkillTracker {
         return trackedSkill != null ? trackedSkill.getGainedLevels() : -1;
     }
 
+    public final long getTimeToLevel(final Skill skill, final int level) {
+        return trackedSkills.get(skill).getTimeToLevel(level);
+    }
+
+    public final long getTimeToNextLevel(final Skill skill) {
+        return trackedSkills.get(skill).getTimeToNextLevel();
+    }
+
     private class TrackedSkill {
 
         private final Skills skills;
@@ -143,6 +148,35 @@ public class SkillTracker {
 
         int getGainedLevels() {
             return skills.getStatic(skill) - startLevel;
+        }
+
+        int getXpToLevel(final int level) {
+            int currentXP = skills.getExperience(skill);
+            int xpForLevel = skills.getExperienceForLevel(level);
+            return xpForLevel - currentXP;
+        }
+
+        int getXpToNextLevel() {
+            int level = getLevel(this.skill);
+            if (level == 99) {
+                return 0;
+            }
+            return getXpToLevel(level + 1);
+        }
+
+        int getTimeToLevel(final int level) {
+            int xpToLevel = getXpToLevel(level);
+            int xpPerHour = getGainedXPPerHour();
+            float numHours = (float) xpToLevel / xpPerHour;
+            return (int) (numHours * 3_600_000.0D);
+        }
+
+        int getTimeToNextLevel() {
+            int level = getLevel(this.skill);
+            if (level == 99) {
+                return 0;
+            }
+            return getTimeToLevel(level + 1);
         }
     }
 }

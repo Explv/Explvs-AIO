@@ -3,46 +3,38 @@ package activities.skills.herblore.herb_cleaning;
 import activities.activity.Activity;
 import activities.activity.ActivityType;
 import activities.banking.ItemReqBanking;
-import util.Executable;
+import util.executable.Executable;
 import util.Sleep;
 import util.item_requirement.ItemReq;
 
 public class HerbCleaningActivity extends Activity {
 
     private final Herb herb;
-    private Executable bankNode;
+    private final ItemReq herbReq;
+    private final Executable bankNode;
 
     public HerbCleaningActivity(final Herb herb) {
         super(ActivityType.HERBLORE);
         this.herb = herb;
-    }
-
-    @Override
-    public void onStart() {
-        bankNode = new ItemReqBanking(new ItemReq(herb.grimyName, 1));
-        bankNode.exchangeContext(getBot());
+        this.herbReq = new ItemReq(herb.grimyName, 1);
+        bankNode = new ItemReqBanking(herbReq);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
-        if (getInventory().contains(herb.grimyName)) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else {
-                cleanHerbs();
-            }
+        if (ItemReq.hasItemRequirements(new ItemReq[]{ herbReq }, getInventory())) {
+            cleanHerbs();
         } else {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(bankNode);
         }
     }
 
     private void cleanHerbs() {
-        long herbCount = getInventory().getAmount(herb.grimyName);
-        if (getInventory().getItem(herb.grimyName).interact("Clean")) {
-            Sleep.sleepUntil(() -> getInventory().getAmount(herb.grimyName) < herbCount, 700);
+        if (getInventory().interact("Clean", herb.grimyName)) {
+            Sleep.sleepUntil(() -> {
+                return !getInventory().contains(herb.grimyName) ||
+                        getDialogues().isPendingContinuation();
+            }, 30_000);
         }
     }
 

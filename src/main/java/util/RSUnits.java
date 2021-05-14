@@ -10,7 +10,7 @@ public class RSUnits {
 
     public static final Pattern UNIT_PATTERN = Pattern.compile("^\\d+(?:(?:\\.\\d+[kmb])|[kmb])?$");
 
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.###");
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
     private static final Map<Character, Integer> suffixMultipliers;
 

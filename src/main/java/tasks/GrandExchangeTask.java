@@ -23,11 +23,6 @@ public class GrandExchangeTask extends Task {
     }
 
     @Override
-    public void onStart() throws InterruptedException {
-        super.onStart();
-    }
-
-    @Override
     public boolean isComplete() {
         if (completed) {
             return true;

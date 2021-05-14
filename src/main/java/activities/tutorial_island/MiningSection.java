@@ -59,7 +59,7 @@ public final class MiningSection extends TutorialSection {
     }
 
     @Override
-    public final void onLoop() throws InterruptedException {
+    public final void run() throws InterruptedException {
         if (pendingContinue()) {
             selectContinue();
             return;
@@ -123,7 +123,7 @@ public final class MiningSection extends TutorialSection {
         if (!SMITH_AREA.contains(myPosition())) {
             getWalking().walk(SMITH_AREA);
         } else if (!"Bronze bar".equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem("Bronze bar").interact("Use");
+            getInventory().use("Bronze bar");
         } else if (getObjects().closest("Anvil").interact("Use")) {
             Sleep.sleepUntil(() -> getDaggerWidget().isPresent(), 5000, 600);
         }
@@ -139,7 +139,7 @@ public final class MiningSection extends TutorialSection {
 
     private void smelt() {
         if (!"Tin ore".equals(getInventory().getSelectedItemName())) {
-            getInventory().getItem("Tin ore").interact("Use");
+            getInventory().use("Tin ore");
         } else if (getObjects().closest("Furnace").interact("Use")) {
             Sleep.sleepUntil(() -> getInventory().contains("Bronze bar"), 5000, 600);
         }

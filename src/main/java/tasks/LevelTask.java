@@ -2,6 +2,7 @@ package tasks;
 
 import activities.activity.Activity;
 import org.osbot.rs07.api.ui.Skill;
+import util.PaintUtil;
 
 public class LevelTask extends Task {
 
@@ -21,7 +22,13 @@ public class LevelTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("Level task: %s (%d/%d)", skill.toString(), getSkills().getStatic(skill), targetLevel);
+        return String.format(
+                "Level task: %s (%d/%d) (%s)",
+                skill.toString(),
+                getSkills().getStatic(skill),
+                targetLevel,
+                PaintUtil.formatTime(getSkillTracker().getTimeToLevel(skill, targetLevel))
+        );
     }
 
     @Override

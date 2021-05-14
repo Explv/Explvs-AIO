@@ -4,14 +4,18 @@ import org.osbot.rs07.Bot;
 import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.canvas.paint.Painter;
 import org.osbot.rs07.input.mouse.BotMouseListener;
+import script.AIO;
 import tasks.Task;
+import util.PaintUtil;
 import util.RSUnits;
-import util.SkillTracker;
+import util.custom_method_provider.SkillTracker;
 import util.file_managers.FontManager;
 import util.file_managers.ImageManager;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class Paint implements Painter {
 
@@ -130,7 +134,7 @@ public class Paint implements Painter {
             elapsedTime += System.currentTimeMillis() - lastCheckTime;
         }
 
-        g.drawString("Run time: " + formatTime(elapsedTime), offsetX + 10, offsetY + 60);
+        g.drawString("Run time: " + PaintUtil.formatTime(elapsedTime), offsetX + 10, offsetY + 60);
     }
 
     private void drawTaskInfo(Graphics2D g) {
@@ -149,12 +153,15 @@ public class Paint implements Painter {
         int x = offsetX + 10;
         int y = offsetY + 120;
         for (final Skill skill : skillTracker.getTrackedSkills()) {
-            String output = String.format("%s lvl %d (+%d lvls) +%s xp (%s xp / hr)",
+            String output = String.format("%s lvl %d (+%d lvls) +%s xp (%s xp / hr) (%s)",
                     skill.toString(),
                     skillTracker.getLevel(skill),
                     skillTracker.getGainedLevels(skill),
                     RSUnits.valueToFormatted(skillTracker.getGainedXP(skill)),
-                    RSUnits.valueToFormatted(skillTracker.getGainedXPPerHour(skill)));
+                    RSUnits.valueToFormatted(skillTracker.getGainedXPPerHour(skill)),
+                    PaintUtil.formatTime(skillTracker.getTimeToNextLevel(skill))
+            );
+
             g.drawString(output, x, y);
             y += 20;
         }
@@ -192,13 +199,5 @@ public class Paint implements Painter {
         } else {
             g.drawImage(mouseImage, mousePos.x, mousePos.y, null);
         }
-    }
-
-    private String formatTime(long ms) {
-        long s = ms / 1000, m = s / 60, h = m / 60;
-        h %= 24;
-        m %= 60;
-        s %= 60;
-        return String.format("%02d:%02d:%02d", h, m, s);
     }
 }

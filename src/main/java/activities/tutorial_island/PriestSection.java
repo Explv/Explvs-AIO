@@ -27,7 +27,7 @@ public final class PriestSection extends TutorialSection {
     }
 
     @Override
-    public final void onLoop() throws InterruptedException {
+    public final void run() throws InterruptedException {
         if (pendingContinue()) {
             selectContinue();
             return;

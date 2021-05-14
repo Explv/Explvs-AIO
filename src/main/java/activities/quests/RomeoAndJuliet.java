@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class RomeoAndJuliet extends QuestActivity {
 
-    private static final Area ROMEO_AREA = new Area(3205, 3431, 3220, 3415);
+    private static final Area ROMEO_AREA = new Area(3210, 3431, 3215, 3426);
     private static final Area JULIET_AREA = new Area(new Position(3155, 3425, 1), new Position(3161, 3426, 1));
     private static final Area LAWRENCE_AREA = new Area(3252, 3486, 3259, 3472);
     private static final Area APOTHECARY_AREA = new Area(3197, 3406, 3192, 3402);
@@ -65,18 +65,9 @@ public class RomeoAndJuliet extends QuestActivity {
     }
 
     @Override
-    public void onStart() {
-        depositAllBanking.exchangeContext(getBot());
-        romeoDialogueCompleter.exchangeContext(getBot());
-        apothecaryDialogueCompleter.exchangeContext(getBot());
-        lawrenceDialogueCompleter.exchangeContext(getBot());
-        julietDialogueCompleter.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (getInventory().getEmptySlotCount() < 5) {
-            depositAllBanking.run();
+            execute(depositAllBanking);
             return;
         }
 
@@ -88,16 +79,16 @@ public class RomeoAndJuliet extends QuestActivity {
         switch (getProgress()) {
             case 0:
             case 20:
-                romeoDialogueCompleter.run();
+                execute(romeoDialogueCompleter);
                 break;
             case 10:
-                julietDialogueCompleter.run();
+                execute(julietDialogueCompleter);
                 break;
             case 30:
-                lawrenceDialogueCompleter.run();
+                execute(lawrenceDialogueCompleter);
                 break;
             case 40:
-                apothecaryDialogueCompleter.run();
+                execute(apothecaryDialogueCompleter);
                 break;
             case 50:
                 // Make sure we are not in the cut scene
@@ -116,7 +107,7 @@ public class RomeoAndJuliet extends QuestActivity {
                         getDialogues().clickContinue();
                     }
                 } else {
-                    romeoDialogueCompleter.run();
+                    execute(romeoDialogueCompleter);
                 }
                 break;
             case 100:
@@ -130,13 +121,13 @@ public class RomeoAndJuliet extends QuestActivity {
 
     private void deliverCadavaPotion() throws InterruptedException {
         if (getInventory().contains("Cadava potion")) {
-            julietDialogueCompleter.run();
+            execute(julietDialogueCompleter);
         } else if (getInventory().contains("Cadava berries")) {
             NPC ApothecaryNPC = getNpcs().closest("Apothecary");
             if (ApothecaryNPC == null) {
                 getWalking().walkPath(APOTHECARY_PATH);
             } else {
-                apothecaryDialogueCompleter.run();
+                execute(apothecaryDialogueCompleter);
             }
         } else {
             pickRandomCadavaBerries();

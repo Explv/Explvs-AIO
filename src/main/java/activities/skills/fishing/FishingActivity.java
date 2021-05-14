@@ -2,21 +2,13 @@ package activities.skills.fishing;
 
 import activities.activity.Activity;
 import activities.activity.ActivityType;
-import activities.banking.Bank;
 import activities.banking.DepositAllBanking;
 import activities.banking.ItemReqBanking;
-import org.osbot.rs07.api.filter.Filter;
-import org.osbot.rs07.api.map.Area;
-import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.NPC;
-import org.osbot.rs07.event.WebWalkEvent;
-import org.osbot.rs07.utility.Condition;
-import util.Executable;
+import util.executable.Executable;
 import util.ResourceMode;
 import util.Sleep;
 import util.item_requirement.ItemReq;
-import util.widget.CachedWidget;
-import util.widget.filters.WidgetActionFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +22,8 @@ public class FishingActivity extends Activity {
     private final ItemReq[] itemReqs;
 
     private NPC currentFishingSpot;
-    private Executable itemReqBankNode;
-    private Executable depositAllBankNode;
+    private final Executable itemReqBankNode;
+    private final Executable depositAllBankNode;
 
     public FishingActivity(final Fish fish, final FishingLocation location, final ResourceMode resourceMode) {
         super(ActivityType.FISHING);
@@ -47,37 +39,21 @@ public class FishingActivity extends Activity {
         }
 
         this.itemReqs = itemReqs.toArray(new ItemReq[0]);
-    }
-
-    @Override
-    public void onStart() {
-        itemReqBankNode = new ItemReqBanking(itemReqs);
-        itemReqBankNode.exchangeContext(getBot());
-
-        depositAllBankNode = new DepositAllBanking(itemReqs);
-        depositAllBankNode.exchangeContext(getBot());
+        itemReqBankNode = new ItemReqBanking(this.itemReqs);
+        depositAllBankNode = new DepositAllBanking(this.itemReqs);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (!ItemReq.hasItemRequirements(itemReqs, getInventory())
                 || ItemReq.hasNonItemRequirement(itemReqs, getInventory(), Fish.RAW_FISH_FILTER)) {
-            log("Running item req bank node");
-            itemReqBankNode.run();
-            if (itemReqBankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(itemReqBankNode);
         } else if (getInventory().isFull()) {
             if (resourceMode == ResourceMode.BANK) {
-                depositAllBankNode.run();
-                if (depositAllBankNode.hasFailed()) {
-                    setFailed();
-                }
+                execute(depositAllBankNode);
             } else if (resourceMode == ResourceMode.DROP) {
                 getInventory().dropAll(Fish.RAW_FISH_FILTER);
             }
-        } else if (getBank() != null && getBank().isOpen()) {
-            getBank().close();
         } else if (!location.location.getArea().contains(myPosition())) {
             getWalking().webWalk(location.location.getArea());
         } else if (!myPlayer().isInteracting(currentFishingSpot) || getDialogues().isPendingContinuation()) {
@@ -88,7 +64,7 @@ public class FishingActivity extends Activity {
     private void fish() {
         currentFishingSpot = getFishingSpot();
         if (currentFishingSpot != null) {
-            if (!currentFishingSpot.isVisible()) {
+            if (!currentFishingSpot.isOnScreen()) {
                 getWalking().walk(currentFishingSpot);
             }
             if (currentFishingSpot.interact(fish.fishingMethod.action)) {

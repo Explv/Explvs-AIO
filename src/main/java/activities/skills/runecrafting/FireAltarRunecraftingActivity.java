@@ -6,6 +6,7 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.ui.EquipmentSlot;
 import util.Sleep;
+import util.executable.ExecutionFailedException;
 
 public class FireAltarRunecraftingActivity extends RunecraftingActivity {
 
@@ -23,21 +24,13 @@ public class FireAltarRunecraftingActivity extends RunecraftingActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        ringOfDuelingBanking.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (getInventory().contains(ringOfDuelingFilter) && !isWearingRingOfDueling()) {
-            if (getBank().isOpen()) {
-                getBank().close();
-            } else if (getInventory().interact("Wear", ringOfDuelingFilter)) {
+            if (getInventory().interact("Wear", ringOfDuelingFilter)) {
                 Sleep.sleepUntil(FireAltarRunecraftingActivity.this::isWearingRingOfDueling, 3000);
             }
         } else if (!isWearingRingOfDueling() && !getInventory().contains(ringOfDuelingFilter) && useRingOfDueling) {
-            ringOfDuelingBanking.run();
+            execute(ringOfDuelingBanking);
         } else {
             super.runActivity();
         }
@@ -76,14 +69,12 @@ public class FireAltarRunecraftingActivity extends RunecraftingActivity {
 
     private class RingOfDuelingBanking extends Banking {
         @Override
-        public boolean bank(final BankType currentBankType) {
+        public void bank(final BankType currentBankType) {
             if (!getBank().contains(ringOfDuelingFilter)) {
-                setFailed();
+                throw new ExecutionFailedException("No ring of dueling found");
             } else {
                 getBank().withdraw(ringOfDuelingFilter, 1);
             }
-
-            return true;
         }
     }
 }

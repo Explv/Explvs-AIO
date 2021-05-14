@@ -14,4 +14,9 @@ public abstract class QuestActivity extends Activity {
     protected int getProgress() {
         return getConfigs().get(quest.configID);
     }
+
+    @Override
+    public String toString() {
+        return quest.name;
+    }
 }

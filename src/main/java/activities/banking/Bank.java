@@ -6,7 +6,6 @@ import util.Location;
 
 import java.util.Arrays;
 
-// TODO: Check these areas
 public enum Bank {
 
     LUMBRIDGE_CASTLE(new Location("Lumbridge Castle", new Area(3207, 3220, 3209, 3216).setPlane(2))),

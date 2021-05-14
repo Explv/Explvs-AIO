@@ -4,6 +4,7 @@ import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.Event;
 import util.widget.CachedWidget;
 import util.widget.filters.WidgetActionFilter;
+import util.widget.filters.WidgetMessageFilter;
 
 public final class DisableAudioEvent extends Event {
 
@@ -12,6 +13,7 @@ public final class DisableAudioEvent extends Event {
     private static final int areaSoundEffectVolumeConfig = 872;
 
     private final CachedWidget soundSettingsWidget = new CachedWidget(new WidgetActionFilter("Audio"));
+    private final CachedWidget musicVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Music Volume"));
     private final CachedWidget audioSettingsWidget = new CachedWidget(new WidgetMessageFilter("Audio Settings"));
     private final CachedWidget soundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Sound Effect Volume"));
     private final CachedWidget areaSoundEffectVolumeWidget = new CachedWidget(new WidgetActionFilter("Adjust Area Sound Volume"));

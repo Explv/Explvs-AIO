@@ -7,7 +7,7 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import util.Executable;
+import util.executable.Executable;
 import util.Sleep;
 import util.item_requirement.ItemReq;
 
@@ -34,23 +34,11 @@ public class RangeGuildActivity extends Activity {
     }
 
     @Override
-    public void onStart() {
-        bankNode.exchangeContext(getBot());
-    }
-
-    @Override
     public void runActivity() throws InterruptedException {
         if (ItemReq.hasItemRequirements(itemReqs, getInventory(), getEquipment())) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else {
-                doRangeGuild();
-            }
+            doRangeGuild();
         } else {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(bankNode);
         }
     }
 
@@ -80,7 +68,7 @@ public class RangeGuildActivity extends Activity {
     }
 
     private void wieldItem(String itemName) {
-        getInventory().getItem(itemName).interact("Wield");
+        getInventory().equip(itemName);
         Sleep.sleepUntil(() -> getEquipment().isWieldingWeapon(bow.toString()), 2500);
     }
 

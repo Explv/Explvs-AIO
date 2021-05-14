@@ -8,7 +8,8 @@ import org.osbot.rs07.api.model.GroundDecoration;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.event.Event;
 import org.osbot.rs07.event.WalkingEvent;
-import util.Executable;
+import util.executable.BlockingExecutable;
+import util.executable.Executable;
 import util.Location;
 import util.Sleep;
 import util.item_requirement.ItemReq;
@@ -17,10 +18,11 @@ import java.util.*;
 
 public class FiremakingActivity extends Activity {
 
+    private static final String TINDERBOX = "Tinderbox";
     private final Log log;
     private final Location location;
     private final ItemReq[] itemReqs;
-    private Executable bankNode;
+    private final Executable bankNode;
 
     public FiremakingActivity(final Log log, final Location location) {
         super(ActivityType.FIREMAKING);
@@ -31,20 +33,14 @@ public class FiremakingActivity extends Activity {
                 new ItemReq("Tinderbox"),
                 new ItemReq(log.NAME, 1)
         };
-    }
 
-    @Override
-    public void onStart() {
         bankNode = new ItemReqBanking(itemReqs);
-        bankNode.exchangeContext(getBot());
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (ItemReq.hasItemRequirements(itemReqs, getInventory())) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else if (!location.getArea().contains(myPosition())) {
+            if (!location.getArea().contains(myPosition())) {
                 getWalking().webWalk(location.getArea());
             } else {
 
@@ -55,13 +51,12 @@ public class FiremakingActivity extends Activity {
                     log(position.toString());
                 }
 
-                execute(new Event() {
+                execute(new BlockingExecutable() {
                     @Override
-                    public int execute() throws InterruptedException {
-
+                    protected void blockingRun() throws InterruptedException {
                         if (fmPositions.isEmpty() || !getInventory().contains(log.toString())) {
                             setFinished();
-                            return 0;
+                            return;
                         }
 
                         Position nextFirePosition = fmPositions.peek();
@@ -80,30 +75,23 @@ public class FiremakingActivity extends Activity {
                                 walkingEvent.setMiniMapDistanceThreshold(0);
                                 execute(walkingEvent);
                             }
-                            return 0;
+                            return;
                         }
 
-                        if (!"Tinderbox".equals(getInventory().getSelectedItemName())) {
-                            if (getInventory().getItem("Tinderbox").interact("Use")) {
-                                Sleep.sleepUntil(() -> "Tinderbox".equals(getInventory().getSelectedItemName()), 1000);
-                            }
-                            return 0;
+                        if (!TINDERBOX.equals(getInventory().getSelectedItemName())) {
+                            getInventory().use(TINDERBOX);
+                            return;
                         }
 
                         if (getInventory().getItem(log.toString()).interact()) {
                             Sleep.sleepUntil(() -> (!myPosition().equals(nextFirePosition) && !myPlayer().isMoving()), 30_000);
                             fmPositions.poll();
                         }
-
-                        return random(100, 150);
                     }
                 });
             }
         } else {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(bankNode);
         }
     }
 

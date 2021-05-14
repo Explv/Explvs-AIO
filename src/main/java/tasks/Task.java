@@ -1,10 +1,13 @@
 package tasks;
 
 import activities.activity.Activity;
+import org.osbot.rs07.canvas.paint.Painter;
 import util.Copyable;
-import util.Executable;
+import util.executable.Executable;
 
-public abstract class Task extends Executable implements Copyable<Task> {
+import java.awt.*;
+
+public abstract class Task extends Executable implements Copyable<Task>, Painter {
     private final TaskType taskType;
     protected Activity activity;
     private int executionOrder;
@@ -39,7 +42,7 @@ public abstract class Task extends Executable implements Copyable<Task> {
     @Override
     public void onStart() throws InterruptedException {
         if (activity != null) {
-            activity.exchangeContext(getBot());
+            activity.exchangeContext(getBot(), this);
             activity.onStart();
         }
     }
@@ -47,10 +50,7 @@ public abstract class Task extends Executable implements Copyable<Task> {
     @Override
     public void run() throws InterruptedException {
         if (activity != null) {
-            activity.run();
-            if (activity.hasFailed()) {
-                setFailed();
-            }
+            execute(activity);
         }
     }
 
@@ -63,6 +63,13 @@ public abstract class Task extends Executable implements Copyable<Task> {
     public void onEnd() throws InterruptedException {
         if (activity != null) {
             activity.onEnd();
+        }
+    }
+
+    @Override
+    public void onPaint(Graphics2D graphics) {
+        if (activity != null) {
+            activity.onPaint(graphics);
         }
     }
 }

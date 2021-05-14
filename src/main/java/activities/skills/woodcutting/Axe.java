@@ -1,6 +1,7 @@
 package activities.skills.woodcutting;
 
 import org.osbot.rs07.api.Skills;
+import org.osbot.rs07.api.ui.EquipmentSlot;
 import org.osbot.rs07.api.ui.Skill;
 import util.Tool;
 

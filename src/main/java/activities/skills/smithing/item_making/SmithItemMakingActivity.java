@@ -5,7 +5,7 @@ import activities.activity.ActivityType;
 import activities.banking.ItemReqBanking;
 import activities.skills.smithing.Bar;
 import org.osbot.rs07.api.ui.RS2Widget;
-import util.Executable;
+import util.executable.Executable;
 import util.Sleep;
 import util.item_requirement.ItemReq;
 import util.widget.CachedWidget;
@@ -34,20 +34,13 @@ public class SmithItemMakingActivity extends Activity {
         itemReqs.add(new ItemReq(bar.toString(), smithItem.barsRequired));
         itemReqs.add(new ItemReq("Hammer"));
         this.itemReqs = itemReqs.toArray(new ItemReq[0]);
-    }
-
-    @Override
-    public void onStart() {
-        bankNode = new ItemReqBanking(itemReqs);
-        bankNode.exchangeContext(getBot());
+        bankNode = new ItemReqBanking(this.itemReqs);
     }
 
     @Override
     public void runActivity() throws InterruptedException {
         if (canSmithItem()) {
-            if (getBank() != null && getBank().isOpen()) {
-                getBank().close();
-            } else if (!smithLocation.location.getArea().contains(myPosition())) {
+            if (!smithLocation.location.getArea().contains(myPosition())) {
                 getWalking().webWalk(smithLocation.location.getArea());
             } else if (smithItemWidget.getParent(getWidgets()).map(RS2Widget::isVisible).isPresent()) {
                 smithAll();
@@ -55,10 +48,7 @@ public class SmithItemMakingActivity extends Activity {
                 useAnvil();
             }
         } else {
-            bankNode.run();
-            if (bankNode.hasFailed()) {
-                setFailed();
-            }
+            execute(bankNode);
         }
     }
 

@@ -25,10 +25,18 @@ public class CustomBreakManager extends RandomSolver {
         shouldLogout = false;
     }
 
+    public void startBreaking(final long breakDuration) {
+        startBreaking(breakDuration, false);
+    }
+
     public void startBreaking(final long breakDuration, final boolean shouldLogout) {
         this.breakDuration = breakDuration;
         this.breakStartTime = System.currentTimeMillis();
         this.shouldLogout = shouldLogout;
+    }
+
+    public void startBreaking(final LocalDateTime endDateTime) {
+        startBreaking(endDateTime, false);
     }
 
     public void startBreaking(final LocalDateTime endDateTime, final boolean shouldLogout) {
