@@ -5,9 +5,9 @@ import activities.activity.ActivityType;
 import activities.banking.DepositAllBanking;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.model.NPC;
-import util.executable.Executable;
 import util.ResourceMode;
 import util.Sleep;
+import util.executable.Executable;
 import util.item_requirement.ItemReq;
 
 import java.util.ArrayList;

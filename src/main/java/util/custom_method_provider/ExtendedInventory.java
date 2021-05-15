@@ -1,7 +1,6 @@
 package util.custom_method_provider;
 
 import org.osbot.rs07.api.Inventory;
-import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
 
 public class ExtendedInventory extends Inventory {

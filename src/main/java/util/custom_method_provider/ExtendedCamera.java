@@ -1,8 +1,6 @@
 package util.custom_method_provider;
 
-import org.osbot.CON;
 import org.osbot.rs07.api.Camera;
-import org.osbot.rs07.api.Settings;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;

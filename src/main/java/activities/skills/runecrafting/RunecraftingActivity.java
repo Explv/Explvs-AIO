@@ -3,8 +3,8 @@ package activities.skills.runecrafting;
 import activities.banking.Banking;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import util.executable.Executable;
 import util.Sleep;
+import util.executable.Executable;
 import util.item_requirement.ItemReq;
 
 public class RunecraftingActivity extends RunecraftingBase {

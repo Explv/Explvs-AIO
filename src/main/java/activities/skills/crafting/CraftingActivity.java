@@ -5,9 +5,9 @@ import activities.activity.ActivityType;
 import activities.banking.Bank;
 import activities.banking.ItemReqBanking;
 import org.osbot.rs07.api.ui.RS2Widget;
-import util.executable.Executable;
 import util.Location;
 import util.Sleep;
+import util.executable.Executable;
 import util.item_requirement.ItemReq;
 import util.widget.CachedWidget;
 

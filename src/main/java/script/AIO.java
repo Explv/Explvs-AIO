@@ -13,7 +13,7 @@ import paint.Paint;
 import tasks.Task;
 import tasks.TutorialIslandTask;
 import tasks.task_executor.TaskExecutor;
-import util.custom_method_provider.*;
+import util.custom_method_provider.CustomMethodProvider;
 import util.event.ConfigureClientEvent;
 
 import java.awt.*;

@@ -4,8 +4,8 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.utility.Condition;
-import util.executable.Executable;
 import util.Sleep;
+import util.executable.Executable;
 import util.executable.ExecutionFailedException;
 
 import java.util.stream.Stream;

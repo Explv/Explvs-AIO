@@ -1,8 +1,8 @@
 package activities.eating;
 
 import org.osbot.rs07.api.ui.Skill;
-import util.executable.Executable;
 import util.Sleep;
+import util.executable.Executable;
 
 public class Eating extends Executable {
 

@@ -10,10 +10,10 @@ import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.event.WalkingEvent;
-import util.executable.Executable;
 import util.Location;
 import util.ResourceMode;
 import util.Sleep;
+import util.executable.Executable;
 import util.executable.ExecutionFailedException;
 
 public class ThievingActivity extends Activity {

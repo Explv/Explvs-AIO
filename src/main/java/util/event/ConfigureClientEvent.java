@@ -1,8 +1,6 @@
 package util.event;
 
 import org.osbot.rs07.api.Display;
-import org.osbot.rs07.api.ui.RS2Widget;
-import org.osbot.rs07.api.ui.Tab;
 import util.custom_method_provider.ExtendedSettings;
 import util.executable.BlockingExecutable;
 

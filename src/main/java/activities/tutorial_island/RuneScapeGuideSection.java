@@ -3,11 +3,9 @@ package activities.tutorial_island;
 import org.osbot.rs07.api.Configs;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;
-import org.osbot.rs07.event.Event;
 import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
 import util.event.ConfigureClientEvent;
-import util.event.DisableAudioEvent;
 import util.widget.CachedWidget;
 import util.widget.filters.WidgetActionFilter;
 

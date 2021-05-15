@@ -3,8 +3,6 @@ package activities.quests;
 import activities.activity.Activity;
 import activities.banking.DepositAllBanking;
 import org.osbot.rs07.api.map.Area;
-import org.osbot.rs07.api.map.Position;
-import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Tab;
 import util.Sleep;

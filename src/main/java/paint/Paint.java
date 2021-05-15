@@ -4,7 +4,6 @@ import org.osbot.rs07.Bot;
 import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.canvas.paint.Painter;
 import org.osbot.rs07.input.mouse.BotMouseListener;
-import script.AIO;
 import tasks.Task;
 import util.PaintUtil;
 import util.RSUnits;
@@ -14,8 +13,6 @@ import util.file_managers.ImageManager;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class Paint implements Painter {
 

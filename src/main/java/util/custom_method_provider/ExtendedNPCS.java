@@ -2,7 +2,6 @@ package util.custom_method_provider;
 
 import org.osbot.rs07.api.NPCS;
 import org.osbot.rs07.api.model.NPC;
-import org.osbot.rs07.script.MethodProvider;
 
 public class ExtendedNPCS extends NPCS {
 

@@ -9,9 +9,9 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.EquipmentSlot;
-import util.executable.Executable;
 import util.ResourceMode;
 import util.Sleep;
+import util.executable.Executable;
 
 import java.util.Arrays;
 import java.util.List;

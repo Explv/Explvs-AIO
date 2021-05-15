@@ -2,7 +2,6 @@ package activities.tutorial_island;
 
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.ui.RS2Widget;
-import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
 import util.executable.Executable;
 

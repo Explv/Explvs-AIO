@@ -3,7 +3,6 @@ package util.custom_method_provider;
 import org.osbot.rs07.api.GroundItems;
 import org.osbot.rs07.api.model.GroundItem;
 import org.osbot.rs07.event.InteractionEvent;
-import org.osbot.rs07.script.MethodProvider;
 import util.Sleep;
 
 public class ExtendedGroundItems extends GroundItems {
