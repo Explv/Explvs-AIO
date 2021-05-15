@@ -27,7 +27,7 @@ import java.util.Optional;
 @ScriptManifest(author = "Explv", name = "Explv's AIO " + AIO.VERSION, info = "AIO", version = 0, logo = "http://i.imgur.com/58Zz0fb.png")
 public class AIO extends Script {
 
-    public static final String VERSION = "v3.3.0";
+    public static final String VERSION = "v3.4.0";
 
     private Gui gui;
     private Paint paint;
@@ -141,7 +141,8 @@ public class AIO extends Script {
         if (!getClient().isLoggedIn()) {
             return random(1200, 1800);
         } else if (!osrsClientIsConfigured && osrsClientIsConfigurable()) {
-            osrsClientIsConfigured = configureOSRSClient();
+            configureOSRSClient();
+            osrsClientIsConfigured = true;
         } else if (taskExecutor.isComplete()) {
             stop(true);
         } else {
@@ -159,8 +160,8 @@ public class AIO extends Script {
                 getNpcs().closest("Lumbridge Guide") == null;
     }
 
-    private boolean configureOSRSClient() {
-        return execute(new ConfigureClientEvent()).hasFinished();
+    private void configureOSRSClient() throws InterruptedException {
+        customMethodProvider.execute(new ConfigureClientEvent());
     }
 
     @Override

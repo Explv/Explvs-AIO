@@ -21,7 +21,7 @@ public final class TutorialIsland extends Activity {
 
     @Override
     public void onStart() throws InterruptedException {
-        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible() && myPlayer().isOnScreen(), 6000, 500);
+        Sleep.sleepUntil(() -> getClient().isLoggedIn() && myPlayer().isVisible(), 6000, 500);
     }
 
     @Override

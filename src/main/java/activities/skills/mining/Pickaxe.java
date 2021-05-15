@@ -17,17 +17,23 @@ public enum Pickaxe implements Tool {
     MITHRIL("Mithril pickaxe", 21, 20),
     ADAMANT("Adamant pickaxe", 31, 30),
     RUNE("Rune pickaxe", 41, 40),
-    DRAGON("Dragon pickaxe", 61, 60),
-    INFERNAL("Infernal pickaxe", 61, 60);
+    DRAGON("Dragon pickaxe", 61, 60, true),
+    INFERNAL("Infernal pickaxe", 61, 60, true);
 
     String name;
     int miningLevelRequired;
     int attackLevelRequired;
+    boolean membersOnly;
 
     Pickaxe(final String name, final int miningLevelRequired, final int attackLevelRequired) {
         this.name = name;
         this.miningLevelRequired = miningLevelRequired;
         this.attackLevelRequired = attackLevelRequired;
+    }
+
+    Pickaxe(final String name, final int miningLevelRequired, final int attackLevelRequired, final boolean membersOnly) {
+        this(name, miningLevelRequired, attackLevelRequired);
+        this.membersOnly = membersOnly;
     }
 
     public static List<String> getNames() {
@@ -37,6 +43,11 @@ public enum Pickaxe implements Tool {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isMembersOnly() {
+        return membersOnly;
     }
 
     @Override

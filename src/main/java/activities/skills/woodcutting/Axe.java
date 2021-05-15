@@ -14,12 +14,13 @@ public enum Axe implements Tool {
     MITHRIL("Mithril axe", 21, 20),
     ADAMANT("Adamant axe", 31, 30),
     RUNE("Rune axe", 41, 40),
-    DRAGON("Dragon axe", 61, 60),
-    INFERNAL("Infernal axe", 61, 60);
+    DRAGON("Dragon axe", 61, 60, true),
+    INFERNAL("Infernal axe", 61, 60, true);
 
     String name;
     int wcLevelRequired;
     int attLevelRequired;
+    boolean membersOnly;
 
     Axe(final String name, final int wcLevelRequired, final int attLevelRequired) {
         this.name = name;
@@ -27,9 +28,19 @@ public enum Axe implements Tool {
         this.attLevelRequired = attLevelRequired;
     }
 
+    Axe(final String name, final int wcLevelRequired, final int attLevelRequired, final boolean membersOnly) {
+        this(name, wcLevelRequired, attLevelRequired);
+        this.membersOnly = membersOnly;
+    }
+
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isMembersOnly() {
+        return membersOnly;
     }
 
     @Override

@@ -19,19 +19,21 @@ public class CustomMethodProvider extends MethodProvider {
     private SkillTracker skillTracker;
     private ExecutableUtil executableUtil;
     private ExtendedInventory extendedInventory;
+    private ExtendedSettings extendedSettings;
     private MakeAllInterface makeAllInterface;
     private boolean hasContext;
 
     public void init(final Bot bot) {
         super.exchangeContext(bot);
         this.extendedGroundItems = new ExtendedGroundItems();
-        this.extendedCamera = new ExtendedCamera();
+        this.extendedCamera = new ExtendedCamera(this);
         this.interactionHelper = new InteractionHelper();
         this.extendedNPCS = new ExtendedNPCS();
         this.graphics = new Graphics();
         this.skillTracker = new SkillTracker();
         this.executableUtil = new ExecutableUtil();
         this.extendedInventory = new ExtendedInventory();
+        this.extendedSettings = new ExtendedSettings();
         this.makeAllInterface = new MakeAllInterface();
         extendedGroundItems.exchangeContext(bot);
         extendedCamera.exchangeContext(bot);
@@ -41,6 +43,7 @@ public class CustomMethodProvider extends MethodProvider {
         skillTracker.exchangeContext(bot);
         executableUtil.exchangeContext(bot, this);
         extendedInventory.exchangeContext(bot);
+        extendedSettings.exchangeContext(bot);
         makeAllInterface.exchangeContext(bot, this);
         hasContext = true;
     }
@@ -62,6 +65,7 @@ public class CustomMethodProvider extends MethodProvider {
         this.skillTracker = methodProvider.skillTracker;
         this.executableUtil = methodProvider.executableUtil;
         this.extendedInventory = methodProvider.extendedInventory;
+        this.extendedSettings = methodProvider.extendedSettings;
         this.makeAllInterface = methodProvider.makeAllInterface;
         super.exchangeContext(bot);
         hasContext = true;
@@ -96,6 +100,11 @@ public class CustomMethodProvider extends MethodProvider {
     @Override
     public ExtendedInventory getInventory() {
         return extendedInventory;
+    }
+
+    @Override
+    public ExtendedSettings getSettings() {
+        return extendedSettings;
     }
 
     public MakeAllInterface getMakeAllInterface() { return makeAllInterface; }

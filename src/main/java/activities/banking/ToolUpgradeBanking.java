@@ -30,6 +30,7 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     public void onStart() throws InterruptedException {
         super.onStart();
         currentTool = Stream.of(toolClass.getEnumConstants())
+                .filter(tool -> !tool.isMembersOnly() || getWorlds().isMembersWorld())
                 .filter(tool -> tool.canUse(getSkills()))
                 .filter(tool -> getInventory().contains(tool.getName()) ||
                         getEquipment().isWearingItem(EquipmentSlot.WEAPON, tool.getName()))
@@ -49,6 +50,10 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     protected void bank(final BankType currentBankType) {
         if (toolsInBank.isEmpty()) {
             for (T tool : toolClass.getEnumConstants()) {
+                if (!getWorlds().isMembersWorld() && tool.isMembersOnly()) {
+                    log(String.format("Skipping tool '%s' as not in members world", tool.getName()));
+                    continue;
+                }
                 if (getBank().contains(tool.getName())) {
                     log(String.format("Found tool '%s' in the bank", tool.getName()));
                     toolsInBank.add(tool);
@@ -98,6 +103,8 @@ public class ToolUpgradeBanking<T extends Enum<T> & Tool> extends Banking {
     private Optional<T> getBestUsableTool() {
         return toolsInBank.stream()
                 .filter(tool -> tool.canUse(getSkills()))
-                .max(Comparator.comparingInt(Tool::getLevelRequired));
+                // NOTE: Do not replace this with a method reference Tool::getLevelRequired
+                // There is a bug in the Java compiler which causes the code to crash.
+                .max(Comparator.comparingInt(tool -> tool.getLevelRequired()));
     }
 }

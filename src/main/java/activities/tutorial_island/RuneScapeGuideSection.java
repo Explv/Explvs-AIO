@@ -86,7 +86,8 @@ public final class RuneScapeGuideSection extends TutorialSection {
                 break;
             case 10:
                 if (!isConfigured) {
-                    isConfigured = execute(new ConfigureClientEvent()).hasFinished();
+                   execute(new ConfigureClientEvent());
+                   isConfigured = true;
                 } else if (getObjects().closest("Door").interact("Open")) {
                     Sleep.sleepUntil(() -> getProgress() != 10, 5000, 600);
                 }

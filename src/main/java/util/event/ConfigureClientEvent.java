@@ -1,22 +1,24 @@
 package util.event;
 
 import org.osbot.rs07.api.Display;
-import org.osbot.rs07.api.Settings;
-import org.osbot.rs07.event.Event;
+import org.osbot.rs07.api.ui.RS2Widget;
+import org.osbot.rs07.api.ui.Tab;
+import util.custom_method_provider.ExtendedSettings;
+import util.executable.BlockingExecutable;
 
-public class ConfigureClientEvent extends Event {
+public class ConfigureClientEvent extends BlockingExecutable {
 
     private boolean isAudioDisabled = false;
 
     @Override
-    public int execute() throws InterruptedException {
+    protected void blockingRun() throws InterruptedException {
         if (getDisplay().isResizableMode()) {
             getDisplay().setDisplayMode(Display.DisplayMode.FIXED);
-        } if (!getSettings().areRoofsEnabled()) {
-            getSettings().setSetting(Settings.AllSettingsTab.DISPLAY, "Hide roofs", true);
+        } else if (!getSettings().areRoofsEnabled()) {
+            getSettings().toggleSetting(ExtendedSettings.Setting.HIDE_ROOFS);
         } else if (!getSettings().isShiftDropActive()) {
-            getSettings().setSetting(Settings.AllSettingsTab.CONTROLS, "Shift click to drop items", true);
-        } else if (getSettings().isAllSettingsWidgetVisible()){
+            getSettings().toggleSetting(ExtendedSettings.Setting.SHIFT_CLICK_TO_DROP_ITEMS);
+        } else if (getSettings().isAllSettingsWidgetVisible()) {
             getWidgets().closeOpenInterface();
         } else if (!isAudioDisabled) {
             execute(new DisableAudioEvent());
@@ -24,8 +26,5 @@ public class ConfigureClientEvent extends Event {
         } else {
             setFinished();
         }
-        return 600;
     }
-
-
 }

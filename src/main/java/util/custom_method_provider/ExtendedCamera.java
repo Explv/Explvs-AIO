@@ -1,12 +1,12 @@
 package util.custom_method_provider;
 
+import org.osbot.CON;
 import org.osbot.rs07.api.Camera;
 import org.osbot.rs07.api.Settings;
 import org.osbot.rs07.api.model.Entity;
 import org.osbot.rs07.api.ui.RS2Widget;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.Event;
-import org.osbot.rs07.script.MethodProvider;
 
 import java.util.function.Supplier;
 
@@ -14,6 +14,11 @@ public class ExtendedCamera extends Camera {
 
     private static final int MAX_PITCH_ANGLE = 67;
     private static final int MAX_ZOOM_OUT_SCALE = 181;
+    private final CustomMethodProvider customMethodProvider;
+
+    public ExtendedCamera(final CustomMethodProvider customMethodProvider) {
+        this.customMethodProvider = customMethodProvider;
+    }
 
     public boolean isAtTop() {
         return getCamera().getPitchAngle() >= MAX_PITCH_ANGLE;
@@ -59,9 +64,8 @@ public class ExtendedCamera extends Camera {
                     setFinished();
                 } else if (getTabs().getOpen() != Tab.SETTINGS) {
                     getTabs().open(Tab.SETTINGS);
-                } else if (getSettings().getCurrentBasicSettingsTab() != Settings.BasicSettingsTab.CONTROLS) {
-                    log("Opening tab");
-                    getSettings().open(Settings.BasicSettingsTab.CONTROLS);
+                } else if (!customMethodProvider.getSettings().isBasicSettingsTabOpen(ExtendedSettings.BasicSettingsTab.CONTROLS)) {
+                    customMethodProvider.getSettings().openBasicSettingsTab(ExtendedSettings.BasicSettingsTab.CONTROLS);
                 } else {
                     RS2Widget maxZoomOutWidget = getWidgets().get(116, 51);
                     if (maxZoomOutWidget != null) {
